@@ -440,6 +440,25 @@ export class OttoV2 extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  canOpenAt(tokenId_: BigInt): BigInt {
+    let result = super.call("canOpenAt", "canOpenAt(uint256):(uint256)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId_)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_canOpenAt(tokenId_: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("canOpenAt", "canOpenAt(uint256):(uint256)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId_)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   candidates(param0: BigInt, param1: BigInt): BigInt {
     let result = super.call(
       "candidates",

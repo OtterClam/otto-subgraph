@@ -8,7 +8,7 @@ dataSources:
     source:
       address: '0x4B3B717EA62c36eb6274BD0813C3f48ccDf94b9F'
       abi: Otto
-      startBlock: 25750074
+      startBlock: 25750072
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
