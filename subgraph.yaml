@@ -6,15 +6,16 @@ dataSources:
     name: Otto
     network: mumbai
     source:
-      address: '0x4B3B717EA62c36eb6274BD0813C3f48ccDf94b9F'
-      abi: Otto
-      startBlock: 25750072
+      address: '0xF0a0328bc4C1FB00D4fa100BC942fd2F44F25d95'
+      abi: OttoV2
+      startBlock: 25765563
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - Otto
+        - OttoV2
       abis:
         - name: Otto
           file: ./abis/Otto.json
@@ -24,4 +25,8 @@ dataSources:
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
+        - event: OpenPortal(indexed address,uint256,bool)
+          handler: handleOpen
+        - event: SummonOtto(indexed address,uint256,bool)
+          handler: handleSummon
       file: ./src/Otto.ts
