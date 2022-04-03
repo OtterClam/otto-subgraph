@@ -6,7 +6,7 @@ dataSources:
     name: Otto
     network: mumbai
     source:
-      address: '0xF0a0328bc4C1FB00D4fa100BC942fd2F44F25d95'
+      address: '0xB35617516850310200a1f8A96858e3306f5EB9c3'
       abi: OttoV2
       startBlock: 25765563
     mapping:
@@ -25,8 +25,8 @@ dataSources:
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
-        - event: OpenPortal(indexed address,uint256,bool)
+        - event: OpenPortal(indexed address,indexed uint256,bool)
           handler: handleOpen
-        - event: SummonOtto(indexed address,uint256,bool)
+        - event: SummonOtto(indexed address,indexed uint256,bool)
           handler: handleSummon
       file: ./src/Otto.ts
