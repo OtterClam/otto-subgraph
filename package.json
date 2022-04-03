@@ -1,18 +1,33 @@
 {
   "name": "otto-subgraph",
   "version": "0.1.0",
+  "files": [
+    "src",
+    "subgraph.yaml",
+    "schema.graphql"
+  ],
   "scripts": {
+    "config:local": "source .config.local && envsubst < subgraph-template.yaml > subgraph.yaml",
+    "config:testnet": "source .config.testnet && envsubst < subgraph-template.yaml > subgraph.yaml",
+    "config:mainnet": "source .config.mainnet && envsubst < subgraph-template.yaml > subgraph.yaml",
     "codegen": "graph codegen",
     "build": "graph build",
     "auth": "graph auth --product hosted-service",
-    "deploy:mainnet": "yarn build && graph deploy --product hosted-service otterclam/otto",
-    "deploy:testnet": "yarn build && graph deploy --product hosted-service otterclam/otto_testnet",
-    "deploy:local": "yarn build && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 otterclam/otto",
+    "deploy:mainnet": "yarn config:mainnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto",
+    "deploy:testnet": "yarn config:testnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto_testnet",
+    "deploy:local": "yarn config:local && yarn codegen && yarn build && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 otterclam/otto",
     "create-local": "graph create --node http://localhost:8020/ otterclam/otto",
     "remove-local": "graph remove --node http://localhost:8020/ otterclam/otto"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@graphprotocol/graph-cli": "0.23.1",
-    "@graphprotocol/graph-ts": "0.23.1"
+    "@graphprotocol/graph-ts": "0.23.1",
+    "@types/node": "^14.0.13",
+    "@typescript-eslint/eslint-plugin": "^3.3.0",
+    "@typescript-eslint/parser": "^3.3.0",
+    "eslint": "^7.2.0",
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.3"
   }
 }

@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Otto
-    network: mumbai
+    network: ${SUBGRAPH_NETWORK}
     source:
-      address: '0xB35617516850310200a1f8A96858e3306f5EB9c3'
+      address: '${SUBGRAPH_OTTO_ADDRESS}'
       abi: OttoV2
-      startBlock: 25765563
+      startBlock: ${SUBGRAPH_OTTO_STARTBLOCK}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
