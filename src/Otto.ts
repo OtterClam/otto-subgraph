@@ -35,7 +35,13 @@ export function handleOpen(event: OpenPortal): void {
   entity.save()
 }
 
-export function handleSummon(event: SummonOtto): void {}
+export function handleSummon(event: SummonOtto): void {
+  let tokenId = event.params.tokenId_
+  let entity = getOttoEntity(tokenId)
+  updateV2(entity, tokenId)
+  entity.updateAt = event.block.timestamp
+  entity.save()
+}
 
 function getOttoEntity(tokenId: BigInt): Otto {
   let id = OTTO + '-' + tokenId.toString()
