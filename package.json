@@ -7,9 +7,10 @@
     "schema.graphql"
   ],
   "scripts": {
-    "config:local": "source .config.local && envsubst < subgraph-template.yaml > subgraph.yaml",
-    "config:testnet": "source .config.testnet && envsubst < subgraph-template.yaml > subgraph.yaml",
-    "config:mainnet": "source .config.mainnet && envsubst < subgraph-template.yaml > subgraph.yaml",
+    "config:local": "source .config.local && yarn _config",
+    "config:testnet": "source .config.testnet && yarn _config",
+    "config:mainnet": "source .config.mainnet && yarn _config",
+    "_config": "envsubst < subgraph-template.yaml > subgraph.yaml && envsubst < Constants-template.ts > src/Constants.ts",
     "codegen": "graph codegen",
     "build": "graph build",
     "auth": "graph auth --product hosted-service",

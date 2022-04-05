@@ -2,7 +2,7 @@ import { Address, BigInt } from '@graphprotocol/graph-ts'
 import { Otto as OttoContract, Transfer as TransferEvent } from '../generated/Otto/Otto'
 import { OttoV2 as OttoV2Contract, OpenPortal, SummonOtto } from '../generated/Otto/OttoV2'
 import { Otto } from '../generated/schema'
-import { OTTO, OTTO_V2_BLOCK } from './utils/Constants'
+import { OTTO, OTTO_V2_BLOCK } from './Constants'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
 
