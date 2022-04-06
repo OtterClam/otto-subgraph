@@ -276,6 +276,28 @@ export class SummonOtto__Params {
   }
 }
 
+export class TraitsChanged extends ethereum.Event {
+  get params(): TraitsChanged__Params {
+    return new TraitsChanged__Params(this);
+  }
+}
+
+export class TraitsChanged__Params {
+  _event: TraitsChanged;
+
+  constructor(event: TraitsChanged) {
+    this._event = event;
+  }
+
+  get tokenId_(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get arr_(): Array<i32> {
+    return this._event.parameters[1].value.toI32Array();
+  }
+}
+
 export class Transfer extends ethereum.Event {
   get params(): Transfer__Params {
     return new Transfer__Params(this);
@@ -1017,6 +1039,44 @@ export class ApproveCall__Outputs {
   _call: ApproveCall;
 
   constructor(call: ApproveCall) {
+    this._call = call;
+  }
+}
+
+export class DevSummonCall extends ethereum.Call {
+  get inputs(): DevSummonCall__Inputs {
+    return new DevSummonCall__Inputs(this);
+  }
+
+  get outputs(): DevSummonCall__Outputs {
+    return new DevSummonCall__Outputs(this);
+  }
+}
+
+export class DevSummonCall__Inputs {
+  _call: DevSummonCall;
+
+  constructor(call: DevSummonCall) {
+    this._call = call;
+  }
+
+  get tokenId_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get traits_(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get birthday_(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class DevSummonCall__Outputs {
+  _call: DevSummonCall;
+
+  constructor(call: DevSummonCall) {
     this._call = call;
   }
 }
