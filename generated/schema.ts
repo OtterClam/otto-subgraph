@@ -19,6 +19,8 @@ export class Otto extends Entity {
     this.set("tokenId", Value.fromBigInt(BigInt.zero()));
     this.set("tokenURI", Value.fromString(""));
     this.set("owner", Value.fromBytes(Bytes.empty()));
+    this.set("candidates", Value.fromBigIntArray(new Array(0)));
+    this.set("legendary", Value.fromBoolean(false));
     this.set("portalStatus", Value.fromString(""));
     this.set("canOpenAt", Value.fromBigInt(BigInt.zero()));
     this.set("summonAt", Value.fromBigInt(BigInt.zero()));
@@ -77,6 +79,24 @@ export class Otto extends Entity {
 
   set owner(value: Bytes) {
     this.set("owner", Value.fromBytes(value));
+  }
+
+  get candidates(): Array<BigInt> {
+    let value = this.get("candidates");
+    return value!.toBigIntArray();
+  }
+
+  set candidates(value: Array<BigInt>) {
+    this.set("candidates", Value.fromBigIntArray(value));
+  }
+
+  get legendary(): boolean {
+    let value = this.get("legendary");
+    return value!.toBoolean();
+  }
+
+  set legendary(value: boolean) {
+    this.set("legendary", Value.fromBoolean(value));
   }
 
   get portalStatus(): string {

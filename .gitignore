@@ -63,3 +63,5 @@ typings/
 # thegraph build
 build
 data
+
+subgraph.yaml

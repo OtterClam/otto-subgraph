@@ -9,6 +9,8 @@ type Otto @entity {
   tokenId: BigInt!
   tokenURI: String!
   owner: Bytes!
+  candidates: [BigInt!]!
+  legendary: Boolean!
   portalStatus: PortalStatus!
   canOpenAt: BigInt!
   summonAt: BigInt!

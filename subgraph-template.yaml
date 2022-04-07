@@ -4,17 +4,18 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Otto
-    network: mumbai
+    network: ${SUBGRAPH_NETWORK}
     source:
-      address: '0x4B3B717EA62c36eb6274BD0813C3f48ccDf94b9F'
-      abi: Otto
-      startBlock: 25750072
+      address: '${SUBGRAPH_OTTO_ADDRESS}'
+      abi: OttoV2
+      startBlock: ${SUBGRAPH_OTTO_STARTBLOCK}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - Otto
+        - OttoV2
       abis:
         - name: Otto
           file: ./abis/Otto.json
@@ -24,4 +25,8 @@ dataSources:
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
+        - event: OpenPortal(indexed address,indexed uint256,bool)
+          handler: handleOpen
+        - event: SummonOtto(indexed address,indexed uint256,bool)
+          handler: handleSummon
       file: ./src/Otto.ts
