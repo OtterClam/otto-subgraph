@@ -29,4 +29,6 @@ dataSources:
           handler: handleOpen
         - event: SummonOtto(indexed address,indexed uint256,bool)
           handler: handleSummon
+        - event: TraitsChanged(indexed uint256,uint16[16])
+          handler: handleTraitsChanged
       file: ./src/Otto.ts

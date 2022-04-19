@@ -12,6 +12,7 @@
     "config:mainnet": "source .config.mainnet && yarn _config",
     "_config": "envsubst < subgraph-template.yaml > subgraph.yaml && envsubst < Constants-template.ts > src/Constants.ts",
     "codegen": "graph codegen",
+    "postinstall": "yarn codegen",
     "build": "graph build",
     "auth": "graph auth --product hosted-service",
     "deploy:mainnet": "yarn config:mainnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto",
