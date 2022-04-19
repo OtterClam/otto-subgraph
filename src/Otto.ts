@@ -1,6 +1,6 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts'
 import { Otto as OttoContract, Transfer as TransferEvent } from '../generated/Otto/Otto'
-import { OttoV2 as OttoV2Contract, OpenPortal, SummonOtto } from '../generated/Otto/OttoV2'
+import { OttoV2 as OttoV2Contract, OpenPortal, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2'
 import { Otto } from '../generated/schema'
 import { OTTO, OTTO_V2_BLOCK } from './Constants'
 
@@ -36,6 +36,14 @@ export function handleOpen(event: OpenPortal): void {
 }
 
 export function handleSummon(event: SummonOtto): void {
+  let tokenId = event.params.tokenId_
+  let entity = getOttoEntity(tokenId)
+  updateV2(entity, tokenId)
+  entity.updateAt = event.block.timestamp
+  entity.save()
+}
+
+export function handleTraitsChanged(event: TraitsChanged): void {
   let tokenId = event.params.tokenId_
   let entity = getOttoEntity(tokenId)
   updateV2(entity, tokenId)
