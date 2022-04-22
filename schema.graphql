@@ -17,3 +17,16 @@ type Otto @entity {
   mintAt: BigInt!
   updateAt: BigInt!
 }
+
+type OttoItem @entity {
+  id: ID!
+  tokenId: BigInt!
+  tokenURI: String!
+  wearable: Boolean!
+  slot: Int!
+  rootOwner: Bytes!
+  owner: Bytes!
+  parentTokenId: BigInt
+  amount: Int!
+  updateAt: BigInt!
+}

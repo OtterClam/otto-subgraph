@@ -342,7 +342,7 @@ export class Upgraded__Params {
   }
 }
 
-export class OttoV2__infosResult {
+export class OttoV2Contract__infosResult {
   value0: BigInt;
   value1: BigInt;
   value2: BigInt;
@@ -385,9 +385,9 @@ export class OttoV2__infosResult {
   }
 }
 
-export class OttoV2 extends ethereum.SmartContract {
-  static bind(address: Address): OttoV2 {
-    return new OttoV2("OttoV2", address);
+export class OttoV2Contract extends ethereum.SmartContract {
+  static bind(address: Address): OttoV2Contract {
+    return new OttoV2Contract("OttoV2Contract", address);
   }
 
   DEFAULT_ADMIN_ROLE(): Bytes {
@@ -615,14 +615,14 @@ export class OttoV2 extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  infos(param0: BigInt): OttoV2__infosResult {
+  infos(param0: BigInt): OttoV2Contract__infosResult {
     let result = super.call(
       "infos",
       "infos(uint256):(uint256,uint256,uint256,uint256,uint256,uint8,bool)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
-    return new OttoV2__infosResult(
+    return new OttoV2Contract__infosResult(
       result[0].toBigInt(),
       result[1].toBigInt(),
       result[2].toBigInt(),
@@ -633,7 +633,7 @@ export class OttoV2 extends ethereum.SmartContract {
     );
   }
 
-  try_infos(param0: BigInt): ethereum.CallResult<OttoV2__infosResult> {
+  try_infos(param0: BigInt): ethereum.CallResult<OttoV2Contract__infosResult> {
     let result = super.tryCall(
       "infos",
       "infos(uint256):(uint256,uint256,uint256,uint256,uint256,uint8,bool)",
@@ -644,7 +644,7 @@ export class OttoV2 extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new OttoV2__infosResult(
+      new OttoV2Contract__infosResult(
         value[0].toBigInt(),
         value[1].toBigInt(),
         value[2].toBigInt(),

@@ -1,8 +1,10 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts'
-import { Otto as OttoContract, Transfer as TransferEvent } from '../generated/Otto/Otto'
-import { OttoV2 as OttoV2Contract, OpenPortal, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2'
+import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoContract'
+import { OttoV2Contract, OpenPortal, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
+import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
 import { Otto } from '../generated/schema'
-import { OTTO, OTTO_V2_BLOCK } from './Constants'
+import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
+import { getItemEntity, updateEntity } from './OttoItemHelper'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
 
@@ -11,7 +13,7 @@ export function handleTransfer(event: TransferEvent): void {
   let entity = getOttoEntity(tokenId)
   entity.owner = event.params.to
   entity.updateAt = event.block.timestamp
-  if (event.block.number <= BigInt.fromString(OTTO_V2_BLOCK)) {
+  if (event.block.number < BigInt.fromString(OTTO_V2_BLOCK)) {
     // v1
     let otto = OttoContract.bind(Address.fromString(OTTO))
     let tokenURI = otto.try_tokenURI(tokenId)
@@ -23,6 +25,19 @@ export function handleTransfer(event: TransferEvent): void {
   } else {
     // v2
     updateV2(entity, tokenId)
+
+    if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
+      // handle owned items transfer
+      let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
+      let itemIds = ottoV3.ownedItemsOf(tokenId)
+      for (let i = 0; i < itemIds.length; i++) {
+        let itemId = itemIds[i]
+        let itemEntity = getItemEntity(itemId, Address.fromString(OTTO), tokenId)
+        itemEntity.rootOwner = entity.owner
+        itemEntity.updateAt = event.block.timestamp
+        itemEntity.save()
+      }
+    }
   }
   entity.save()
 }
@@ -49,6 +64,35 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   updateV2(entity, tokenId)
   entity.updateAt = event.block.timestamp
   entity.save()
+}
+
+export function handleItemEquipped(event: ItemEquipped): void {
+  let ottoId = event.params.ottoId_
+  let entity = getOttoEntity(ottoId)
+  updateV2(entity, ottoId)
+  entity.updateAt = event.block.timestamp
+  entity.save()
+
+  let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
+  itemEntity.amount++
+  itemEntity.rootOwner = entity.owner
+  itemEntity.parentTokenId = ottoId
+  updateEntity(itemEntity, event.block.timestamp)
+  itemEntity.save()
+}
+
+export function handleItemTookOff(event: ItemTookOff): void {
+  let ottoId = event.params.ottoId_
+  let entity = getOttoEntity(ottoId)
+  updateV2(entity, ottoId)
+  entity.updateAt = event.block.timestamp
+  entity.save()
+
+  let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
+  itemEntity.amount--
+  itemEntity.parentTokenId = null
+  updateEntity(itemEntity, event.block.timestamp)
+  itemEntity.save()
 }
 
 function getOttoEntity(tokenId: BigInt): Otto {

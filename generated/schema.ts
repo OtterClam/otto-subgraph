@@ -144,3 +144,134 @@ export class Otto extends Entity {
     this.set("updateAt", Value.fromBigInt(value));
   }
 }
+
+export class OttoItem extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("tokenId", Value.fromBigInt(BigInt.zero()));
+    this.set("tokenURI", Value.fromString(""));
+    this.set("wearable", Value.fromBoolean(false));
+    this.set("slot", Value.fromI32(0));
+    this.set("rootOwner", Value.fromBytes(Bytes.empty()));
+    this.set("owner", Value.fromBytes(Bytes.empty()));
+    this.set("amount", Value.fromI32(0));
+    this.set("updateAt", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save OttoItem entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save OttoItem entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("OttoItem", id.toString(), this);
+    }
+  }
+
+  static load(id: string): OttoItem | null {
+    return changetype<OttoItem | null>(store.get("OttoItem", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    return value!.toBigInt();
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+
+  get tokenURI(): string {
+    let value = this.get("tokenURI");
+    return value!.toString();
+  }
+
+  set tokenURI(value: string) {
+    this.set("tokenURI", Value.fromString(value));
+  }
+
+  get wearable(): boolean {
+    let value = this.get("wearable");
+    return value!.toBoolean();
+  }
+
+  set wearable(value: boolean) {
+    this.set("wearable", Value.fromBoolean(value));
+  }
+
+  get slot(): i32 {
+    let value = this.get("slot");
+    return value!.toI32();
+  }
+
+  set slot(value: i32) {
+    this.set("slot", Value.fromI32(value));
+  }
+
+  get rootOwner(): Bytes {
+    let value = this.get("rootOwner");
+    return value!.toBytes();
+  }
+
+  set rootOwner(value: Bytes) {
+    this.set("rootOwner", Value.fromBytes(value));
+  }
+
+  get owner(): Bytes {
+    let value = this.get("owner");
+    return value!.toBytes();
+  }
+
+  set owner(value: Bytes) {
+    this.set("owner", Value.fromBytes(value));
+  }
+
+  get parentTokenId(): BigInt | null {
+    let value = this.get("parentTokenId");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set parentTokenId(value: BigInt | null) {
+    if (!value) {
+      this.unset("parentTokenId");
+    } else {
+      this.set("parentTokenId", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get amount(): i32 {
+    let value = this.get("amount");
+    return value!.toI32();
+  }
+
+  set amount(value: i32) {
+    this.set("amount", Value.fromI32(value));
+  }
+
+  get updateAt(): BigInt {
+    let value = this.get("updateAt");
+    return value!.toBigInt();
+  }
+
+  set updateAt(value: BigInt) {
+    this.set("updateAt", Value.fromBigInt(value));
+  }
+}
