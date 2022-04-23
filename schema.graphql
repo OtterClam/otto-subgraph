@@ -16,6 +16,8 @@ type Otto @entity {
   summonAt: BigInt!
   mintAt: BigInt!
   updateAt: BigInt!
+
+  items: [OttoItem!]!
 }
 
 type OttoItem @entity {

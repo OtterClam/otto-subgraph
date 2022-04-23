@@ -1,4 +1,4 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, store } from '@graphprotocol/graph-ts'
 import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoContract'
 import { OttoV2Contract, OpenPortal, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
 import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
@@ -71,7 +71,6 @@ export function handleItemEquipped(event: ItemEquipped): void {
   let entity = getOttoEntity(ottoId)
   updateV2(entity, ottoId)
   entity.updateAt = event.block.timestamp
-  entity.save()
 
   let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
   itemEntity.amount++
@@ -79,6 +78,11 @@ export function handleItemEquipped(event: ItemEquipped): void {
   itemEntity.parentTokenId = ottoId
   updateEntity(itemEntity, event.block.timestamp)
   itemEntity.save()
+
+  let items = entity.items
+  items.push(itemEntity.id)
+  entity.items = items
+  entity.save()
 }
 
 export function handleItemTookOff(event: ItemTookOff): void {
@@ -89,10 +93,7 @@ export function handleItemTookOff(event: ItemTookOff): void {
   entity.save()
 
   let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
-  itemEntity.amount--
-  itemEntity.parentTokenId = null
-  updateEntity(itemEntity, event.block.timestamp)
-  itemEntity.save()
+  store.remove('OttoItem', itemEntity.id)
 }
 
 function getOttoEntity(tokenId: BigInt): Otto {

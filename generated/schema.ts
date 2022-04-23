@@ -26,6 +26,7 @@ export class Otto extends Entity {
     this.set("summonAt", Value.fromBigInt(BigInt.zero()));
     this.set("mintAt", Value.fromBigInt(BigInt.zero()));
     this.set("updateAt", Value.fromBigInt(BigInt.zero()));
+    this.set("items", Value.fromStringArray(new Array(0)));
   }
 
   save(): void {
@@ -142,6 +143,15 @@ export class Otto extends Entity {
 
   set updateAt(value: BigInt) {
     this.set("updateAt", Value.fromBigInt(value));
+  }
+
+  get items(): Array<string> {
+    let value = this.get("items");
+    return value!.toStringArray();
+  }
+
+  set items(value: Array<string>) {
+    this.set("items", Value.fromStringArray(value));
   }
 }
 
