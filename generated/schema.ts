@@ -285,3 +285,117 @@ export class OttoItem extends Entity {
     this.set("updateAt", Value.fromBigInt(value));
   }
 }
+
+export class OttoProduct extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("productId", Value.fromBigInt(BigInt.zero()));
+    this.set("price", Value.fromBigInt(BigInt.zero()));
+    this.set("discountPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("uri", Value.fromString(""));
+    this.set("amount", Value.fromI32(0));
+    this.set("type", Value.fromString(""));
+    this.set("factory", Value.fromBytes(Bytes.empty()));
+    this.set("updateAt", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save OttoProduct entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save OttoProduct entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("OttoProduct", id.toString(), this);
+    }
+  }
+
+  static load(id: string): OttoProduct | null {
+    return changetype<OttoProduct | null>(store.get("OttoProduct", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get productId(): BigInt {
+    let value = this.get("productId");
+    return value!.toBigInt();
+  }
+
+  set productId(value: BigInt) {
+    this.set("productId", Value.fromBigInt(value));
+  }
+
+  get price(): BigInt {
+    let value = this.get("price");
+    return value!.toBigInt();
+  }
+
+  set price(value: BigInt) {
+    this.set("price", Value.fromBigInt(value));
+  }
+
+  get discountPrice(): BigInt {
+    let value = this.get("discountPrice");
+    return value!.toBigInt();
+  }
+
+  set discountPrice(value: BigInt) {
+    this.set("discountPrice", Value.fromBigInt(value));
+  }
+
+  get uri(): string {
+    let value = this.get("uri");
+    return value!.toString();
+  }
+
+  set uri(value: string) {
+    this.set("uri", Value.fromString(value));
+  }
+
+  get amount(): i32 {
+    let value = this.get("amount");
+    return value!.toI32();
+  }
+
+  set amount(value: i32) {
+    this.set("amount", Value.fromI32(value));
+  }
+
+  get type(): string {
+    let value = this.get("type");
+    return value!.toString();
+  }
+
+  set type(value: string) {
+    this.set("type", Value.fromString(value));
+  }
+
+  get factory(): Bytes {
+    let value = this.get("factory");
+    return value!.toBytes();
+  }
+
+  set factory(value: Bytes) {
+    this.set("factory", Value.fromBytes(value));
+  }
+
+  get updateAt(): BigInt {
+    let value = this.get("updateAt");
+    return value!.toBigInt();
+  }
+
+  set updateAt(value: BigInt) {
+    this.set("updateAt", Value.fromBigInt(value));
+  }
+}

@@ -32,3 +32,15 @@ type OttoItem @entity {
   amount: Int!
   updateAt: BigInt!
 }
+
+type OttoProduct @entity {
+  id: ID!
+  productId: BigInt!
+  price: BigInt!
+  discountPrice: BigInt!
+  uri: String!
+  amount: Int!
+  type: String!
+  factory: Bytes!
+  updateAt: BigInt!
+}
