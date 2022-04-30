@@ -423,7 +423,7 @@
       },
       {
         "internalType": "address",
-        "name": "shipping_",
+        "name": "factory_",
         "type": "address"
       }
     ],
@@ -443,6 +443,25 @@
     "name": "deleteProduct",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "factories",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -707,25 +726,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "shipping",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes4",
         "name": "interfaceId",
         "type": "bytes4"
@@ -791,7 +791,7 @@
       },
       {
         "internalType": "address",
-        "name": "shipping_",
+        "name": "factory_",
         "type": "address"
       }
     ],

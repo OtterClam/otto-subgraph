@@ -479,6 +479,25 @@ export class OttopiaStoreContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  factories(param0: BigInt): Address {
+    let result = super.call("factories", "factories(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
+
+    return result[0].toAddress();
+  }
+
+  try_factories(param0: BigInt): ethereum.CallResult<Address> {
+    let result = super.tryCall("factories", "factories(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   getRoleAdmin(role: Bytes): Bytes {
     let result = super.call("getRoleAdmin", "getRoleAdmin(bytes32):(bytes32)", [
       ethereum.Value.fromFixedBytes(role)
@@ -590,25 +609,6 @@ export class OttopiaStoreContract extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  shipping(param0: BigInt): Address {
-    let result = super.call("shipping", "shipping(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(param0)
-    ]);
-
-    return result[0].toAddress();
-  }
-
-  try_shipping(param0: BigInt): ethereum.CallResult<Address> {
-    let result = super.tryCall("shipping", "shipping(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(param0)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   supportsInterface(interfaceId: Bytes): boolean {
@@ -749,7 +749,7 @@ export class CreateProductCall__Inputs {
     );
   }
 
-  get shipping_(): Address {
+  get factory_(): Address {
     return this._call.inputValues[1].value.toAddress();
   }
 }
@@ -1169,7 +1169,7 @@ export class UpdateProductCall__Inputs {
     );
   }
 
-  get shipping_(): Address {
+  get factory_(): Address {
     return this._call.inputValues[2].value.toAddress();
   }
 }

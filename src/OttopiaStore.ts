@@ -48,6 +48,6 @@ function updateEntity(entity: OttoProduct, timestamp: BigInt): void {
   entity.discountPrice = product.value1
   entity.amount = product.value2.toI32()
   entity.type = product.value3
-  entity.factory = store.shipping(entity.productId)
+  entity.factory = store.factories(entity.productId)
   entity.updateAt = timestamp
 }
