@@ -4,7 +4,7 @@ import {
   DeleteProduct,
   OttopiaStoreContract,
   UpdateProduct,
-} from '../generated/OttoStore/OttopiaStoreContract'
+} from '../generated/OttopiaStore/OttopiaStoreContract'
 import { OttoProduct } from '../generated/schema'
 import { OTTOPIA_STORE } from './Constants'
 

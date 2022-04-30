@@ -67,7 +67,7 @@ dataSources:
       file: ./src/OttoItem.ts
 
   - kind: ethereum/contract
-    name: OttoStore
+    name: OttopiaStore
     network: ${SUBGRAPH_NETWORK}
     source:
       address: '${SUBGRAPH_OTTOPIA_STORE_ADDRESS}'
