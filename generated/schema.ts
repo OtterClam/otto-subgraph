@@ -27,6 +27,7 @@ export class Otto extends Entity {
     this.set("mintAt", Value.fromBigInt(BigInt.zero()));
     this.set("updateAt", Value.fromBigInt(BigInt.zero()));
     this.set("items", Value.fromStringArray(new Array(0)));
+    this.set("traits", Value.fromStringArray(new Array(0)));
   }
 
   save(): void {
@@ -152,6 +153,15 @@ export class Otto extends Entity {
 
   set items(value: Array<string>) {
     this.set("items", Value.fromStringArray(value));
+  }
+
+  get traits(): Array<string> {
+    let value = this.get("traits");
+    return value!.toStringArray();
+  }
+
+  set traits(value: Array<string>) {
+    this.set("traits", Value.fromStringArray(value));
   }
 }
 
@@ -283,5 +293,125 @@ export class OttoItem extends Entity {
 
   set updateAt(value: BigInt) {
     this.set("updateAt", Value.fromBigInt(value));
+  }
+}
+
+export class Trait extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("slot", Value.fromI32(0));
+    this.set("code", Value.fromI32(0));
+    this.set("count", Value.fromI32(0));
+    this.set("ottos", Value.fromStringArray(new Array(0)));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Trait entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Trait entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Trait", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Trait | null {
+    return changetype<Trait | null>(store.get("Trait", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get slot(): i32 {
+    let value = this.get("slot");
+    return value!.toI32();
+  }
+
+  set slot(value: i32) {
+    this.set("slot", Value.fromI32(value));
+  }
+
+  get code(): i32 {
+    let value = this.get("code");
+    return value!.toI32();
+  }
+
+  set code(value: i32) {
+    this.set("code", Value.fromI32(value));
+  }
+
+  get count(): i32 {
+    let value = this.get("count");
+    return value!.toI32();
+  }
+
+  set count(value: i32) {
+    this.set("count", Value.fromI32(value));
+  }
+
+  get ottos(): Array<string> {
+    let value = this.get("ottos");
+    return value!.toStringArray();
+  }
+
+  set ottos(value: Array<string>) {
+    this.set("ottos", Value.fromStringArray(value));
+  }
+}
+
+export class RarityScoreboard extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("epoch", Value.fromI32(0));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save RarityScoreboard entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save RarityScoreboard entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("RarityScoreboard", id.toString(), this);
+    }
+  }
+
+  static load(id: string): RarityScoreboard | null {
+    return changetype<RarityScoreboard | null>(
+      store.get("RarityScoreboard", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get epoch(): i32 {
+    let value = this.get("epoch");
+    return value!.toI32();
+  }
+
+  set epoch(value: i32) {
+    this.set("epoch", Value.fromI32(value));
   }
 }

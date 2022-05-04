@@ -18,6 +18,7 @@ type Otto @entity {
   updateAt: BigInt!
 
   items: [OttoItem!]!
+  traits: [Trait!]!
 }
 
 type OttoItem @entity {
@@ -31,4 +32,16 @@ type OttoItem @entity {
   parentTokenId: BigInt
   amount: Int!
   updateAt: BigInt!
+}
+
+type Trait @entity {
+  id: ID!
+  slot: Int!
+  code: Int!
+  ottos: [Otto!]!
+}
+
+type RarityScoreboard @entity {
+  id: ID!
+  epoch: Int!
 }
