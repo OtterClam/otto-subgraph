@@ -38,6 +38,7 @@ type Trait @entity {
   id: ID!
   slot: Int!
   code: Int!
+  count: Int!
   ottos: [Otto!]!
 }
 

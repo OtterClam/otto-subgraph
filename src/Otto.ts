@@ -5,7 +5,7 @@ import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/Ott
 import { Otto, Trait } from '../generated/schema'
 import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
-import { PFP } from './PFP'
+import { updateTrait } from './RarityScore'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
 
@@ -60,51 +60,11 @@ export function handleSummon(event: SummonOtto): void {
 }
 
 export function handleTraitsChanged(event: TraitsChanged): void {
-  const NUM_OTTO_TRAITS = 13
   let tokenId = event.params.tokenId_
   let ottoEntity = getOttoEntity(tokenId)
   updateV2(ottoEntity, tokenId)
   ottoEntity.updateAt = event.block.timestamp
-
-  log.warning('{}: traits: {}', [ottoEntity.id, event.params.arr_.toString()])
-  let traits = ottoEntity.traits
-  if (traits.length == 0) {
-    for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
-      let traitEntity = loadOrCreateTrait(i, event.params.arr_[i])
-      let ottos = traitEntity.ottos
-      ottos.push(ottoEntity.id)
-      traitEntity.ottos = ottos
-      traitEntity.save()
-      traits.push(traitEntity.id)
-      log.warning('{}: add traits', [ottoEntity.id, traitEntity.id])
-    }
-  } else {
-    let newTraits = new Array<string>()
-    for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
-      let newTrait = loadOrCreateTrait(i, event.params.arr_[i])
-      let newTraitOttos = newTrait.ottos
-      if (!newTraitOttos.includes(ottoEntity.id)) {
-        newTraitOttos.push(ottoEntity.id)
-        newTrait.ottos = newTraitOttos
-        newTrait.save()
-
-        let oldTraitId = traits[i]
-        let oldTrait = Trait.load(oldTraitId)
-        if (oldTrait != null) {
-          log.warning('{}: trait from {} to {}', [ottoEntity.id, oldTrait.id, newTrait.id])
-          let oldTraitOttos = oldTrait.ottos
-          let index = oldTraitOttos.indexOf(ottoEntity.id)
-          oldTraitOttos.splice(index, 1)
-          oldTrait.ottos = oldTraitOttos
-          oldTrait.save()
-        }
-      }
-      newTraits.push(newTrait.id.toString())
-    }
-    traits = newTraits
-  }
-
-  ottoEntity.traits = traits
+  updateTrait(event.params.arr_, ottoEntity)
   ottoEntity.save()
 }
 
@@ -159,19 +119,4 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
   entity.canOpenAt = info.value1
   entity.summonAt = info.value2
   entity.legendary = info.value6
-}
-
-function loadOrCreateTrait(slot: i32, code: i32): Trait {
-  let firstCode = i32(PFP.toObject().get(slot.toString())!.toObject().get(code.toString())!.toI64())
-  let traitId = slot.toString() + '-' + firstCode.toString()
-  let entity = Trait.load(traitId)
-  if (entity == null) {
-    log.warning('traitId: {} created', [traitId])
-    entity = new Trait(traitId)
-    entity.slot = slot
-    entity.code = firstCode
-  } else {
-    log.warning('traitId: {} loaded', [traitId])
-  }
-  return entity
 }
