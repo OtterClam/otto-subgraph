@@ -26,6 +26,7 @@ export class Otto extends Entity {
     this.set("summonAt", Value.fromBigInt(BigInt.zero()));
     this.set("mintAt", Value.fromBigInt(BigInt.zero()));
     this.set("updateAt", Value.fromBigInt(BigInt.zero()));
+    this.set("rrs", Value.fromI32(0));
     this.set("items", Value.fromStringArray(new Array(0)));
     this.set("traits", Value.fromStringArray(new Array(0)));
   }
@@ -144,6 +145,15 @@ export class Otto extends Entity {
 
   set updateAt(value: BigInt) {
     this.set("updateAt", Value.fromBigInt(value));
+  }
+
+  get rrs(): i32 {
+    let value = this.get("rrs");
+    return value!.toI32();
+  }
+
+  set rrs(value: i32) {
+    this.set("rrs", Value.fromI32(value));
   }
 
   get items(): Array<string> {
@@ -301,7 +311,7 @@ export class Trait extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("slot", Value.fromI32(0));
+    this.set("slot", Value.fromString(""));
     this.set("code", Value.fromI32(0));
     this.set("count", Value.fromI32(0));
     this.set("ottos", Value.fromStringArray(new Array(0)));
@@ -333,13 +343,13 @@ export class Trait extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get slot(): i32 {
+  get slot(): string {
     let value = this.get("slot");
-    return value!.toI32();
+    return value!.toString();
   }
 
-  set slot(value: i32) {
-    this.set("slot", Value.fromI32(value));
+  set slot(value: string) {
+    this.set("slot", Value.fromString(value));
   }
 
   get code(): i32 {
@@ -367,6 +377,69 @@ export class Trait extends Entity {
 
   set ottos(value: Array<string>) {
     this.set("ottos", Value.fromStringArray(value));
+  }
+}
+
+export class Slot extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("maxCount", Value.fromI32(0));
+    this.set("maxCountTraits", Value.fromStringArray(new Array(0)));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Slot entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Slot entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Slot", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Slot | null {
+    return changetype<Slot | null>(store.get("Slot", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get maxCount(): i32 {
+    let value = this.get("maxCount");
+    return value!.toI32();
+  }
+
+  set maxCount(value: i32) {
+    this.set("maxCount", Value.fromI32(value));
+  }
+
+  get maxCountTraits(): Array<string> {
+    let value = this.get("maxCountTraits");
+    return value!.toStringArray();
+  }
+
+  set maxCountTraits(value: Array<string>) {
+    this.set("maxCountTraits", Value.fromStringArray(value));
+  }
+
+  get traits(): Array<string> {
+    let value = this.get("traits");
+    return value!.toStringArray();
+  }
+
+  set traits(value: Array<string>) {
+    this.set("traits", Value.fromStringArray(value));
   }
 }
 
