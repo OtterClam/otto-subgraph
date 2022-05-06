@@ -65,3 +65,29 @@ dataSources:
           handler: handleTransfer
 
       file: ./src/OttoItem.ts
+
+  - kind: ethereum/contract
+    name: OttopiaStore
+    network: ${SUBGRAPH_NETWORK}
+    source:
+      address: '${SUBGRAPH_OTTOPIA_STORE_ADDRESS}'
+      abi: OttopiaStoreContract
+      startBlock: ${SUBGRAPH_OTTOPIA_STORE_START_BLOCK}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - OttoProduct
+      abis:
+        - name: OttopiaStoreContract
+          file: ./abis/OttopiaStore.json
+        # --------------------
+      eventHandlers:
+        - event: CreateProduct(indexed uint256)
+          handler: handleCreate
+        - event: UpdateProduct(indexed uint256)
+          handler: handleUpdate
+        - event: DeleteProduct(indexed uint256)
+          handler: handleDelete
+      file: ./src/OttopiaStore.ts

@@ -52,3 +52,14 @@ type Slot @entity {
   traits: [Trait!]! @derivedFrom(field: "slot")
 }
 
+type OttoProduct @entity {
+  id: ID!
+  productId: BigInt!
+  price: BigInt!
+  discountPrice: BigInt!
+  uri: String!
+  amount: Int!
+  type: String!
+  factory: Bytes!
+  updateAt: BigInt!
+}

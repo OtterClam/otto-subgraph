@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes, Entity } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
 import { OttoItemContract } from '../generated/OttoItem/OttoItemContract'
 import { OttoItem } from '../generated/schema'
 import { OTTO_ITEM } from './Constants'
