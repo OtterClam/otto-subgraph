@@ -26,7 +26,9 @@ export class Otto extends Entity {
     this.set("summonAt", Value.fromBigInt(BigInt.zero()));
     this.set("mintAt", Value.fromBigInt(BigInt.zero()));
     this.set("updateAt", Value.fromBigInt(BigInt.zero()));
+    this.set("brs", Value.fromI32(0));
     this.set("rrs", Value.fromI32(0));
+    this.set("rarityScore", Value.fromI32(0));
     this.set("items", Value.fromStringArray(new Array(0)));
     this.set("traits", Value.fromStringArray(new Array(0)));
   }
@@ -147,6 +149,15 @@ export class Otto extends Entity {
     this.set("updateAt", Value.fromBigInt(value));
   }
 
+  get brs(): i32 {
+    let value = this.get("brs");
+    return value!.toI32();
+  }
+
+  set brs(value: i32) {
+    this.set("brs", Value.fromI32(value));
+  }
+
   get rrs(): i32 {
     let value = this.get("rrs");
     return value!.toI32();
@@ -154,6 +165,15 @@ export class Otto extends Entity {
 
   set rrs(value: i32) {
     this.set("rrs", Value.fromI32(value));
+  }
+
+  get rarityScore(): i32 {
+    let value = this.get("rarityScore");
+    return value!.toI32();
+  }
+
+  set rarityScore(value: i32) {
+    this.set("rarityScore", Value.fromI32(value));
   }
 
   get items(): Array<string> {
@@ -313,6 +333,7 @@ export class Trait extends Entity {
 
     this.set("slot", Value.fromString(""));
     this.set("code", Value.fromI32(0));
+    this.set("brs", Value.fromI32(0));
     this.set("count", Value.fromI32(0));
     this.set("ottos", Value.fromStringArray(new Array(0)));
   }
@@ -359,6 +380,15 @@ export class Trait extends Entity {
 
   set code(value: i32) {
     this.set("code", Value.fromI32(value));
+  }
+
+  get brs(): i32 {
+    let value = this.get("brs");
+    return value!.toI32();
+  }
+
+  set brs(value: i32) {
+    this.set("brs", Value.fromI32(value));
   }
 
   get count(): i32 {
@@ -440,51 +470,5 @@ export class Slot extends Entity {
 
   set traits(value: Array<string>) {
     this.set("traits", Value.fromStringArray(value));
-  }
-}
-
-export class RarityScoreboard extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("epoch", Value.fromI32(0));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save RarityScoreboard entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save RarityScoreboard entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("RarityScoreboard", id.toString(), this);
-    }
-  }
-
-  static load(id: string): RarityScoreboard | null {
-    return changetype<RarityScoreboard | null>(
-      store.get("RarityScoreboard", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get epoch(): i32 {
-    let value = this.get("epoch");
-    return value!.toI32();
-  }
-
-  set epoch(value: i32) {
-    this.set("epoch", Value.fromI32(value));
   }
 }

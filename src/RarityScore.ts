@@ -1,6 +1,6 @@
 import { log } from '@graphprotocol/graph-ts'
 import { Otto, Trait, Slot } from '../generated/schema'
-import { PFP } from './PFP'
+import { PFP } from './utils/PFP'
 
 const NUM_OTTO_TRAITS = 13
 
@@ -25,7 +25,15 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
   for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
     let code = codes[i]
     let slotId = slots[i].id
-    let firstCode = i32(PFP.toObject().get(slotId)!.toObject().get(code.toString())!.toI64())
+    let firstCode = PFP.toObject()
+      .get(slotId)!
+      .toObject()
+      .get(code.toString())!
+      .toObject()
+      .get('first_code')!
+      .toBigInt()
+      .toI32()
+    let brs = PFP.toObject().get(slotId)!.toObject().get(code.toString())!.toObject().get('brs')!.toBigInt().toI32()
     let traitId = slotId + '-' + firstCode.toString()
     let trait = Trait.load(traitId)
     if (trait == null) {
@@ -33,6 +41,7 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
       trait = new Trait(traitId)
       trait.slot = slotId
       trait.code = firstCode
+      trait.brs = brs
     } else {
       log.info('traitId: {} loaded', [traitId])
     }
@@ -47,19 +56,11 @@ function addOttoToTrait(slot: Slot, trait: Trait, otto: Otto): void {
   trait.ottos = ottos
   trait.count++
   if (trait.count == slot.maxCount) {
-    log.warning('{}: slot {} trait {} maxCount == trait.count {}', [otto.id, slot.id, trait.id, trait.count.toString()])
     let traits = slot.maxCountTraits
     traits.push(trait.id)
     slot.maxCountTraits = traits
   }
   if (trait.count > slot.maxCount) {
-    log.warning('{}: slot {} trait {} change maxCount from {} to {}', [
-      otto.id,
-      slot.id,
-      trait.id,
-      slot.maxCount.toString(),
-      trait.count.toString(),
-    ])
     slot.maxCount = trait.count
     slot.maxCountTraits = [trait.id]
   }
@@ -68,12 +69,6 @@ function addOttoToTrait(slot: Slot, trait: Trait, otto: Otto): void {
 function removeOttoFromTrait(slot: Slot, trait: Trait, otto: Otto): void {
   let ottos = trait.ottos
   let index = ottos.indexOf(otto.id)
-  log.warning('{}: slot {} trait {} removeOttoFromTrait find otto index {}', [
-    otto.id,
-    slot.id,
-    trait.id,
-    index.toString(),
-  ])
   ottos.splice(index, 1)
   trait.ottos = ottos
   let oldCount = trait.count
@@ -90,15 +85,15 @@ function removeOttoFromTrait(slot: Slot, trait: Trait, otto: Otto): void {
 }
 
 function collectChangedOttoIds(ids: Array<string>, trait: Trait, exclude: Otto): void {
-  log.warning('collectChangedOttoIds ids {} ', [ids.toString()])
+  // log.warning('collectChangedOttoIds ids {} ', [ids.toString()])
   for (let i = 0; i < trait.ottos.length; i++) {
     let ottoId = trait.ottos[i]
     if (ottoId == exclude.id) {
-      log.warning('otto {} is excluded', [exclude.id])
+      // log.warning('otto {} is excluded', [exclude.id])
       continue
     }
     if (ids.indexOf(ottoId) == -1) {
-      log.warning('otto {} is collected', [ottoId])
+      // log.warning('otto {} is collected', [ottoId])
       ids.push(ottoId)
     }
   }
@@ -112,24 +107,25 @@ function calculateOttoRarityScore(count: i32, maxCount: i32): i32 {
   }
 }
 
-function updateOttoRarityScore(otto: Otto, slots: Array<Slot>): void {
+function updateRarityScore(otto: Otto, slots: Array<Slot>): void {
   let totalRRS = 0
+  let totalBRS = 0
   for (let i = 0; i < otto.traits.length; i++) {
     let traitId = otto.traits[i]
     let trait = Trait.load(traitId)
     if (trait == null) {
-      log.warning('{}: trait {} of otto(who need to be updated) not found, should not happened', [otto.id, traitId])
       continue
     }
-    let rrs = calculateOttoRarityScore(trait.count, slots[i].maxCount)
-    log.warning('{}: trait {} rrs {}', [otto.id, traitId, rrs.toString()])
-    totalRRS += rrs
+    totalRRS += calculateOttoRarityScore(trait.count, slots[i].maxCount)
+    totalBRS += trait.brs
   }
-  log.warning('{}: total rrs {}', [otto.id, totalRRS.toString()])
+
+  otto.brs = totalBRS
   otto.rrs = totalRRS
+  otto.rarityScore = totalBRS + totalRRS
 }
 
-export function updateRRS(codes: Array<i32>, otto: Otto): void {
+export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
   log.info('{}: traits: {}', [otto.id, codes.toString()])
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
@@ -149,8 +145,6 @@ export function updateRRS(codes: Array<i32>, otto: Otto): void {
     // otto traits changed
     // update changed traits
     // update all ottos in all changed traits
-    // let newTraits = new Array<string>()
-    log.warning('old otto.traits: {}', [otto.traits.toString()])
     let oldTraits = loadOrCreateTraits(
       slots,
       otto.traits.map<i32>((id) => i32(Number.parseInt(id.split('-')[1]))),
@@ -167,8 +161,8 @@ export function updateRRS(codes: Array<i32>, otto: Otto): void {
     oldTraits = newTraits
   }
 
-  log.warning('dirty otto ids {}', [dirtyOttoIds.toString()])
-  log.warning('dirty old traits {}', [dirtyOldTraits.map<string>((t) => t.id).toString()])
+  log.info('dirty otto ids {}', [dirtyOttoIds.toString()])
+  log.info('dirty old traits {}', [dirtyOldTraits.map<string>((t) => t.id).toString()])
 
   // update all changed traits
   for (let i = 0; i < dirtyOldTraits.length; i++) {
@@ -186,12 +180,11 @@ export function updateRRS(codes: Array<i32>, otto: Otto): void {
     let id = dirtyOttoIds[i]
     let dirtyOtto = Otto.load(id)
     if (dirtyOtto == null) {
-      log.warning('load dirty otto {} failed, should not happened {}', [id])
       continue
     }
-    updateOttoRarityScore(dirtyOtto, slots)
+    updateRarityScore(dirtyOtto, slots)
     dirtyOtto.save()
   }
   otto.traits = newTraits.map<string>((t) => t.id)
-  updateOttoRarityScore(otto, slots)
+  updateRarityScore(otto, slots)
 }

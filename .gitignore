@@ -65,3 +65,4 @@ build
 data
 
 subgraph.yaml
+src/Constants.ts

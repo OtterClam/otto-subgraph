@@ -5,7 +5,7 @@ import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/Ott
 import { Otto, Trait } from '../generated/schema'
 import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
-import { updateRRS } from './RarityScore'
+import { updateRarityScoreRanking } from './RarityScore'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
 
@@ -64,7 +64,9 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   let ottoEntity = getOttoEntity(tokenId)
   updateV2(ottoEntity, tokenId)
   ottoEntity.updateAt = event.block.timestamp
-  updateRRS(event.params.arr_, ottoEntity)
+  if (tokenId.ge(BigInt.fromI32(250))) {
+    updateRarityScoreRanking(event.params.arr_, ottoEntity)
+  }
   ottoEntity.save()
 }
 
