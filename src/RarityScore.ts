@@ -7,7 +7,7 @@ const NUM_OTTO_TRAITS = 13
 function loadOrCreateSlots(): Array<Slot> {
   let slots = new Array<Slot>()
   for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
-    let slotId = i.toString()
+    let slotId = 'ottopia_slot_' + i.toString()
     let slot = Slot.load(slotId)
     if (slot == null) {
       slot = new Slot(slotId)
@@ -26,14 +26,21 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
     let code = codes[i]
     let slotId = slots[i].id
     let firstCode = PFP.toObject()
-      .get(slotId)!
+      .get(i.toString())!
       .toObject()
       .get(code.toString())!
       .toObject()
       .get('first_code')!
       .toBigInt()
       .toI32()
-    let brs = PFP.toObject().get(slotId)!.toObject().get(code.toString())!.toObject().get('brs')!.toBigInt().toI32()
+    let brs = PFP.toObject()
+      .get(i.toString())!
+      .toObject()
+      .get(code.toString())!
+      .toObject()
+      .get('brs')!
+      .toBigInt()
+      .toI32()
     let traitId = slotId + '-' + firstCode.toString()
     let trait = Trait.load(traitId)
     if (trait == null) {
