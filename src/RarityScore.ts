@@ -11,9 +11,6 @@ function loadOrCreateSlots(): Array<Slot> {
     let slot = Slot.load(slotId)
     if (slot == null) {
       slot = new Slot(slotId)
-      log.info('slotId: {} created, maxCount = {}', [slotId, slot.maxCount.toString()])
-    } else {
-      log.info('slotId: {} loaded, maxCount = {}', [slotId, slot.maxCount.toString()])
     }
     slots.push(slot)
   }
@@ -44,13 +41,10 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
     let traitId = slotId + '-' + firstCode.toString()
     let trait = Trait.load(traitId)
     if (trait == null) {
-      log.info('traitId: {} created', [traitId])
       trait = new Trait(traitId)
       trait.slot = slotId
       trait.code = firstCode
       trait.brs = brs
-    } else {
-      log.info('traitId: {} loaded', [traitId])
     }
     traits.push(trait)
   }
@@ -71,6 +65,7 @@ function addOttoToTrait(slot: Slot, trait: Trait, otto: Otto): void {
     slot.maxCount = trait.count
     slot.maxCountTraits = [trait.id]
   }
+  trait.rrs = calculateOttoRarityScore(trait.count, slot.maxCount)
 }
 
 function removeOttoFromTrait(slot: Slot, trait: Trait, otto: Otto): void {
@@ -89,18 +84,16 @@ function removeOttoFromTrait(slot: Slot, trait: Trait, otto: Otto): void {
       slot.maxCount = trait.count
     }
   }
+  trait.rrs = calculateOttoRarityScore(trait.count, slot.maxCount)
 }
 
 function collectChangedOttoIds(ids: Array<string>, trait: Trait, exclude: Otto): void {
-  // log.warning('collectChangedOttoIds ids {} ', [ids.toString()])
   for (let i = 0; i < trait.ottos.length; i++) {
     let ottoId = trait.ottos[i]
     if (ottoId == exclude.id) {
-      // log.warning('otto {} is excluded', [exclude.id])
       continue
     }
     if (ids.indexOf(ottoId) == -1) {
-      // log.warning('otto {} is collected', [ottoId])
       ids.push(ottoId)
     }
   }
@@ -114,7 +107,7 @@ function calculateOttoRarityScore(count: i32, maxCount: i32): i32 {
   }
 }
 
-function updateRarityScore(otto: Otto, slots: Array<Slot>): void {
+function updateOttoRarityScore(otto: Otto): void {
   let totalRRS = 0
   let totalBRS = 0
   for (let i = 0; i < otto.traits.length; i++) {
@@ -124,15 +117,11 @@ function updateRarityScore(otto: Otto, slots: Array<Slot>): void {
       continue
     }
     if (i == 9 || i == 12) {
-      log.warning('skip rrs i = {}, traitId = {}, code = {}, brs = {}', [
-        i.toString(),
-        traitId,
-        trait.code.toString(),
-        trait.brs.toString(),
-      ])
+      // i==9: coat of arms
+      // i==12: gender
       continue
     }
-    totalRRS += calculateOttoRarityScore(trait.count, slots[i].maxCount)
+    totalRRS += trait.rrs
     totalBRS += trait.brs
   }
 
@@ -142,7 +131,6 @@ function updateRarityScore(otto: Otto, slots: Array<Slot>): void {
 }
 
 export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
-  log.info('{}: traits: {}', [otto.id, codes.toString()])
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
   let dirtyOttoIds = new Array<string>()
@@ -152,7 +140,6 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     // new otto created
     // add all traits
     // update all ottos in all traits
-    log.info('{}: new traits', [otto.id])
     for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
       addOttoToTrait(slots[i], newTraits[i], otto)
       collectChangedOttoIds(dirtyOttoIds, newTraits[i], otto)
@@ -177,9 +164,6 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     oldTraits = newTraits
   }
 
-  log.info('dirty otto ids {}', [dirtyOttoIds.toString()])
-  log.info('dirty old traits {}', [dirtyOldTraits.map<string>((t) => t.id).toString()])
-
   // update all changed traits
   for (let i = 0; i < dirtyOldTraits.length; i++) {
     let dirtyTrait = dirtyOldTraits[i]
@@ -198,9 +182,9 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     if (dirtyOtto == null) {
       continue
     }
-    updateRarityScore(dirtyOtto, slots)
+    updateOttoRarityScore(dirtyOtto)
     dirtyOtto.save()
   }
   otto.traits = newTraits.map<string>((t) => t.id)
-  updateRarityScore(otto, slots)
+  updateOttoRarityScore(otto)
 }

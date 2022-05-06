@@ -334,6 +334,7 @@ export class Trait extends Entity {
     this.set("slot", Value.fromString(""));
     this.set("code", Value.fromI32(0));
     this.set("brs", Value.fromI32(0));
+    this.set("rrs", Value.fromI32(0));
     this.set("count", Value.fromI32(0));
     this.set("ottos", Value.fromStringArray(new Array(0)));
   }
@@ -389,6 +390,15 @@ export class Trait extends Entity {
 
   set brs(value: i32) {
     this.set("brs", Value.fromI32(value));
+  }
+
+  get rrs(): i32 {
+    let value = this.get("rrs");
+    return value!.toI32();
+  }
+
+  set rrs(value: i32) {
+    this.set("rrs", Value.fromI32(value));
   }
 
   get count(): i32 {

@@ -41,6 +41,7 @@ type Trait @entity {
   slot: Slot!
   code: Int!
   brs: Int! # base rarity score
+  rrs: Int! # base rarity score
   count: Int!
   ottos: [Otto!]!
 }
