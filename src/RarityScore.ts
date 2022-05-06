@@ -123,6 +123,15 @@ function updateRarityScore(otto: Otto, slots: Array<Slot>): void {
     if (trait == null) {
       continue
     }
+    if (i == 9 || i == 12) {
+      log.warning('skip rrs i = {}, traitId = {}, code = {}, brs = {}', [
+        i.toString(),
+        traitId,
+        trait.code.toString(),
+        trait.brs.toString(),
+      ])
+      continue
+    }
     totalRRS += calculateOttoRarityScore(trait.count, slots[i].maxCount)
     totalBRS += trait.brs
   }
