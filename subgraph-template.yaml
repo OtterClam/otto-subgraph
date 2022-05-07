@@ -63,6 +63,8 @@ dataSources:
       eventHandlers:
         - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
           handler: handleTransfer
+        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleTransferBatch
 
       file: ./src/OttoItem.ts
 
