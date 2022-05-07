@@ -1,10 +1,11 @@
-import { Address, BigInt, store } from '@graphprotocol/graph-ts'
+import { Address, BigInt, store, log } from '@graphprotocol/graph-ts'
 import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoContract'
 import { OttoV2Contract, OpenPortal, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
 import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
-import { Otto } from '../generated/schema'
-import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
+import { Otto, Trait } from '../generated/schema'
+import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_RARITY_SCORE_START_ID } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
+import { updateRarityScoreRanking } from './RarityScore'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
 
@@ -60,10 +61,13 @@ export function handleSummon(event: SummonOtto): void {
 
 export function handleTraitsChanged(event: TraitsChanged): void {
   let tokenId = event.params.tokenId_
-  let entity = getOttoEntity(tokenId)
-  updateV2(entity, tokenId)
-  entity.updateAt = event.block.timestamp
-  entity.save()
+  let ottoEntity = getOttoEntity(tokenId)
+  updateV2(ottoEntity, tokenId)
+  ottoEntity.updateAt = event.block.timestamp
+  if (tokenId.ge(BigInt.fromString(OTTO_RARITY_SCORE_START_ID))) {
+    updateRarityScoreRanking(event.params.arr_, ottoEntity)
+  }
+  ottoEntity.save()
 }
 
 export function handleItemEquipped(event: ItemEquipped): void {

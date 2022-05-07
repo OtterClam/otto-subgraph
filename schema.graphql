@@ -16,8 +16,11 @@ type Otto @entity {
   summonAt: BigInt!
   mintAt: BigInt!
   updateAt: BigInt!
-
+  brs: Int!
+  rrs: Int!
+  rarityScore: Int!
   items: [OttoItem!]!
+  traits: [Trait!]!
 }
 
 type OttoItem @entity {
@@ -31,6 +34,23 @@ type OttoItem @entity {
   parentTokenId: BigInt
   amount: Int!
   updateAt: BigInt!
+}
+
+type Trait @entity {
+  id: ID!
+  slot: Slot!
+  code: Int!
+  brs: Int! # base rarity score
+  rrs: Int! # base rarity score
+  count: Int!
+  ottos: [Otto!]!
+}
+
+type Slot @entity {
+  id: ID!
+  maxCount: Int!
+  maxCountTraits: [Trait!]!
+  traits: [Trait!]! @derivedFrom(field: "slot")
 }
 
 type OttoProduct @entity {
