@@ -17,6 +17,7 @@
     "build": "graph build",
     "auth": "graph auth --product hosted-service",
     "deploy:mainnet": "yarn config:mainnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto",
+    "deploy:mainnet-backup": "yarn config:mainnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto_backup",
     "deploy:testnet": "yarn config:testnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto_testnet",
     "deploy:xxxxx": "yarn config:xxxxx && yarn codegen && yarn build && graph deploy --product hosted-service d0c0q/xxxxx",
     "deploy:local": "yarn config:local && yarn codegen && yarn build && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 otterclam/otto",
