@@ -23,22 +23,17 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
   for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
     let code = codes[i]
     let slotId = slots[i].id
-    let firstCode = PFP.toObject()
-      .get(i.toString())!
-      .toObject()
-      .get(code.toString())!
-      .toObject()
-      .get('first_code')!
-      .toBigInt()
-      .toI32()
-    let brs = PFP.toObject()
-      .get(i.toString())!
-      .toObject()
-      .get(code.toString())!
-      .toObject()
-      .get('brs')!
-      .toBigInt()
-      .toI32()
+    let slotProps = PFP.toObject().get(i.toString())!.toArray()
+    let firstCode = 0
+    let brs = 0
+    for (let j = 0; j < slotProps.length; j++) {
+      firstCode = slotProps[j].toObject().get('first_code')!.toBigInt().toI32()
+      let len = slotProps[j].toObject().get('length')!.toBigInt().toI32()
+      if (code >= firstCode && code < firstCode + len) {
+        brs = slotProps[j].toObject().get('brs')!.toBigInt().toI32()
+        break
+      }
+    }
     let traitId = slotId + '-' + firstCode.toString()
     let trait = Trait.load(traitId)
     if (trait == null) {
@@ -162,7 +157,7 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     // update all ottos in all changed traits
     let oldTraits = loadOrCreateTraits(
       slots,
-      otto.traits.map<i32>(id => i32(Number.parseInt(id.split('-')[1]))),
+      otto.traits.map<i32>((id) => i32(Number.parseInt(id.split('-')[1]))),
     )
     for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
       if (!newTraits[i].ottos.includes(otto.id)) {
@@ -200,6 +195,6 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     updateOttoRarityScore(dirtyOtto)
     dirtyOtto.save()
   }
-  otto.traits = newTraits.map<string>(t => t.id)
+  otto.traits = newTraits.map<string>((t) => t.id)
   updateOttoRarityScore(otto)
 }
