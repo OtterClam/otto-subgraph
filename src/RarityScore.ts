@@ -1,6 +1,6 @@
 import { log } from '@graphprotocol/graph-ts'
 import { Otto, Trait, Slot } from '../generated/schema'
-import { PFP } from './utils/PFP'
+import { loadPFP } from './utils/PFP'
 
 const NUM_OTTO_TRAITS = 13
 
@@ -19,6 +19,7 @@ function loadOrCreateSlots(): Array<Slot> {
 
 function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait> {
   let traits = new Array<Trait>()
+  let PFP = loadPFP()
   for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
     let code = codes[i]
     let slotId = slots[i].id
@@ -65,7 +66,13 @@ function addOttoToTrait(slot: Slot, trait: Trait, otto: Otto): void {
     slot.maxCount = trait.count
     slot.maxCountTraits = [trait.id]
   }
-  trait.rrs = calculateOttoRarityScore(trait.count, slot.maxCount)
+  trait.rrs = calculateRRS(trait.count, slot.maxCount)
+  log.warning('trait: {} rrs: {} count: {} maxCount: {} ', [
+    trait.id,
+    trait.rrs.toString(),
+    trait.count.toString(),
+    slot.maxCount.toString(),
+  ])
 }
 
 function removeOttoFromTrait(slot: Slot, trait: Trait, otto: Otto): void {
@@ -84,7 +91,7 @@ function removeOttoFromTrait(slot: Slot, trait: Trait, otto: Otto): void {
       slot.maxCount = trait.count
     }
   }
-  trait.rrs = calculateOttoRarityScore(trait.count, slot.maxCount)
+  trait.rrs = calculateRRS(trait.count, slot.maxCount)
 }
 
 function collectChangedOttoIds(ids: Array<string>, trait: Trait, exclude: Otto): void {
@@ -99,7 +106,7 @@ function collectChangedOttoIds(ids: Array<string>, trait: Trait, exclude: Otto):
   }
 }
 
-function calculateOttoRarityScore(count: i32, maxCount: i32): i32 {
+function calculateRRS(count: i32, maxCount: i32): i32 {
   if (maxCount == 0) {
     return 100
   } else {
@@ -150,7 +157,7 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     // update all ottos in all changed traits
     let oldTraits = loadOrCreateTraits(
       slots,
-      otto.traits.map<i32>((id) => i32(Number.parseInt(id.split('-')[1]))),
+      otto.traits.map<i32>(id => i32(Number.parseInt(id.split('-')[1]))),
     )
     for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
       if (!newTraits[i].ottos.includes(otto.id)) {
@@ -185,6 +192,6 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     updateOttoRarityScore(dirtyOtto)
     dirtyOtto.save()
   }
-  otto.traits = newTraits.map<string>((t) => t.id)
+  otto.traits = newTraits.map<string>(t => t.id)
   updateOttoRarityScore(otto)
 }

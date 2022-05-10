@@ -1,6 +1,10 @@
-import { json, Bytes } from '@graphprotocol/graph-ts'
+import { json, JSONValue, Bytes } from '@graphprotocol/graph-ts'
 
-export const PFP = json.fromBytes(
+let PFP: JSONValue | null = null
+
+export function loadPFP(): JSONValue {
+  if (PFP === null) {
+PFP = json.fromBytes(
   Bytes.fromUTF8(`
 {
   "0": {
@@ -150738,3 +150742,7 @@ export const PFP = json.fromBytes(
 }
 `),
 )
+}
+  return PFP!
+}
+
