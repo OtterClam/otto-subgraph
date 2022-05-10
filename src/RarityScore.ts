@@ -65,14 +65,9 @@ function addOttoToTrait(slot: Slot, trait: Trait, otto: Otto): void {
   if (trait.count > slot.maxCount) {
     slot.maxCount = trait.count
     slot.maxCountTraits = [trait.id]
+    updateAllTraits(slot)
   }
   trait.rrs = calculateRRS(trait.count, slot.maxCount)
-  log.warning('trait: {} rrs: {} count: {} maxCount: {} ', [
-    trait.id,
-    trait.rrs.toString(),
-    trait.count.toString(),
-    slot.maxCount.toString(),
-  ])
 }
 
 function removeOttoFromTrait(slot: Slot, trait: Trait, otto: Otto): void {
@@ -90,8 +85,19 @@ function removeOttoFromTrait(slot: Slot, trait: Trait, otto: Otto): void {
     if (traits.length == 0) {
       slot.maxCount = trait.count
     }
+    updateAllTraits(slot)
   }
   trait.rrs = calculateRRS(trait.count, slot.maxCount)
+}
+
+function updateAllTraits(slot: Slot): void {
+  for (let i = 0; i < slot.traits.length; i++) {
+    let trait = Trait.load(slot.traits[i])
+    if (trait != null) {
+      trait.rrs = calculateRRS(trait.count, slot.maxCount)
+      trait.save()
+    }
+  }
 }
 
 function collectChangedOttoIds(ids: Array<string>, trait: Trait, exclude: Otto): void {
