@@ -84,8 +84,8 @@ function removeOttoFromTrait(slot: Slot, trait: Trait, otto: Otto): void {
     slot.maxCountTraits = traits
     if (traits.length == 0) {
       slot.maxCount = trait.count
+      updateAllTraits(slot)
     }
-    updateAllTraits(slot)
   }
   trait.rrs = calculateRRS(trait.count, slot.maxCount)
 }
@@ -115,9 +115,8 @@ function collectChangedOttoIds(ids: Array<string>, trait: Trait, exclude: Otto):
 function calculateRRS(count: i32, maxCount: i32): i32 {
   if (maxCount == 0) {
     return 100
-  } else {
-    return 100 - (100 * count) / maxCount
   }
+  return 100 - (100 * count) / maxCount
 }
 
 function updateOttoRarityScore(otto: Otto): void {
@@ -180,8 +179,11 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
   // update all changed traits
   for (let i = 0; i < dirtyOldTraits.length; i++) {
     let dirtyTrait = dirtyOldTraits[i]
+    let slotIndex = i32(Number.parseInt(dirtyTrait.id.split('-')[0].split('_')[2]))
+    dirtyTrait.rrs = calculateRRS(dirtyTrait.count, slots[slotIndex].maxCount)
     dirtyTrait.save()
   }
+
   // update all new slot & trait
   for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
     slots[i].save()
