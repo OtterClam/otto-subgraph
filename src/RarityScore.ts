@@ -11,9 +11,9 @@ function loadOrCreateSlots(): Array<Slot> {
     let slot = Slot.load(slotId)
     if (slot == null) {
       slot = new Slot(slotId)
-      log.warning('slot created {}', [slotId])
-    } else {
-      log.warning('slot loaded {}', [slotId])
+      //   log.warning('slot created {}', [slotId])
+      // } else {
+      //   log.warning('slot loaded {}', [slotId])
     }
     slots.push(slot)
   }
@@ -47,9 +47,9 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
       let slotTraits = slots[i].traits
       slotTraits.push(trait.id)
       slots[i].traits = slotTraits
-      log.warning('trait created {}', [traitId])
-    } else {
-      log.warning('trait loaded {}', [traitId])
+      // log.warning('trait created {}', [traitId])
+      // } else {
+      //   log.warning('trait loaded {}', [traitId])
     }
     traits.push(trait)
   }
@@ -107,9 +107,9 @@ function collectOttoIds(ids: Array<string>, trait: Trait): void {
     let ottoId = trait.ottos[i]
     if (ids.indexOf(ottoId) == -1) {
       ids.push(ottoId)
-      log.warning('collect changed otto {}', [ottoId])
-    } else {
-      log.warning('skip collecting changed otto {}', [ottoId])
+      //   log.warning('collect changed otto {}', [ottoId])
+      // } else {
+      //   log.warning('skip collecting changed otto {}', [ottoId])
     }
   }
 }
@@ -118,9 +118,9 @@ function collectTrait(traits: Array<Trait>, trait: Trait): void {
   let traitIds = traits.map<string>((t) => t.id)
   if (traitIds.indexOf(trait.id) == -1) {
     traits.push(trait)
-    log.warning('collect changed trait {}', [trait.id])
-  } else {
-    log.warning('skip collecting changed trait {}', [trait.id])
+    //   log.warning('collect changed trait {}', [trait.id])
+    // } else {
+    //   log.warning('skip collecting changed trait {}', [trait.id])
   }
 }
 
@@ -128,12 +128,12 @@ function collectTraitsInSlotExcept(traits: Array<Trait>, slot: Slot, skipped: Tr
   for (let i = 0; i < slot.traits.length; i++) {
     let traitId = slot.traits[i]
     if (slot.traits[i] == skipped.id) {
-      log.warning('skip current trait {}', [traitId])
+      // log.warning('skip current trait {}', [traitId])
       continue
     }
     let trait = Trait.load(traitId)
     if (trait == null) {
-      log.warning('old trait {} not found, should not happen', [traitId])
+      // log.warning('old trait {} not found, should not happen', [traitId])
       continue
     }
     collectTrait(traits, trait)
@@ -165,7 +165,7 @@ function updateOttoRarityScore(otto: Otto): void {
     totalBRS += trait.brs
   }
 
-  log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
+  // log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
   otto.brs = totalBRS
   otto.rrs = totalRRS
   otto.rarityScore = totalBRS + totalRRS
@@ -181,7 +181,7 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     // new otto created
     // add all traits
     // update all ottos in all traits
-    log.warning('============= ADD TRAIT {}', [otto.id])
+    // log.warning('============= ADD TRAIT {}', [otto.id])
     for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
       let slot = slots[i]
       let newTrait = newTraits[i]
@@ -203,7 +203,7 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
       slots,
       otto.traits.map<i32>((id) => i32(Number.parseInt(id.split('-')[1]))),
     )
-    log.warning('============= CHANGE TRAIT {}', [otto.id])
+    // log.warning('============= CHANGE TRAIT {}', [otto.id])
     for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
       if (!newTraits[i].ottos.includes(otto.id)) {
         let slot = slots[i]
@@ -251,7 +251,7 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     oldTraits = newTraits
   }
 
-  log.warning('dirty trais ids: {}', [dirtyOldTraits.map<string>((t) => t.id).join(', ')])
+  // log.warning('dirty trais ids: {}', [dirtyOldTraits.map<string>((t) => t.id).join(', ')])
 
   // update all changed traits
   for (let i = 0; i < dirtyOldTraits.length; i++) {
@@ -269,7 +269,7 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     newTraits[i].save()
   }
 
-  log.warning('dirty otto ids: {}', [dirtyOttoIds.join(', ')])
+  // log.warning('dirty otto ids: {}', [dirtyOttoIds.join(', ')])
   // update all changed otto
   for (let i = 0; i < dirtyOttoIds.length; i++) {
     let id = dirtyOttoIds[i]
@@ -281,7 +281,7 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     dirtyOtto.save()
   }
 
-  log.warning('current otto id: {}', [otto.id])
+  // log.warning('current otto id: {}', [otto.id])
 
   otto.traits = newTraits.map<string>((t) => t.id)
   updateOttoRarityScore(otto)
