@@ -49,8 +49,8 @@ type Trait @entity {
 type Slot @entity {
   id: ID!
   maxCount: Int!
-  maxCountTraits: [Trait!]!
-  traits: [Trait!]! @derivedFrom(field: "slot")
+  topCountTraits: [Trait!]!
+  traits: [Trait!]! 
 }
 
 type OttoProduct @entity {
