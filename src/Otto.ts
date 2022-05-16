@@ -3,7 +3,9 @@ import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoC
 import { OttoV2Contract, OpenPortal, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
 import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
 import { Otto, Trait } from '../generated/schema'
-import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_RARITY_SCORE_START_ID } from './Constants' import { getItemEntity, updateEntity } from './OttoItemHelper' import { updateRarityScoreRanking } from './RarityScore'
+import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_RARITY_SCORE_START_ID } from './Constants'
+import { getItemEntity, updateEntity } from './OttoItemHelper'
+import { updateRarityScoreRanking } from './RarityScore'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
 
