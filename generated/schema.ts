@@ -426,7 +426,8 @@ export class Slot extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("maxCount", Value.fromI32(0));
-    this.set("maxCountTraits", Value.fromStringArray(new Array(0)));
+    this.set("topCountTraits", Value.fromStringArray(new Array(0)));
+    this.set("traits", Value.fromStringArray(new Array(0)));
   }
 
   save(): void {
@@ -464,13 +465,13 @@ export class Slot extends Entity {
     this.set("maxCount", Value.fromI32(value));
   }
 
-  get maxCountTraits(): Array<string> {
-    let value = this.get("maxCountTraits");
+  get topCountTraits(): Array<string> {
+    let value = this.get("topCountTraits");
     return value!.toStringArray();
   }
 
-  set maxCountTraits(value: Array<string>) {
-    this.set("maxCountTraits", Value.fromStringArray(value));
+  set topCountTraits(value: Array<string>) {
+    this.set("topCountTraits", Value.fromStringArray(value));
   }
 
   get traits(): Array<string> {
