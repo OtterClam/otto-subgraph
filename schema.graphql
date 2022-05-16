@@ -16,6 +16,8 @@ type Otto @entity {
   summonAt: BigInt!
   mintAt: BigInt!
   updateAt: BigInt!
+  birthday: BigInt!
+  epoch: Int!
   brs: Int!
   rrs: Int!
   rarityScore: Int!
@@ -50,7 +52,7 @@ type Slot @entity {
   id: ID!
   maxCount: Int!
   topCountTraits: [Trait!]!
-  traits: [Trait!]! 
+  traits: [Trait!]!
 }
 
 type OttoProduct @entity {

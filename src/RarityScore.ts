@@ -1,6 +1,7 @@
-import { log } from '@graphprotocol/graph-ts'
+import { log, BigInt } from '@graphprotocol/graph-ts'
 import { Otto, Trait, Slot } from '../generated/schema'
 import { loadPFP } from './utils/PFP'
+import { OTTOPIA_RARITY_SCORE_RANKING_DURATION, OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH } from './Constants'
 
 const NUM_OTTO_TRAITS = 13
 
@@ -171,11 +172,35 @@ function updateOttoRarityScore(otto: Otto): void {
   otto.rarityScore = totalBRS + totalRRS
 }
 
-export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
+function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
+  let id = otto.id + '-' + epoch.toString()
+  let entity = new Otto(id)
+  for (let i = 0; i < otto.entries.length; i++) {
+    if (['id', 'epoch'].includes(otto.entries[i].key)) {
+      continue
+    }
+    entity.set(otto.entries[i].key, otto.entries[i].value)
+  }
+  entity.epoch = epoch
+  entity.save()
+}
+
+function toEpoch(timestamp: BigInt): i32 {
+  let ts = timestamp.toI32()
+  let firstEpochTs = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH).toI32()
+  let duration = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_DURATION).toI32()
+  if (ts < firstEpochTs) {
+    return 0
+  }
+  return (ts - firstEpochTs) / duration
+}
+
+export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto, timestamp: BigInt): void {
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
   let dirtyOttoIds = new Array<string>()
   let dirtyOldTraits = new Array<Trait>()
+  let epoch = toEpoch(timestamp)
 
   if (otto.traits.length == 0) {
     // new otto created
@@ -278,6 +303,7 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
       continue
     }
     updateOttoRarityScore(dirtyOtto)
+    updateOrCreateOttoSnapshot(dirtyOtto, epoch)
     dirtyOtto.save()
   }
 
@@ -285,4 +311,5 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
 
   otto.traits = newTraits.map<string>((t) => t.id)
   updateOttoRarityScore(otto)
+  updateOrCreateOttoSnapshot(otto, epoch)
 }

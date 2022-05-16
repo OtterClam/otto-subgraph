@@ -26,6 +26,8 @@ export class Otto extends Entity {
     this.set("summonAt", Value.fromBigInt(BigInt.zero()));
     this.set("mintAt", Value.fromBigInt(BigInt.zero()));
     this.set("updateAt", Value.fromBigInt(BigInt.zero()));
+    this.set("birthday", Value.fromBigInt(BigInt.zero()));
+    this.set("epoch", Value.fromI32(0));
     this.set("brs", Value.fromI32(0));
     this.set("rrs", Value.fromI32(0));
     this.set("rarityScore", Value.fromI32(0));
@@ -147,6 +149,24 @@ export class Otto extends Entity {
 
   set updateAt(value: BigInt) {
     this.set("updateAt", Value.fromBigInt(value));
+  }
+
+  get birthday(): BigInt {
+    let value = this.get("birthday");
+    return value!.toBigInt();
+  }
+
+  set birthday(value: BigInt) {
+    this.set("birthday", Value.fromBigInt(value));
+  }
+
+  get epoch(): i32 {
+    let value = this.get("epoch");
+    return value!.toI32();
+  }
+
+  set epoch(value: i32) {
+    this.set("epoch", Value.fromI32(value));
   }
 
   get brs(): i32 {

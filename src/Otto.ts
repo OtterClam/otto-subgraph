@@ -3,9 +3,7 @@ import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoC
 import { OttoV2Contract, OpenPortal, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
 import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
 import { Otto, Trait } from '../generated/schema'
-import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_RARITY_SCORE_START_ID } from './Constants'
-import { getItemEntity, updateEntity } from './OttoItemHelper'
-import { updateRarityScoreRanking } from './RarityScore'
+import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_RARITY_SCORE_START_ID } from './Constants' import { getItemEntity, updateEntity } from './OttoItemHelper' import { updateRarityScoreRanking } from './RarityScore'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
 
@@ -65,7 +63,7 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   updateV2(ottoEntity, tokenId)
   ottoEntity.updateAt = event.block.timestamp
   if (tokenId.ge(BigInt.fromString(OTTO_RARITY_SCORE_START_ID))) {
-    updateRarityScoreRanking(event.params.arr_, ottoEntity)
+    updateRarityScoreRanking(event.params.arr_, ottoEntity, event.block.timestamp)
   }
   ottoEntity.save()
 }
@@ -120,5 +118,7 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
   entity.mintAt = info.value0
   entity.canOpenAt = info.value1
   entity.summonAt = info.value2
+  entity.birthday = info.value3
   entity.legendary = info.value6
+  entity.epoch = -1
 }
