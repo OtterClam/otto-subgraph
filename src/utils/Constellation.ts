@@ -15,9 +15,9 @@ const Pisces = 12
 export function parseConstellation(birthday: Date): i32 {
   let month = birthday.getUTCMonth() + 1
   let day = birthday.getUTCDate()
-  if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) {
+  if ((month == 3 && day >= 21) || (month == 4 && day <= 20)) {
     return Aries
-  } else if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) {
+  } else if ((month == 4 && day >= 21) || (month == 5 && day <= 20)) {
     return Taurus
   } else if ((month == 5 && day >= 21) || (month == 6 && day <= 21)) {
     return Gemini
@@ -27,11 +27,11 @@ export function parseConstellation(birthday: Date): i32 {
     return Leo
   } else if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) {
     return Virgo
-  } else if ((month == 9 && day >= 23) || (month == 10 && day <= 23)) {
+  } else if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) {
     return Libra
-  } else if ((month == 10 && day >= 24) || (month == 11 && day <= 22)) {
+  } else if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) {
     return Scorpio
-  } else if ((month == 11 && day >= 23) || (month == 12 && day <= 21)) {
+  } else if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) {
     return Sagittarius
   } else if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) {
     return Capricorn
