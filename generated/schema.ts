@@ -30,7 +30,6 @@ export class Otto extends Entity {
     this.set("birthday", Value.fromBigInt(BigInt.zero()));
     this.set("constellation", Value.fromI32(0));
     this.set("constellationBoost", Value.fromI32(0));
-    this.set("chosenOtto", Value.fromBoolean(false));
     this.set("epoch", Value.fromI32(0));
     this.set("brs", Value.fromI32(0));
     this.set("rrs", Value.fromI32(0));
@@ -189,15 +188,6 @@ export class Otto extends Entity {
 
   set constellationBoost(value: i32) {
     this.set("constellationBoost", Value.fromI32(value));
-  }
-
-  get chosenOtto(): boolean {
-    let value = this.get("chosenOtto");
-    return value!.toBoolean();
-  }
-
-  set chosenOtto(value: boolean) {
-    this.set("chosenOtto", Value.fromBoolean(value));
   }
 
   get epoch(): i32 {

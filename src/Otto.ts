@@ -121,7 +121,8 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
   entity.mintAt = info.value0
   entity.canOpenAt = info.value1
   entity.summonAt = info.value2
-  entity.birthday = info.value3
+  // fix overflow when birthday timestamp < 0, wrong date but works
+  entity.birthday = info.value3.bitAnd(BigInt.fromU64(0xffffffffffffffff))
   let birthdayDate = new Date(entity.birthday.toI64() * 1000)
   entity.constellation = parseConstellation(birthdayDate)
   entity.legendary = info.value6
