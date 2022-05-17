@@ -1,11 +1,12 @@
-import { Address, BigInt, store, log } from '@graphprotocol/graph-ts'
+import { log, Address, BigInt, store } from '@graphprotocol/graph-ts'
 import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoContract'
-import { OttoV2Contract, OpenPortal, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
+import { OpenPortal, OttoV2Contract, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
 import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
-import { Otto, Trait } from '../generated/schema'
-import { OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_RARITY_SCORE_START_ID } from './Constants'
+import { Otto } from '../generated/schema'
+import { OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
 import { updateRarityScoreRanking } from './RarityScore'
+import { parseConstellation } from './utils/Constellation'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
 
@@ -121,6 +122,8 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
   entity.canOpenAt = info.value1
   entity.summonAt = info.value2
   entity.birthday = info.value3
+  let birthdayDate = new Date(entity.birthday.toI64() * 1000)
+  entity.constellation = parseConstellation(birthdayDate)
   entity.legendary = info.value6
   entity.epoch = -1
 }

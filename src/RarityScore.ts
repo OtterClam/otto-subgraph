@@ -2,6 +2,7 @@ import { BigInt } from '@graphprotocol/graph-ts'
 import { Otto, Slot, Trait } from '../generated/schema'
 import { OTTOPIA_RARITY_SCORE_RANKING_DURATION, OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH } from './Constants'
 import { loadPFP } from './utils/PFP'
+import { parseConstellation } from './utils/Constellation'
 
 const NUM_OTTO_TRAITS = 13
 
@@ -148,66 +149,17 @@ function calculateRRS(count: i32, maxCount: i32): i32 {
   return 100 - (100 * count) / maxCount
 }
 
-enum Constellation {
-  Error,
-  Aries,
-  Taurus,
-  Gemini,
-  Cancer,
-  Leo,
-  Virgo,
-  Libra,
-  Scorpio,
-  Sagittarius,
-  Capricorn,
-  Aquarius,
-  Pisces,
-}
-
-// 0: Aries
-function toConstellation(birthday: Date): Constellation {
-  let month = birthday.getUTCMonth()
-  let day = birthday.getUTCDay()
-  if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) {
-    return Constellation.Aries
-  } else if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) {
-    return Constellation.Taurus
-  } else if ((month == 5 && day >= 21) || (month == 6 && day <= 21)) {
-    return Constellation.Gemini
-  } else if ((month == 6 && day >= 22) || (month == 7 && day <= 22)) {
-    return Constellation.Cancer
-  } else if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) {
-    return Constellation.Leo
-  } else if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) {
-    return Constellation.Virgo
-  } else if ((month == 9 && day >= 23) || (month == 10 && day <= 23)) {
-    return Constellation.Libra
-  } else if ((month == 10 && day >= 24) || (month == 11 && day <= 22)) {
-    return Constellation.Scorpio
-  } else if ((month == 11 && day >= 23) || (month == 12 && day <= 21)) {
-    return Constellation.Sagittarius
-  } else if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) {
-    return Constellation.Capricorn
-  } else if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) {
-    return Constellation.Aquarius
-  } else if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) {
-    return Constellation.Pisces
-  } else {
-    return Constellation.Error
-  }
-}
-
 function calculateConstellationBoost(birthday: BigInt, epoch: i32): i32 {
   let boost = 0
   let ts = toEpochEndTimestamp(epoch)
-  let competitionDate = new Date(ts.toI64())
-  let birthdayDate = new Date(birthday.toI64())
-  if (toConstellation(competitionDate) == toConstellation(birthdayDate)) {
+  let competitionDate = new Date(ts.toI64() * 1000)
+  let birthdayDate = new Date(birthday.toI64() * 1000)
+  if (parseConstellation(competitionDate) == parseConstellation(birthdayDate)) {
     boost += 50
   }
   if (
     competitionDate.getUTCMonth() == birthdayDate.getUTCMonth() &&
-    competitionDate.getUTCDay() == birthdayDate.getUTCDay()
+    competitionDate.getUTCDate() == birthdayDate.getUTCDate()
   ) {
     boost += 100
   }
