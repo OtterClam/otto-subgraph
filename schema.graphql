@@ -11,6 +11,7 @@ type Otto @entity {
   owner: Bytes!
   candidates: [BigInt!]!
   legendary: Boolean!
+  legendaryBoost: Int!
   portalStatus: PortalStatus!
   canOpenAt: BigInt!
   summonAt: BigInt!
@@ -18,6 +19,7 @@ type Otto @entity {
   updateAt: BigInt!
   birthday: BigInt!
   constellation: Int!
+  constellationBoost: Int!
   epoch: Int!
   brs: Int!
   rrs: Int!
