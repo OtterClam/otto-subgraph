@@ -1,6 +1,8 @@
-import { log } from '@graphprotocol/graph-ts'
-import { Otto, Trait, Slot } from '../generated/schema'
+import { BigInt } from '@graphprotocol/graph-ts'
+import { Otto, Slot, Trait } from '../generated/schema'
+import { OTTOPIA_RARITY_SCORE_RANKING_DURATION, OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH } from './Constants'
 import { loadPFP } from './utils/PFP'
+import { parseConstellation } from './utils/Constellation'
 
 const NUM_OTTO_TRAITS = 13
 
@@ -147,7 +149,32 @@ function calculateRRS(count: i32, maxCount: i32): i32 {
   return 100 - (100 * count) / maxCount
 }
 
-function updateOttoRarityScore(otto: Otto): void {
+function calculateConstellationBoost(birthday: BigInt, epoch: i32): i32 {
+  let boost = 0
+  let ts = toEpochEndTimestamp(epoch)
+  let competitionDate = new Date(ts.toI64() * 1000)
+  let birthdayDate = new Date(birthday.toI64() * 1000)
+  if (parseConstellation(competitionDate) == parseConstellation(birthdayDate)) {
+    boost += 50
+  }
+  if (
+    competitionDate.getUTCMonth() == birthdayDate.getUTCMonth() &&
+    competitionDate.getUTCDate() == birthdayDate.getUTCDate()
+  ) {
+    boost += 100
+  }
+  return boost
+}
+
+function calcuateLegendaryBoost(otto: Otto): i32 {
+  let boost = 0
+  if (otto.items.length == 0 && otto.legendary) {
+    boost += 100
+  }
+  return boost
+}
+
+function updateOttoRarityScore(otto: Otto, epoch: i32): void {
   let totalRRS = 0
   let totalBRS = 0
   for (let i = 0; i < otto.traits.length; i++) {
@@ -166,16 +193,48 @@ function updateOttoRarityScore(otto: Otto): void {
   }
 
   // log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
-  otto.brs = totalBRS
+  otto.legendaryBoost = calcuateLegendaryBoost(otto)
+  otto.constellationBoost = calculateConstellationBoost(otto.birthday, epoch)
+  otto.brs = totalBRS + otto.constellationBoost + otto.legendaryBoost
   otto.rrs = totalRRS
-  otto.rarityScore = totalBRS + totalRRS
+  otto.rarityScore = otto.brs + otto.rrs
 }
 
-export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
+function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
+  let id = otto.id + '-' + epoch.toString()
+  let entity = new Otto(id)
+  for (let i = 0; i < otto.entries.length; i++) {
+    if (['id', 'epoch'].includes(otto.entries[i].key)) {
+      continue
+    }
+    entity.set(otto.entries[i].key, otto.entries[i].value)
+  }
+  entity.epoch = epoch
+  entity.save()
+}
+
+function toEpoch(timestamp: BigInt): i32 {
+  let ts = timestamp.toI32()
+  let firstEpochTs = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH).toI32()
+  let duration = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_DURATION).toI32()
+  if (ts < firstEpochTs) {
+    return 0
+  }
+  return (ts - firstEpochTs) / duration
+}
+
+function toEpochEndTimestamp(epoch: i32): BigInt {
+  let firstEpochTs = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH).toI32()
+  let duration = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_DURATION).toI32()
+  return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
+}
+
+export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto, timestamp: BigInt): void {
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
   let dirtyOttoIds = new Array<string>()
   let dirtyOldTraits = new Array<Trait>()
+  let epoch = toEpoch(timestamp)
 
   if (otto.traits.length == 0) {
     // new otto created
@@ -277,12 +336,14 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto): void {
     if (dirtyOtto == null) {
       continue
     }
-    updateOttoRarityScore(dirtyOtto)
+    updateOttoRarityScore(dirtyOtto, epoch)
+    updateOrCreateOttoSnapshot(dirtyOtto, epoch)
     dirtyOtto.save()
   }
 
   // log.warning('current otto id: {}', [otto.id])
 
   otto.traits = newTraits.map<string>((t) => t.id)
-  updateOttoRarityScore(otto)
+  updateOttoRarityScore(otto, epoch)
+  updateOrCreateOttoSnapshot(otto, epoch)
 }

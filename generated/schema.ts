@@ -21,11 +21,16 @@ export class Otto extends Entity {
     this.set("owner", Value.fromBytes(Bytes.empty()));
     this.set("candidates", Value.fromBigIntArray(new Array(0)));
     this.set("legendary", Value.fromBoolean(false));
+    this.set("legendaryBoost", Value.fromI32(0));
     this.set("portalStatus", Value.fromString(""));
     this.set("canOpenAt", Value.fromBigInt(BigInt.zero()));
     this.set("summonAt", Value.fromBigInt(BigInt.zero()));
     this.set("mintAt", Value.fromBigInt(BigInt.zero()));
     this.set("updateAt", Value.fromBigInt(BigInt.zero()));
+    this.set("birthday", Value.fromBigInt(BigInt.zero()));
+    this.set("constellation", Value.fromI32(0));
+    this.set("constellationBoost", Value.fromI32(0));
+    this.set("epoch", Value.fromI32(0));
     this.set("brs", Value.fromI32(0));
     this.set("rrs", Value.fromI32(0));
     this.set("rarityScore", Value.fromI32(0));
@@ -104,6 +109,15 @@ export class Otto extends Entity {
     this.set("legendary", Value.fromBoolean(value));
   }
 
+  get legendaryBoost(): i32 {
+    let value = this.get("legendaryBoost");
+    return value!.toI32();
+  }
+
+  set legendaryBoost(value: i32) {
+    this.set("legendaryBoost", Value.fromI32(value));
+  }
+
   get portalStatus(): string {
     let value = this.get("portalStatus");
     return value!.toString();
@@ -147,6 +161,42 @@ export class Otto extends Entity {
 
   set updateAt(value: BigInt) {
     this.set("updateAt", Value.fromBigInt(value));
+  }
+
+  get birthday(): BigInt {
+    let value = this.get("birthday");
+    return value!.toBigInt();
+  }
+
+  set birthday(value: BigInt) {
+    this.set("birthday", Value.fromBigInt(value));
+  }
+
+  get constellation(): i32 {
+    let value = this.get("constellation");
+    return value!.toI32();
+  }
+
+  set constellation(value: i32) {
+    this.set("constellation", Value.fromI32(value));
+  }
+
+  get constellationBoost(): i32 {
+    let value = this.get("constellationBoost");
+    return value!.toI32();
+  }
+
+  set constellationBoost(value: i32) {
+    this.set("constellationBoost", Value.fromI32(value));
+  }
+
+  get epoch(): i32 {
+    let value = this.get("epoch");
+    return value!.toI32();
+  }
+
+  set epoch(value: i32) {
+    this.set("epoch", Value.fromI32(value));
   }
 
   get brs(): i32 {
