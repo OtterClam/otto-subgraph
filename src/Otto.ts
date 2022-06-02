@@ -24,6 +24,7 @@ export function handleTransfer(event: TransferEvent): void {
     entity.mintAt = event.block.timestamp
     entity.canOpenAt = BigInt.fromU64(1649250000)
     entity.summonAt = BigInt.fromI32(0)
+    entity.epoch = -1
   } else {
     // v2
     updateV2(entity, tokenId)
@@ -92,13 +93,14 @@ export function handleItemEquipped(event: ItemEquipped): void {
 
 export function handleItemTookOff(event: ItemTookOff): void {
   let ottoId = event.params.ottoId_
+
+  let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
+  store.remove('OttoItem', itemEntity.id)
+
   let entity = getOttoEntity(ottoId)
   updateV2(entity, ottoId)
   entity.updateAt = event.block.timestamp
   entity.save()
-
-  let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
-  store.remove('OttoItem', itemEntity.id)
 }
 
 function getOttoEntity(tokenId: BigInt): Otto {

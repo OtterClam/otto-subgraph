@@ -166,10 +166,10 @@ function calculateConstellationBoost(birthday: BigInt, epoch: i32): i32 {
   return boost
 }
 
-function calcuateLegendaryBoost(otto: Otto): i32 {
+function calculateLegendaryBoost(otto: Otto): i32 {
   let boost = 0
   if (otto.items.length == 0 && otto.legendary) {
-    boost += 100
+    boost = 100
   }
   return boost
 }
@@ -193,7 +193,7 @@ function updateOttoRarityScore(otto: Otto, epoch: i32): void {
   }
 
   // log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
-  otto.legendaryBoost = calcuateLegendaryBoost(otto)
+  otto.legendaryBoost = calculateLegendaryBoost(otto)
   otto.constellationBoost = calculateConstellationBoost(otto.birthday, epoch)
   otto.brs = totalBRS + otto.constellationBoost + otto.legendaryBoost
   otto.rrs = totalRRS
