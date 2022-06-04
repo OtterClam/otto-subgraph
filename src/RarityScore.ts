@@ -1,8 +1,14 @@
-import { BigInt } from '@graphprotocol/graph-ts'
-import { Otto, Slot, Trait } from '../generated/schema'
-import { OTTOPIA_RARITY_SCORE_RANKING_DURATION, OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH } from './Constants'
-import { loadPFP } from './utils/PFP'
+import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+import { OttoV3Contract } from '../generated/Otto/OttoV3Contract'
+import { Epoch, Otto, Slot, Trait } from '../generated/schema'
+import {
+  OTTOPIA_RARITY_SCORE_RANKING_DURATION,
+  OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH,
+  OTTO_RARITY_SCORE_START_ID,
+  OTTO,
+} from './Constants'
 import { parseConstellation } from './utils/Constellation'
+import { loadPFP } from './utils/PFP'
 
 const NUM_OTTO_TRAITS = 13
 
@@ -213,13 +219,44 @@ function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
   entity.save()
 }
 
+function updateOrCreateEpoch(epoch: i32, dirtyOttoIds: Array<string>, currentOttoId: string): void {
+  let epochId = 'ottopia_epoch_' + epoch.toString()
+  let epochEntity = Epoch.load(epochId)
+  if (epochEntity == null) {
+    epochEntity = new Epoch(epochId)
+    epochEntity.num = epoch
+    epochEntity.save()
+
+    let ottov3 = OttoV3Contract.bind(Address.fromString(OTTO))
+    let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
+    let total = ottov3.totalSupply().toI32() - offset
+    for (let i = offset; i < total; i++) {
+      let id = OTTO + '-' + i.toString()
+      if (dirtyOttoIds.includes(id) || id == currentOttoId) {
+        continue
+      }
+      let otto = Otto.load(id)
+      if (otto == null) {
+        continue
+      }
+      updateOrCreateOttoSnapshot(otto, epoch)
+    }
+  }
+}
+
 function toEpoch(timestamp: BigInt): i32 {
   let ts = timestamp.toI32()
   let firstEpochTs = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH).toI32()
   let duration = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_DURATION).toI32()
+  log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
+    ts.toString(),
+    firstEpochTs.toString(),
+    duration.toString(),
+  ])
   if (ts < firstEpochTs) {
     return 0
   }
+  log.warning('toEpoch (ts - firstEpochTs) / duration {}', [((ts - firstEpochTs) / duration).toString()])
   return (ts - firstEpochTs) / duration
 }
 
@@ -229,7 +266,7 @@ function toEpochEndTimestamp(epoch: i32): BigInt {
   return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
 }
 
-export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto, timestamp: BigInt): void {
+export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigInt): void {
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
   let dirtyOttoIds = new Array<string>()
@@ -346,4 +383,5 @@ export function updateRarityScoreRanking(codes: Array<i32>, otto: Otto, timestam
   otto.traits = newTraits.map<string>((t) => t.id)
   updateOttoRarityScore(otto, epoch)
   updateOrCreateOttoSnapshot(otto, epoch)
+  updateOrCreateEpoch(epoch, dirtyOttoIds, otto.id)
 }

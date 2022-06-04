@@ -534,6 +534,50 @@ export class Slot extends Entity {
   }
 }
 
+export class Epoch extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("num", Value.fromI32(0));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Epoch entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Epoch entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Epoch", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Epoch | null {
+    return changetype<Epoch | null>(store.get("Epoch", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get num(): i32 {
+    let value = this.get("num");
+    return value!.toI32();
+  }
+
+  set num(value: i32) {
+    this.set("num", Value.fromI32(value));
+  }
+}
+
 export class OttoProduct extends Entity {
   constructor(id: string) {
     super();
