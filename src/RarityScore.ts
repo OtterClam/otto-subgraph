@@ -1,11 +1,11 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 import { OttoV3Contract } from '../generated/Otto/OttoV3Contract'
 import { Epoch, Otto, Slot, Trait } from '../generated/schema'
 import {
+  OTTO,
   OTTOPIA_RARITY_SCORE_RANKING_DURATION,
   OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH,
   OTTO_RARITY_SCORE_START_ID,
-  OTTO,
 } from './Constants'
 import { parseConstellation } from './utils/Constellation'
 import { loadPFP } from './utils/PFP'
@@ -248,15 +248,15 @@ function toEpoch(timestamp: BigInt): i32 {
   let ts = timestamp.toI32()
   let firstEpochTs = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH).toI32()
   let duration = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_DURATION).toI32()
-  log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
-    ts.toString(),
-    firstEpochTs.toString(),
-    duration.toString(),
-  ])
+  // log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
+  //   ts.toString(),
+  //   firstEpochTs.toString(),
+  //   duration.toString(),
+  // ])
   if (ts < firstEpochTs) {
     return 0
   }
-  log.warning('toEpoch (ts - firstEpochTs) / duration {}', [((ts - firstEpochTs) / duration).toString()])
+  // log.warning('toEpoch (ts - firstEpochTs) / duration {}', [((ts - firstEpochTs) / duration).toString()])
   return (ts - firstEpochTs) / duration
 }
 
