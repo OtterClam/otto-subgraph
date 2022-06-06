@@ -18,6 +18,7 @@ type Otto @entity {
   mintAt: BigInt!
   updateAt: BigInt!
   birthday: BigInt!
+  numericVisibleTraits: BigInt!
   constellation: Int!
   constellationBoost: Int!
   epoch: Int!
