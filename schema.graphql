@@ -58,6 +58,11 @@ type Slot @entity {
   traits: [Trait!]!
 }
 
+type Epoch @entity {
+  id: ID!
+  num: Int!
+}
+
 type OttoProduct @entity {
   id: ID!
   productId: BigInt!
