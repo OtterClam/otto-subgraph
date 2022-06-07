@@ -62,6 +62,7 @@ type Slot @entity {
 type Epoch @entity {
   id: ID!
   num: Int!
+  totalOttos: Int!
 }
 
 type OttoProduct @entity {

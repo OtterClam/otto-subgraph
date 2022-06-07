@@ -1,4 +1,4 @@
-import { log, Address, BigInt, store } from '@graphprotocol/graph-ts'
+import { Address, BigInt, log, store } from '@graphprotocol/graph-ts'
 import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoContract'
 import { OpenPortal, OttoV2Contract, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
 import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'

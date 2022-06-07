@@ -550,6 +550,7 @@ export class Epoch extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("num", Value.fromI32(0));
+    this.set("totalOttos", Value.fromI32(0));
   }
 
   save(): void {
@@ -585,6 +586,15 @@ export class Epoch extends Entity {
 
   set num(value: i32) {
     this.set("num", Value.fromI32(value));
+  }
+
+  get totalOttos(): i32 {
+    let value = this.get("totalOttos");
+    return value!.toI32();
+  }
+
+  set totalOttos(value: i32) {
+    this.set("totalOttos", Value.fromI32(value));
   }
 }
 
