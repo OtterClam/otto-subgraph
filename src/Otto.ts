@@ -70,6 +70,12 @@ export function handleTraitsChanged(event: TraitsChanged): void {
     updateRarityScore(event.params.arr_, ottoEntity, event.block.timestamp)
   }
   ottoEntity.save()
+
+  log.info('handleTraitsChanged, otto: {}, item count: {}, legendaryBoost: {}', [
+    tokenId.toString(),
+    ottoEntity.items.length.toString(),
+    ottoEntity.legendaryBoost.toString(),
+  ])
 }
 
 export function handleItemEquipped(event: ItemEquipped): void {
@@ -95,12 +101,20 @@ export function handleItemTookOff(event: ItemTookOff): void {
   let ottoId = event.params.ottoId_
 
   let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
-  store.remove('OttoItem', itemEntity.id)
 
   let entity = getOttoEntity(ottoId)
   updateV2(entity, ottoId)
+
+  let items = entity.items
+  let index = items.indexOf(itemEntity.id)
+  items.splice(index, 1)
+  entity.items = items
   entity.updateAt = event.block.timestamp
   entity.save()
+
+  log.info('handleItemTookOff, otto: {}, item count: {}', [ottoId.toString(), entity.items.length.toString()])
+
+  store.remove('OttoItem', itemEntity.id)
 }
 
 function getOttoEntity(tokenId: BigInt): Otto {
