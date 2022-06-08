@@ -40,6 +40,7 @@ type OttoItem @entity {
   parentTokenId: BigInt
   amount: Int!
   updateAt: BigInt!
+  createdAt: BigInt!
 }
 
 type Trait @entity {

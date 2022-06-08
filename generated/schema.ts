@@ -268,6 +268,7 @@ export class OttoItem extends Entity {
     this.set("owner", Value.fromBytes(Bytes.empty()));
     this.set("amount", Value.fromI32(0));
     this.set("updateAt", Value.fromBigInt(BigInt.zero()));
+    this.set("createdAt", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -383,6 +384,15 @@ export class OttoItem extends Entity {
 
   set updateAt(value: BigInt) {
     this.set("updateAt", Value.fromBigInt(value));
+  }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value!.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
   }
 }
 
