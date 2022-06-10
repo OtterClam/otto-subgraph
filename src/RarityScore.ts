@@ -5,6 +5,7 @@ import {
   OTTO,
   OTTOPIA_RARITY_SCORE_RANKING_DURATION,
   OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH,
+  OTTO_EPOCH_BOOST_BLOCK,
   OTTO_RARITY_SCORE_START_ID,
 } from './Constants'
 import { parseConstellation } from './utils/Constellation'
@@ -180,9 +181,13 @@ function calculateLegendaryBoost(otto: Otto): i32 {
   return boost
 }
 
-function updateOttoRarityScore(otto: Otto, epoch: i32): void {
-  let totalRRS = 0
+export function updateOttoRarityScore(otto: Otto, epoch: i32, block: BigInt): void {
+  let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let totalBRS = 0
+  if (block >= BigInt.fromString(OTTO_EPOCH_BOOST_BLOCK)) {
+    totalBRS = ottoV3.baseAttributesOf(otto.tokenId)[7] + ottoV3.epochBoostOf(otto.tokenId, BigInt.fromI32(epoch))[7]
+  }
+  let totalRRS = 0
   for (let i = 0; i < otto.traits.length; i++) {
     let traitId = otto.traits[i]
     let trait = Trait.load(traitId)
@@ -220,9 +225,9 @@ function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
 }
 
 function updateOrCreateEpoch(epoch: i32, dirtyOttoIds: Array<string>, currentOttoId: string): void {
-  let ottov3 = OttoV3Contract.bind(Address.fromString(OTTO))
+  let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
-  let total = ottov3.totalSupply().toI32() - offset
+  let total = ottoV3.totalSupply().toI32() - offset
 
   let epochId = 'ottopia_epoch_' + epoch.toString()
   let epochEntity = Epoch.load(epochId)
@@ -267,7 +272,7 @@ function toEpochEndTimestamp(epoch: i32): BigInt {
   return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
 }
 
-export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigInt): void {
+export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigInt, block: BigInt): void {
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
   let dirtyOttoIds = new Array<string>()
@@ -374,7 +379,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
     if (dirtyOtto == null) {
       continue
     }
-    updateOttoRarityScore(dirtyOtto, epoch)
+    updateOttoRarityScore(dirtyOtto, epoch, block)
     updateOrCreateOttoSnapshot(dirtyOtto, epoch)
     dirtyOtto.save()
   }
@@ -382,7 +387,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   // log.warning('current otto id: {}', [otto.id])
 
   otto.traits = newTraits.map<string>((t) => t.id)
-  updateOttoRarityScore(otto, epoch)
+  updateOttoRarityScore(otto, epoch, block)
   updateOrCreateOttoSnapshot(otto, epoch)
   updateOrCreateEpoch(epoch, dirtyOttoIds, otto.id)
 }

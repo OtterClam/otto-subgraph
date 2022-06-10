@@ -27,6 +27,7 @@ type Otto @entity {
   rarityScore: Int!
   items: [OttoItem!]!
   traits: [Trait!]!
+  diceCount: Int!
 }
 
 type OttoItem @entity {
