@@ -28,6 +28,7 @@ export class Otto extends Entity {
     this.set("mintAt", Value.fromBigInt(BigInt.zero()));
     this.set("updateAt", Value.fromBigInt(BigInt.zero()));
     this.set("birthday", Value.fromBigInt(BigInt.zero()));
+    this.set("numericVisibleTraits", Value.fromBigInt(BigInt.zero()));
     this.set("constellation", Value.fromI32(0));
     this.set("constellationBoost", Value.fromI32(0));
     this.set("epoch", Value.fromI32(0));
@@ -172,6 +173,15 @@ export class Otto extends Entity {
     this.set("birthday", Value.fromBigInt(value));
   }
 
+  get numericVisibleTraits(): BigInt {
+    let value = this.get("numericVisibleTraits");
+    return value!.toBigInt();
+  }
+
+  set numericVisibleTraits(value: BigInt) {
+    this.set("numericVisibleTraits", Value.fromBigInt(value));
+  }
+
   get constellation(): i32 {
     let value = this.get("constellation");
     return value!.toI32();
@@ -258,6 +268,7 @@ export class OttoItem extends Entity {
     this.set("owner", Value.fromBytes(Bytes.empty()));
     this.set("amount", Value.fromI32(0));
     this.set("updateAt", Value.fromBigInt(BigInt.zero()));
+    this.set("createdAt", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -373,6 +384,15 @@ export class OttoItem extends Entity {
 
   set updateAt(value: BigInt) {
     this.set("updateAt", Value.fromBigInt(value));
+  }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value!.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
   }
 }
 
@@ -540,6 +560,7 @@ export class Epoch extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("num", Value.fromI32(0));
+    this.set("totalOttos", Value.fromI32(0));
   }
 
   save(): void {
@@ -575,6 +596,15 @@ export class Epoch extends Entity {
 
   set num(value: i32) {
     this.set("num", Value.fromI32(value));
+  }
+
+  get totalOttos(): i32 {
+    let value = this.get("totalOttos");
+    return value!.toI32();
+  }
+
+  set totalOttos(value: i32) {
+    this.set("totalOttos", Value.fromI32(value));
   }
 }
 

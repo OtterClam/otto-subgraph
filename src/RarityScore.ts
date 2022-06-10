@@ -220,16 +220,15 @@ function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
 }
 
 function updateOrCreateEpoch(epoch: i32, dirtyOttoIds: Array<string>, currentOttoId: string): void {
+  let ottov3 = OttoV3Contract.bind(Address.fromString(OTTO))
+  let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
+  let total = ottov3.totalSupply().toI32() - offset
+
   let epochId = 'ottopia_epoch_' + epoch.toString()
   let epochEntity = Epoch.load(epochId)
   if (epochEntity == null) {
     epochEntity = new Epoch(epochId)
     epochEntity.num = epoch
-    epochEntity.save()
-
-    let ottov3 = OttoV3Contract.bind(Address.fromString(OTTO))
-    let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
-    let total = ottov3.totalSupply().toI32() - offset
     for (let i = offset; i < total; i++) {
       let id = OTTO + '-' + i.toString()
       if (dirtyOttoIds.includes(id) || id == currentOttoId) {
@@ -242,6 +241,8 @@ function updateOrCreateEpoch(epoch: i32, dirtyOttoIds: Array<string>, currentOtt
       updateOrCreateOttoSnapshot(otto, epoch)
     }
   }
+  epochEntity.totalOttos = total
+  epochEntity.save()
 }
 
 function toEpoch(timestamp: BigInt): i32 {

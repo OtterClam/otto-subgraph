@@ -1,4 +1,4 @@
-import { log, Address, BigInt, store } from '@graphprotocol/graph-ts'
+import { Address, BigInt, log, store } from '@graphprotocol/graph-ts'
 import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoContract'
 import { OpenPortal, OttoV2Contract, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
 import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
@@ -33,6 +33,7 @@ export function handleTransfer(event: TransferEvent): void {
       // handle owned items transfer
       let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
       let itemIds = ottoV3.ownedItemsOf(tokenId)
+      entity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
       for (let i = 0; i < itemIds.length; i++) {
         let itemId = itemIds[i]
         let itemEntity = getItemEntity(itemId, Address.fromString(OTTO), tokenId)
@@ -68,6 +69,10 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   ottoEntity.updateAt = event.block.timestamp
   if (tokenId.ge(BigInt.fromString(OTTO_RARITY_SCORE_START_ID))) {
     updateRarityScore(event.params.arr_, ottoEntity, event.block.timestamp)
+  }
+  if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
+    let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
+    ottoEntity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
   }
   ottoEntity.save()
 

@@ -18,6 +18,7 @@ type Otto @entity {
   mintAt: BigInt!
   updateAt: BigInt!
   birthday: BigInt!
+  numericVisibleTraits: BigInt!
   constellation: Int!
   constellationBoost: Int!
   epoch: Int!
@@ -39,6 +40,7 @@ type OttoItem @entity {
   parentTokenId: BigInt
   amount: Int!
   updateAt: BigInt!
+  createdAt: BigInt!
 }
 
 type Trait @entity {
@@ -61,6 +63,7 @@ type Slot @entity {
 type Epoch @entity {
   id: ID!
   num: Int!
+  totalOttos: Int!
 }
 
 type OttoProduct @entity {

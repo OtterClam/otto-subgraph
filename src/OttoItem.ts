@@ -13,19 +13,19 @@ export function handleTransferBatch(event: TransferBatch): void {
   }
 }
 
-// function transfer(event: TransferEvent): void {
 function transfer(itemId: BigInt, from: Address, to: Address, value: BigInt, timestamp: BigInt): void {
+  // if transfer to Otto, handle in Otto Item Equipped handler
   if (to !== Address.fromString(OTTO)) {
-    // if transfer to Otto, handle in Otto Item Equipped handler
     let toEntity = getItemEntity(itemId, to, null)
     updateEntity(toEntity, timestamp)
     toEntity.rootOwner = to
+    toEntity.createdAt = timestamp
     toEntity.amount += value.toI32()
     toEntity.save()
   }
 
+  // if transfer from Otto, handle in Otto Item Took Off handler
   if (from !== Address.fromString(OTTO)) {
-    // if transfer from Otto, handle in Otto Item Took Off handler
     let fromEntity = getItemEntity(itemId, from, null)
     updateEntity(fromEntity, timestamp)
     fromEntity.amount -= value.toI32()
