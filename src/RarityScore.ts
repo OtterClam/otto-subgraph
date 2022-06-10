@@ -211,7 +211,7 @@ export function updateOttoRarityScore(otto: Otto, epoch: i32, block: BigInt): vo
   otto.rarityScore = otto.brs + otto.rrs
 }
 
-function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
+export function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
   let id = otto.id + '-' + epoch.toString()
   let entity = new Otto(id)
   for (let i = 0; i < otto.entries.length; i++) {
