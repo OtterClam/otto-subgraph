@@ -139,6 +139,7 @@ function getOttoEntity(tokenId: BigInt): Otto {
   if (entity == null) {
     entity = new Otto(id)
     entity.tokenId = tokenId
+    entity.epoch = -1
   }
   return entity
 }
@@ -158,5 +159,4 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
   let birthdayDate = new Date(entity.birthday.toI64() * 1000)
   entity.constellation = parseConstellation(birthdayDate)
   entity.legendary = info.value6
-  entity.epoch = -1
 }

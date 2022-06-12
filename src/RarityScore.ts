@@ -184,8 +184,10 @@ function calculateLegendaryBoost(otto: Otto): i32 {
 export function updateOttoRarityScore(otto: Otto, epoch: i32, block: BigInt): void {
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let totalBRS = 0
+  let epochBoost = 0
   if (block >= BigInt.fromString(OTTO_EPOCH_BOOST_BLOCK)) {
-    totalBRS = ottoV3.baseAttributesOf(otto.tokenId)[7] + ottoV3.epochBoostOf(otto.tokenId, BigInt.fromI32(epoch))[7]
+    totalBRS = ottoV3.baseAttributesOf(otto.tokenId)[7]
+    epochBoost = ottoV3.epochBoostOf(otto.tokenId, BigInt.fromI32(epoch))[7]
   }
   let totalRRS = 0
   for (let i = 0; i < otto.traits.length; i++) {
@@ -206,7 +208,8 @@ export function updateOttoRarityScore(otto: Otto, epoch: i32, block: BigInt): vo
   // log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
   otto.legendaryBoost = calculateLegendaryBoost(otto)
   otto.constellationBoost = calculateConstellationBoost(otto.birthday, epoch)
-  otto.brs = totalBRS + otto.constellationBoost + otto.legendaryBoost
+  otto.epochRarityBoost = epochBoost
+  otto.brs = totalBRS + otto.constellationBoost + otto.legendaryBoost + epochBoost
   otto.rrs = totalRRS
   otto.rarityScore = otto.brs + otto.rrs
 }
