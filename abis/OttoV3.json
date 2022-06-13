@@ -74,25 +74,6 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "tokenId_",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "int16[8]",
-        "name": "attrs_",
-        "type": "int16[8]"
-      }
-    ],
-    "name": "AttributesChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
         "name": "ottoId_",
         "type": "uint256"
       },
@@ -136,6 +117,31 @@
       }
     ],
     "name": "BeaconUpgraded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint32",
+        "name": "epoch_",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "int16[9]",
+        "name": "attrs_",
+        "type": "int16[9]"
+      }
+    ],
+    "name": "EpochBoostsChanged",
     "type": "event"
   },
   {
@@ -572,19 +578,6 @@
         "internalType": "uint256",
         "name": "tokenId_",
         "type": "uint256"
-      }
-    ],
-    "name": "devClose",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId_",
-        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -611,6 +604,83 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "epoch_",
+        "type": "uint32"
+      }
+    ],
+    "name": "epochBoostOf",
+    "outputs": [
+      {
+        "internalType": "int16[9]",
+        "name": "",
+        "type": "int16[9]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "epochBoosts",
+    "outputs": [
+      {
+        "internalType": "int16",
+        "name": "",
+        "type": "int16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "itemId_",
+        "type": "uint256"
+      }
+    ],
+    "name": "equipable",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "tokenId_",
         "type": "uint256"
       }
@@ -621,6 +691,25 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId_",
+        "type": "uint256"
+      }
+    ],
+    "name": "genderOf",
+    "outputs": [
+      {
+        "internalType": "enum IOttoV3.Gender",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -662,32 +751,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "manager_",
-        "type": "address"
-      }
-    ],
-    "name": "grantManager",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "minter_",
-        "type": "address"
-      }
-    ],
-    "name": "grantMinter",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1172,32 +1235,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "manager_",
-        "type": "address"
-      }
-    ],
-    "name": "revokeManager",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "minter_",
-        "type": "address"
-      }
-    ],
-    "name": "revokeMinter",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -1603,6 +1640,47 @@
       }
     ],
     "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int16[8]",
+        "name": "delta_",
+        "type": "int16[8]"
+      }
+    ],
+    "name": "updateBaseAttributes",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "epoch_",
+        "type": "uint32"
+      },
+      {
+        "internalType": "int16[8]",
+        "name": "delta_",
+        "type": "int16[8]"
+      }
+    ],
+    "name": "updateEpochBoost",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

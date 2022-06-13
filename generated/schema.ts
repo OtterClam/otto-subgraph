@@ -37,6 +37,8 @@ export class Otto extends Entity {
     this.set("rarityScore", Value.fromI32(0));
     this.set("items", Value.fromStringArray(new Array(0)));
     this.set("traits", Value.fromStringArray(new Array(0)));
+    this.set("diceCount", Value.fromI32(0));
+    this.set("epochRarityBoost", Value.fromI32(0));
   }
 
   save(): void {
@@ -252,6 +254,24 @@ export class Otto extends Entity {
 
   set traits(value: Array<string>) {
     this.set("traits", Value.fromStringArray(value));
+  }
+
+  get diceCount(): i32 {
+    let value = this.get("diceCount");
+    return value!.toI32();
+  }
+
+  set diceCount(value: i32) {
+    this.set("diceCount", Value.fromI32(value));
+  }
+
+  get epochRarityBoost(): i32 {
+    let value = this.get("epochRarityBoost");
+    return value!.toI32();
+  }
+
+  set epochRarityBoost(value: i32) {
+    this.set("epochRarityBoost", Value.fromI32(value));
   }
 }
 

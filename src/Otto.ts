@@ -1,11 +1,11 @@
 import { Address, BigInt, log, store } from '@graphprotocol/graph-ts'
 import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoContract'
 import { OpenPortal, OttoV2Contract, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
-import { ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
+import { EpochBoostsChanged, ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
 import { Otto } from '../generated/schema'
 import { OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
-import { updateRarityScore } from './RarityScore'
+import { updateOrCreateOttoSnapshot, updateOttoRarityScore, updateRarityScore } from './RarityScore'
 import { parseConstellation } from './utils/Constellation'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
@@ -68,7 +68,7 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   updateV2(ottoEntity, tokenId)
   ottoEntity.updateAt = event.block.timestamp
   if (tokenId.ge(BigInt.fromString(OTTO_RARITY_SCORE_START_ID))) {
-    updateRarityScore(event.params.arr_, ottoEntity, event.block.timestamp)
+    updateRarityScore(event.params.arr_, ottoEntity, event.block.timestamp, event.block.number)
   }
   if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
     let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
@@ -81,6 +81,17 @@ export function handleTraitsChanged(event: TraitsChanged): void {
     ottoEntity.items.length.toString(),
     ottoEntity.legendaryBoost.toString(),
   ])
+}
+
+export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
+  let tokenId = event.params.ottoId_
+  let ottoEntity = getOttoEntity(tokenId)
+  updateOttoRarityScore(ottoEntity, event.params.epoch_.toI32(), event.block.number)
+  ottoEntity.diceCount = event.params.attrs_[8]
+  ottoEntity.updateAt = event.block.timestamp
+  ottoEntity.save()
+
+  updateOrCreateOttoSnapshot(ottoEntity, event.params.epoch_.toI32())
 }
 
 export function handleItemEquipped(event: ItemEquipped): void {
@@ -128,6 +139,7 @@ function getOttoEntity(tokenId: BigInt): Otto {
   if (entity == null) {
     entity = new Otto(id)
     entity.tokenId = tokenId
+    entity.epoch = -1
   }
   return entity
 }
@@ -147,5 +159,4 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
   let birthdayDate = new Date(entity.birthday.toI64() * 1000)
   entity.constellation = parseConstellation(birthdayDate)
   entity.legendary = info.value6
-  entity.epoch = -1
 }

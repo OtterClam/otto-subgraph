@@ -84,28 +84,6 @@ export class ApprovalForAll__Params {
   }
 }
 
-export class AttributesChanged extends ethereum.Event {
-  get params(): AttributesChanged__Params {
-    return new AttributesChanged__Params(this);
-  }
-}
-
-export class AttributesChanged__Params {
-  _event: AttributesChanged;
-
-  constructor(event: AttributesChanged) {
-    this._event = event;
-  }
-
-  get tokenId_(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get attrs_(): Array<i32> {
-    return this._event.parameters[1].value.toI32Array();
-  }
-}
-
 export class BaseAttributesChanged extends ethereum.Event {
   get params(): BaseAttributesChanged__Params {
     return new BaseAttributesChanged__Params(this);
@@ -165,6 +143,32 @@ export class BeaconUpgraded__Params {
 
   get beacon(): Address {
     return this._event.parameters[0].value.toAddress();
+  }
+}
+
+export class EpochBoostsChanged extends ethereum.Event {
+  get params(): EpochBoostsChanged__Params {
+    return new EpochBoostsChanged__Params(this);
+  }
+}
+
+export class EpochBoostsChanged__Params {
+  _event: EpochBoostsChanged;
+
+  constructor(event: EpochBoostsChanged) {
+    this._event = event;
+  }
+
+  get ottoId_(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get epoch_(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get attrs_(): Array<i32> {
+    return this._event.parameters[2].value.toI32Array();
   }
 }
 
@@ -681,6 +685,101 @@ export class OttoV3Contract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  epochBoostOf(ottoId_: BigInt, epoch_: BigInt): Array<i32> {
+    let result = super.call(
+      "epochBoostOf",
+      "epochBoostOf(uint256,uint32):(int16[9])",
+      [
+        ethereum.Value.fromUnsignedBigInt(ottoId_),
+        ethereum.Value.fromUnsignedBigInt(epoch_)
+      ]
+    );
+
+    return result[0].toI32Array();
+  }
+
+  try_epochBoostOf(
+    ottoId_: BigInt,
+    epoch_: BigInt
+  ): ethereum.CallResult<Array<i32>> {
+    let result = super.tryCall(
+      "epochBoostOf",
+      "epochBoostOf(uint256,uint32):(int16[9])",
+      [
+        ethereum.Value.fromUnsignedBigInt(ottoId_),
+        ethereum.Value.fromUnsignedBigInt(epoch_)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32Array());
+  }
+
+  epochBoosts(param0: BigInt, param1: BigInt, param2: BigInt): i32 {
+    let result = super.call(
+      "epochBoosts",
+      "epochBoosts(uint256,uint32,uint256):(int16)",
+      [
+        ethereum.Value.fromUnsignedBigInt(param0),
+        ethereum.Value.fromUnsignedBigInt(param1),
+        ethereum.Value.fromUnsignedBigInt(param2)
+      ]
+    );
+
+    return result[0].toI32();
+  }
+
+  try_epochBoosts(
+    param0: BigInt,
+    param1: BigInt,
+    param2: BigInt
+  ): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "epochBoosts",
+      "epochBoosts(uint256,uint32,uint256):(int16)",
+      [
+        ethereum.Value.fromUnsignedBigInt(param0),
+        ethereum.Value.fromUnsignedBigInt(param1),
+        ethereum.Value.fromUnsignedBigInt(param2)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
+  equipable(ottoId_: BigInt, itemId_: BigInt): boolean {
+    let result = super.call("equipable", "equipable(uint256,uint256):(bool)", [
+      ethereum.Value.fromUnsignedBigInt(ottoId_),
+      ethereum.Value.fromUnsignedBigInt(itemId_)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_equipable(
+    ottoId_: BigInt,
+    itemId_: BigInt
+  ): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "equipable",
+      "equipable(uint256,uint256):(bool)",
+      [
+        ethereum.Value.fromUnsignedBigInt(ottoId_),
+        ethereum.Value.fromUnsignedBigInt(itemId_)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
   exists(tokenId_: BigInt): boolean {
     let result = super.call("exists", "exists(uint256):(bool)", [
       ethereum.Value.fromUnsignedBigInt(tokenId_)
@@ -698,6 +797,25 @@ export class OttoV3Contract extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  genderOf(tokenId_: BigInt): i32 {
+    let result = super.call("genderOf", "genderOf(uint256):(uint8)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId_)
+    ]);
+
+    return result[0].toI32();
+  }
+
+  try_genderOf(tokenId_: BigInt): ethereum.CallResult<i32> {
+    let result = super.tryCall("genderOf", "genderOf(uint256):(uint8)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId_)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
   getApproved(tokenId: BigInt): Address {
@@ -1377,36 +1495,6 @@ export class ApproveCall__Outputs {
   }
 }
 
-export class DevCloseCall extends ethereum.Call {
-  get inputs(): DevCloseCall__Inputs {
-    return new DevCloseCall__Inputs(this);
-  }
-
-  get outputs(): DevCloseCall__Outputs {
-    return new DevCloseCall__Outputs(this);
-  }
-}
-
-export class DevCloseCall__Inputs {
-  _call: DevCloseCall;
-
-  constructor(call: DevCloseCall) {
-    this._call = call;
-  }
-
-  get tokenId_(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class DevCloseCall__Outputs {
-  _call: DevCloseCall;
-
-  constructor(call: DevCloseCall) {
-    this._call = call;
-  }
-}
-
 export class DevSummonCall extends ethereum.Call {
   get inputs(): DevSummonCall__Inputs {
     return new DevSummonCall__Inputs(this);
@@ -1445,66 +1533,6 @@ export class DevSummonCall__Outputs {
   _call: DevSummonCall;
 
   constructor(call: DevSummonCall) {
-    this._call = call;
-  }
-}
-
-export class GrantManagerCall extends ethereum.Call {
-  get inputs(): GrantManagerCall__Inputs {
-    return new GrantManagerCall__Inputs(this);
-  }
-
-  get outputs(): GrantManagerCall__Outputs {
-    return new GrantManagerCall__Outputs(this);
-  }
-}
-
-export class GrantManagerCall__Inputs {
-  _call: GrantManagerCall;
-
-  constructor(call: GrantManagerCall) {
-    this._call = call;
-  }
-
-  get manager_(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class GrantManagerCall__Outputs {
-  _call: GrantManagerCall;
-
-  constructor(call: GrantManagerCall) {
-    this._call = call;
-  }
-}
-
-export class GrantMinterCall extends ethereum.Call {
-  get inputs(): GrantMinterCall__Inputs {
-    return new GrantMinterCall__Inputs(this);
-  }
-
-  get outputs(): GrantMinterCall__Outputs {
-    return new GrantMinterCall__Outputs(this);
-  }
-}
-
-export class GrantMinterCall__Inputs {
-  _call: GrantMinterCall;
-
-  constructor(call: GrantMinterCall) {
-    this._call = call;
-  }
-
-  get minter_(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class GrantMinterCall__Outputs {
-  _call: GrantMinterCall;
-
-  constructor(call: GrantMinterCall) {
     this._call = call;
   }
 }
@@ -1813,66 +1841,6 @@ export class RenounceRoleCall__Outputs {
   _call: RenounceRoleCall;
 
   constructor(call: RenounceRoleCall) {
-    this._call = call;
-  }
-}
-
-export class RevokeManagerCall extends ethereum.Call {
-  get inputs(): RevokeManagerCall__Inputs {
-    return new RevokeManagerCall__Inputs(this);
-  }
-
-  get outputs(): RevokeManagerCall__Outputs {
-    return new RevokeManagerCall__Outputs(this);
-  }
-}
-
-export class RevokeManagerCall__Inputs {
-  _call: RevokeManagerCall;
-
-  constructor(call: RevokeManagerCall) {
-    this._call = call;
-  }
-
-  get manager_(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class RevokeManagerCall__Outputs {
-  _call: RevokeManagerCall;
-
-  constructor(call: RevokeManagerCall) {
-    this._call = call;
-  }
-}
-
-export class RevokeMinterCall extends ethereum.Call {
-  get inputs(): RevokeMinterCall__Inputs {
-    return new RevokeMinterCall__Inputs(this);
-  }
-
-  get outputs(): RevokeMinterCall__Outputs {
-    return new RevokeMinterCall__Outputs(this);
-  }
-}
-
-export class RevokeMinterCall__Inputs {
-  _call: RevokeMinterCall;
-
-  constructor(call: RevokeMinterCall) {
-    this._call = call;
-  }
-
-  get minter_(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class RevokeMinterCall__Outputs {
-  _call: RevokeMinterCall;
-
-  constructor(call: RevokeMinterCall) {
     this._call = call;
   }
 }
@@ -2331,6 +2299,78 @@ export class TransferOwnershipCall__Outputs {
   _call: TransferOwnershipCall;
 
   constructor(call: TransferOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateBaseAttributesCall extends ethereum.Call {
+  get inputs(): UpdateBaseAttributesCall__Inputs {
+    return new UpdateBaseAttributesCall__Inputs(this);
+  }
+
+  get outputs(): UpdateBaseAttributesCall__Outputs {
+    return new UpdateBaseAttributesCall__Outputs(this);
+  }
+}
+
+export class UpdateBaseAttributesCall__Inputs {
+  _call: UpdateBaseAttributesCall;
+
+  constructor(call: UpdateBaseAttributesCall) {
+    this._call = call;
+  }
+
+  get ottoId_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get delta_(): Array<i32> {
+    return this._call.inputValues[1].value.toI32Array();
+  }
+}
+
+export class UpdateBaseAttributesCall__Outputs {
+  _call: UpdateBaseAttributesCall;
+
+  constructor(call: UpdateBaseAttributesCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateEpochBoostCall extends ethereum.Call {
+  get inputs(): UpdateEpochBoostCall__Inputs {
+    return new UpdateEpochBoostCall__Inputs(this);
+  }
+
+  get outputs(): UpdateEpochBoostCall__Outputs {
+    return new UpdateEpochBoostCall__Outputs(this);
+  }
+}
+
+export class UpdateEpochBoostCall__Inputs {
+  _call: UpdateEpochBoostCall;
+
+  constructor(call: UpdateEpochBoostCall) {
+    this._call = call;
+  }
+
+  get ottoId_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get epoch_(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get delta_(): Array<i32> {
+    return this._call.inputValues[2].value.toI32Array();
+  }
+}
+
+export class UpdateEpochBoostCall__Outputs {
+  _call: UpdateEpochBoostCall;
+
+  constructor(call: UpdateEpochBoostCall) {
     this._call = call;
   }
 }
