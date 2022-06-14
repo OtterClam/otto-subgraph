@@ -246,6 +246,10 @@ function updateOrCreateEpoch(epoch: i32, dirtyOttoIds: Array<string>, currentOtt
       if (otto == null) {
         continue
       }
+      // clear epoch rarity boost when new epoch starts
+      otto.epochRarityBoost = 0
+      otto.diceCount = 0
+      otto.save()
       updateOrCreateOttoSnapshot(otto, epoch)
     }
   }
