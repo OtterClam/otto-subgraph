@@ -32,7 +32,6 @@ function loadOrCreateSlots(): Array<Slot> {
 function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait> {
   let traits = new Array<Trait>()
   let PFP = loadPFP()
-  // const start = Date.now()
   for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
     let code = codes[i]
     let slotId = slots[i].id
@@ -63,7 +62,6 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
     }
     traits.push(trait)
   }
-  // log.warning('load traits {}ms', [(Date.now() - start).toString()])
   return traits
 }
 
@@ -231,8 +229,8 @@ export function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
 
 export function toEpoch(timestamp: BigInt): i32 {
   let ts = timestamp.toI32()
-  let firstEpochTs = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH).toI32()
-  let duration = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_DURATION).toI32()
+  let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
+  let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
   // log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
   //   ts.toString(),
   //   firstEpochTs.toString(),
@@ -246,8 +244,8 @@ export function toEpoch(timestamp: BigInt): i32 {
 }
 
 function toEpochEndTimestamp(epoch: i32): BigInt {
-  let firstEpochTs = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH).toI32()
-  let duration = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_DURATION).toI32()
+  let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
+  let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
   return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
 }
 
@@ -370,10 +368,9 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   otto.traits = newTraits.map<string>((t) => t.id)
   updateOttoRarityScore(otto, epoch, block)
   updateOrCreateOttoSnapshot(otto, epoch)
-  updateOrCreateEpoch(epoch, otto)
 }
 
-function updateOrCreateEpoch(epoch: i32, currentOtto: Otto): void {
+export function updateOrCreateEpoch(epoch: i32): void {
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
   let total = ottoV3.totalSupply().toI32() - offset
@@ -384,13 +381,8 @@ function updateOrCreateEpoch(epoch: i32, currentOtto: Otto): void {
     log.warning('create epoch: {}', [epochId])
     epochEntity = new Epoch(epochId)
     epochEntity.num = epoch
-    currentOtto.epochRarityBoost = 0
-    currentOtto.diceCount = 0
     for (let i = offset; i < total; i++) {
       let id = OTTO + '-' + i.toString()
-      if (id == currentOtto.id) {
-        continue
-      }
       let otto = Otto.load(id)
       if (otto == null) {
         continue

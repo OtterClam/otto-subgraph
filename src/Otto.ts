@@ -5,7 +5,13 @@ import { EpochBoostsChanged, ItemEquipped, ItemTookOff, OttoV3Contract } from '.
 import { Otto } from '../generated/schema'
 import { OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
-import { updateOrCreateOttoSnapshot, updateOttoRarityScore, updateRarityScore, toEpoch } from './RarityScore'
+import {
+  updateOrCreateOttoSnapshot,
+  updateOttoRarityScore,
+  updateRarityScore,
+  toEpoch,
+  updateOrCreateEpoch,
+} from './RarityScore'
 import { parseConstellation } from './utils/Constellation'
 
 let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
@@ -75,6 +81,8 @@ export function handleTraitsChanged(event: TraitsChanged): void {
     ottoEntity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
   }
   ottoEntity.save()
+
+  updateOrCreateEpoch(toEpoch(event.block.timestamp))
 
   log.info('handleTraitsChanged, otto: {}, item count: {}, legendaryBoost: {}', [
     tokenId.toString(),
