@@ -1,4 +1,4 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 import { OttoV3Contract } from '../generated/Otto/OttoV3Contract'
 import { Epoch, Otto, Slot, Trait } from '../generated/schema'
 import {
@@ -227,40 +227,10 @@ export function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
   entity.save()
 }
 
-function updateOrCreateEpoch(epoch: i32, dirtyOttoIds: Array<string>, currentOttoId: string): void {
-  let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
-  let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
-  let total = ottoV3.totalSupply().toI32() - offset
-
-  let epochId = 'ottopia_epoch_' + epoch.toString()
-  let epochEntity = Epoch.load(epochId)
-  if (epochEntity == null) {
-    epochEntity = new Epoch(epochId)
-    epochEntity.num = epoch
-    for (let i = offset; i < total; i++) {
-      let id = OTTO + '-' + i.toString()
-      if (dirtyOttoIds.includes(id) || id == currentOttoId) {
-        continue
-      }
-      let otto = Otto.load(id)
-      if (otto == null) {
-        continue
-      }
-      // clear epoch rarity boost when new epoch starts
-      otto.epochRarityBoost = 0
-      otto.diceCount = 0
-      otto.save()
-      updateOrCreateOttoSnapshot(otto, epoch)
-    }
-  }
-  epochEntity.totalOttos = total
-  epochEntity.save()
-}
-
-function toEpoch(timestamp: BigInt): i32 {
+export function toEpoch(timestamp: BigInt): i32 {
   let ts = timestamp.toI32()
-  let firstEpochTs = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH).toI32()
-  let duration = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_DURATION).toI32()
+  let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
+  let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
   // log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
   //   ts.toString(),
   //   firstEpochTs.toString(),
@@ -274,8 +244,8 @@ function toEpoch(timestamp: BigInt): i32 {
 }
 
 function toEpochEndTimestamp(epoch: i32): BigInt {
-  let firstEpochTs = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH).toI32()
-  let duration = BigInt.fromString(OTTOPIA_RARITY_SCORE_RANKING_DURATION).toI32()
+  let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
+  let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
   return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
 }
 
@@ -360,7 +330,8 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
     oldTraits = newTraits
   }
 
-  // log.warning('dirty trais ids: {}', [dirtyOldTraits.map<string>((t) => t.id).join(', ')])
+  // log.warning(' dirty trais ids: {}', [dirtyOldTraits.map<string>((t) => t.id).join(', ')])
+  // log.warning(' dirty trais count: {}', [dirtyOldTraits.length.toString()])
 
   // update all changed traits
   for (let i = 0; i < dirtyOldTraits.length; i++) {
@@ -378,7 +349,8 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
     newTraits[i].save()
   }
 
-  // log.warning('dirty otto ids: {}', [dirtyOttoIds.join(', ')])
+  // log.warning('dirty otto : {}', [dirtyOttoIds.join(', ')])
+  // log.warning('dirty otto count: {} hash: {}', [dirtyOttoIds.length.toString(), hash])
   // update all changed otto
   for (let i = 0; i < dirtyOttoIds.length; i++) {
     let id = dirtyOttoIds[i]
@@ -396,5 +368,32 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   otto.traits = newTraits.map<string>((t) => t.id)
   updateOttoRarityScore(otto, epoch, block)
   updateOrCreateOttoSnapshot(otto, epoch)
-  updateOrCreateEpoch(epoch, dirtyOttoIds, otto.id)
+}
+
+export function updateOrCreateEpoch(epoch: i32): void {
+  let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
+  let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
+  let total = ottoV3.totalSupply().toI32() - offset
+
+  let epochId = 'ottopia_epoch_' + epoch.toString()
+  let epochEntity = Epoch.load(epochId)
+  if (epochEntity == null) {
+    log.warning('create epoch: {}', [epochId])
+    epochEntity = new Epoch(epochId)
+    epochEntity.num = epoch
+    for (let i = offset; i < total; i++) {
+      let id = OTTO + '-' + i.toString()
+      let otto = Otto.load(id)
+      if (otto == null) {
+        continue
+      }
+      // clear epoch rarity boost when new epoch starts
+      otto.epochRarityBoost = 0
+      otto.diceCount = 0
+      otto.save()
+      updateOrCreateOttoSnapshot(otto, epoch)
+    }
+  }
+  epochEntity.totalOttos = total
+  epochEntity.save()
 }
