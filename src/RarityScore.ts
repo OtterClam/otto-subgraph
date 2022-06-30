@@ -186,8 +186,13 @@ export function updateOttoRarityScore(otto: Otto, epoch: i32, block: BigInt): vo
   let totalBRS = 0
   let epochBoost = 0
   if (block >= BigInt.fromString(OTTO_EPOCH_BOOST_BLOCK)) {
-    totalBRS = ottoV3.baseAttributesOf(otto.tokenId)[7]
-    epochBoost = ottoV3.epochBoostOf(otto.tokenId, BigInt.fromI32(epoch))[7]
+    let baseAttributes = ottoV3.try_baseAttributesOf(otto.tokenId)
+    if (!baseAttributes.reverted) {
+      totalBRS = baseAttributes.value[7]
+      epochBoost = ottoV3.epochBoostOf(otto.tokenId, BigInt.fromI32(epoch))[7]
+    } else {
+      log.error('load baseAttributesOf {} failed', [otto.tokenId.toString()])
+    }
   }
   let totalRRS = 0
   for (let i = 0; i < otto.traits.length; i++) {
