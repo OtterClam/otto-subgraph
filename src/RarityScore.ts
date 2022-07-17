@@ -12,6 +12,7 @@ import { parseConstellation } from './utils/Constellation'
 import { loadPFP } from './utils/PFP'
 
 const NUM_OTTO_TRAITS = 13
+const EPOCH_3_EXTEND_TS = 86400 * 2
 
 function loadOrCreateSlots(): Array<Slot> {
   let slots = new Array<Slot>()
@@ -242,7 +243,6 @@ export function toEpoch(timestamp: BigInt): i32 {
   let ts = timestamp.toI32()
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
-  let epoch3extendTs = 86400 * 2
   // log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
   //   ts.toString(),
   //   firstEpochTs.toString(),
@@ -252,21 +252,20 @@ export function toEpoch(timestamp: BigInt): i32 {
     return 0
   } else if (ts >= firstEpochTs && ts < firstEpochTs + 3 * duration) {
     return (ts - firstEpochTs) / duration
-  } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + epoch3extendTs + 4 * duration) {
+  } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration) {
     return 3
   } else {
-    return (ts + epoch3extendTs - firstEpochTs) / duration
+    return (ts + EPOCH_3_EXTEND_TS - firstEpochTs) / duration
   }
 }
 
 function toEpochEndTimestamp(epoch: i32): BigInt {
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
-  let epoch3extendTs = 86400 * 2
   if (epoch < 3) {
     return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
   } else {
-    return BigInt.fromI64(firstEpochTs + epoch3extendTs + duration * (epoch + 1))
+    return BigInt.fromI64(firstEpochTs + EPOCH_3_EXTEND_TS + duration * (epoch + 1))
   }
 }
 
