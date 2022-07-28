@@ -39,7 +39,6 @@ export function handleTransfer(event: TransferEvent): void {
       // handle owned items transfer
       let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
       let itemIds = ottoV3.ownedItemsOf(tokenId)
-      entity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
       for (let i = 0; i < itemIds.length; i++) {
         let itemId = itemIds[i]
         let itemEntity = getItemEntity(itemId, Address.fromString(OTTO), tokenId)
@@ -77,6 +76,10 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   ottoEntity.updateAt = event.block.timestamp
   if (tokenId.ge(BigInt.fromString(OTTO_RARITY_SCORE_START_ID))) {
     updateRarityScore(event.params.arr_, ottoEntity, event.block.timestamp, event.block.number)
+  }
+  if (event.block.number >= BigInt.fromString(OTTO_V2_BLOCK)) {
+    let ottoV2 = OttoV2Contract.bind(Address.fromString(OTTO))
+    ottoEntity.numericVisibleTraits = ottoV2.infos(tokenId).value4
   }
   if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
     let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
