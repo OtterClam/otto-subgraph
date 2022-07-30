@@ -255,7 +255,7 @@ export function toEpoch(timestamp: BigInt): i32 {
   } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration) {
     return 3
   } else {
-    return (ts + EPOCH_3_EXTEND_TS - firstEpochTs) / duration
+    return (ts - firstEpochTs - EPOCH_3_EXTEND_TS) / duration
   }
 }
 
