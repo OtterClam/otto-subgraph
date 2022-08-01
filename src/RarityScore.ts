@@ -182,25 +182,9 @@ function calculateLegendaryBoost(otto: Otto): i32 {
   return boost
 }
 
-export function updateOttoRarityScore(otto: Otto, epoch: i32, block: BigInt): void {
-  let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
-  let totalBRS = 0
-  let epochBoost = 0
-  if (block >= BigInt.fromString(OTTO_EPOCH_BOOST_BLOCK)) {
-    let baseAttributes = ottoV3.try_baseAttributesOf(otto.tokenId)
-    let epochBoosts = ottoV3.try_epochBoostOf(otto.tokenId, BigInt.fromI32(epoch))
-    if (!baseAttributes.reverted && !epochBoosts.reverted) {
-      totalBRS = baseAttributes.value[7]
-      epochBoost = epochBoosts.value[7]
-    } else {
-      if (baseAttributes.reverted) {
-        log.error('load baseAttributesOf {} failed', [otto.tokenId.toString()])
-      }
-      if (epochBoosts.reverted) {
-        log.error('load epochBoostOf {} failed', [otto.tokenId.toString()])
-      }
-    }
-  }
+export function updateOttoRarityScore(otto: Otto, epoch: i32): void {
+  let totalBRS = otto.baseRarityBoost
+  let epochBoost = otto.epochRarityBoost
   let totalRRS = 0
   for (let i = 0; i < otto.traits.length; i++) {
     let traitId = otto.traits[i]
@@ -269,7 +253,7 @@ function toEpochEndTimestamp(epoch: i32): BigInt {
   }
 }
 
-export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigInt, block: BigInt): void {
+export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigInt): void {
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
   let dirtyOttoIds = new Array<string>()
@@ -378,7 +362,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
     if (dirtyOtto == null) {
       continue
     }
-    updateOttoRarityScore(dirtyOtto, epoch, block)
+    updateOttoRarityScore(dirtyOtto, epoch)
     updateOrCreateOttoSnapshot(dirtyOtto, epoch)
     dirtyOtto.save()
   }
@@ -386,7 +370,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   // log.warning('current otto id: {}', [otto.id])
 
   otto.traits = newTraits.map<string>((t) => t.id)
-  updateOttoRarityScore(otto, epoch, block)
+  updateOttoRarityScore(otto, epoch)
   updateOrCreateOttoSnapshot(otto, epoch)
 }
 

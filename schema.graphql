@@ -29,6 +29,7 @@ type Otto @entity {
   traits: [Trait!]!
   diceCount: Int!
   epochRarityBoost: Int!
+  baseRarityBoost: Int!
 }
 
 type OttoItem @entity {
