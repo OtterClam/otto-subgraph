@@ -116,23 +116,23 @@ function replaceTopCountTraitByCount(slot: Slot, count: i32): void {
 function collectOttoIds(ids: Array<string>, trait: Trait): void {
   for (let i = 0; i < trait.ottos.length; i++) {
     let ottoId = trait.ottos[i]
-    // if (ids.indexOf(ottoId) == -1) {
-    ids.push(ottoId)
-    //   log.warning('collect changed otto {}', [ottoId])
-    // } else {
-    //   log.warning('skip collecting changed otto {}', [ottoId])
-    // }
+    if (ids.indexOf(ottoId) == -1) {
+      ids.push(ottoId)
+      //   log.warning('collect changed otto {}', [ottoId])
+      // } else {
+      //   log.warning('skip collecting changed otto {}', [ottoId])
+    }
   }
 }
 
 function collectTrait(traits: Array<Trait>, trait: Trait): void {
-  // let traitIds = traits.map<string>((t) => t.id)
-  // if (traitIds.indexOf(trait.id) == -1) {
-  traits.push(trait)
-  //   log.warning('collect changed trait {}', [trait.id])
-  // } else {
-  //   log.warning('skip collecting changed trait {}', [trait.id])
-  // }
+  let traitIds = traits.map<string>((t) => t.id)
+  if (traitIds.indexOf(trait.id) == -1) {
+    traits.push(trait)
+    //   log.warning('collect changed trait {}', [trait.id])
+    // } else {
+    //   log.warning('skip collecting changed trait {}', [trait.id])
+  }
 }
 
 function collectTraitsInSlotExcept(traits: Array<Trait>, slot: Slot, skipped: Trait): void {
