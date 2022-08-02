@@ -400,14 +400,15 @@ export function updateOrCreateEpoch(epoch: i32): void {
         continue
       }
       updateOttoRarityScore(otto, epoch)
+      if (epoch > 0) {
+        updateOrCreateOttoSnapshot(otto, epoch - 1)
+      }
+
       // clear epoch rarity boost when new epoch starts
       otto.epochRarityBoost = 0
       otto.diceCount = 0
       otto.save()
       updateOrCreateOttoSnapshot(otto, epoch)
-      if (epoch > 0) {
-        updateOrCreateOttoSnapshot(otto, epoch - 1)
-      }
     }
   }
   epochEntity.totalOttos = total
