@@ -74,8 +74,6 @@ export function handleSummon(event: SummonOtto): void {
 }
 
 export function handleTraitsChanged(event: TraitsChanged): void {
-  updateOrCreateEpoch(toEpoch(event.block.timestamp))
-
   let tokenId = event.params.tokenId_
   let ottoEntity = getOttoEntity(tokenId)
   ottoEntity.updateAt = event.block.timestamp
@@ -87,6 +85,7 @@ export function handleTraitsChanged(event: TraitsChanged): void {
     ottoEntity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
   }
   ottoEntity.save()
+  updateOrCreateEpoch(toEpoch(event.block.timestamp))
   log.info('handleTraitsChanged, otto: {}, item count: {}, legendaryBoost: {}', [
     tokenId.toString(),
     ottoEntity.items.length.toString(),

@@ -406,7 +406,6 @@ export function updateOrCreateEpoch(epoch: i32): void {
       otto.save()
       updateOrCreateOttoSnapshot(otto, epoch)
       if (epoch > 0) {
-        // save last epoch
         updateOrCreateOttoSnapshot(otto, epoch - 1)
       }
     }
