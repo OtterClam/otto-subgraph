@@ -13,6 +13,7 @@ import { loadPFP } from './utils/PFP'
 
 const NUM_OTTO_TRAITS = 13
 const EPOCH_3_EXTEND_TS = 86400 * 2
+const EPOCH_4_EXTEND_TS = 86400 * 2
 
 function loadOrCreateSlots(): Array<Slot> {
   let slots = new Array<Slot>()
@@ -238,8 +239,13 @@ export function toEpoch(timestamp: BigInt): i32 {
     return (ts - firstEpochTs) / duration
   } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration) {
     return 3
+  } else if (
+    ts >= firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration &&
+    ts < firstEpochTs + EPOCH_3_EXTEND_TS + EPOCH_4_EXTEND_TS + 5 * duration
+  ) {
+    return 4
   } else {
-    return (ts - firstEpochTs - EPOCH_3_EXTEND_TS) / duration
+    return (ts - firstEpochTs - EPOCH_3_EXTEND_TS - EPOCH_4_EXTEND_TS) / duration
   }
 }
 
