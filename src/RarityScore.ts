@@ -2,7 +2,7 @@ import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 import { OttoV3Contract } from '../generated/Otto/OttoV3Contract'
 import { Epoch, Otto, Slot, Trait } from '../generated/schema'
 import {
-  CURRENT_EPOCH,
+  LATEST_TIMESTAMP,
   OTTO,
   OTTOPIA_RARITY_SCORE_RANKING_DURATION,
   OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH,
@@ -365,7 +365,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   updateOttoRarityScore(otto, epoch)
   updateOrCreateOttoSnapshot(otto, epoch)
 
-  if (epoch < CURRENT_EPOCH) {
+  if (timestamp.toI32() < LATEST_TIMESTAMP) {
     return
   }
 
@@ -390,7 +390,8 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   }
 }
 
-export function updateOrCreateEpoch(epoch: i32): void {
+export function updateOrCreateEpoch(timestamp: BigInt): void {
+  let epoch = toEpoch(timestamp)
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
   let total = ottoV3.totalSupply().toI32() - offset
@@ -418,6 +419,17 @@ export function updateOrCreateEpoch(epoch: i32): void {
       otto.save()
       updateOrCreateOttoSnapshot(otto, epoch)
     }
+  } else if (timestamp.toI32() >= LATEST_TIMESTAMP && !epochEntity.ottosSynced) {
+    for (let i = offset; i < total; i++) {
+      let id = OTTO + '-' + i.toString()
+      let otto = Otto.load(id)
+      if (otto == null) {
+        continue
+      }
+      updateOttoRarityScore(otto, epoch)
+      otto.save()
+    }
+    epochEntity.ottosSynced = true
   }
   epochEntity.totalOttos = total
   epochEntity.save()

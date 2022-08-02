@@ -66,6 +66,7 @@ type Slot @entity {
 type Epoch @entity {
   id: ID!
   num: Int!
+  ottosSynced: Boolean!
   totalOttos: Int!
 }
 

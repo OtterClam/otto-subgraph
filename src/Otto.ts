@@ -85,7 +85,7 @@ export function handleTraitsChanged(event: TraitsChanged): void {
     ottoEntity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
   }
   ottoEntity.save()
-  updateOrCreateEpoch(toEpoch(event.block.timestamp))
+  updateOrCreateEpoch(event.block.timestamp)
   log.info('handleTraitsChanged, otto: {}, item count: {}, legendaryBoost: {}', [
     tokenId.toString(),
     ottoEntity.items.length.toString(),
@@ -94,8 +94,7 @@ export function handleTraitsChanged(event: TraitsChanged): void {
 }
 
 export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
-  let epoch = toEpoch(event.block.timestamp)
-  updateOrCreateEpoch(epoch)
+  updateOrCreateEpoch(event.block.timestamp)
 
   let tokenId = event.params.ottoId_
   let ottoEntity = getOttoEntity(tokenId)
@@ -103,6 +102,7 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   ottoEntity.diceCount = event.params.attrs_[8]
   ottoEntity.updateAt = event.block.timestamp
   updateOttoRarityScore(ottoEntity, event.params.epoch_.toI32())
+  let epoch = toEpoch(event.block.timestamp)
   if (epoch === event.params.epoch_.toI32()) {
     ottoEntity.save()
   }
@@ -110,13 +110,13 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
 }
 
 export function handleBaseAttributeChanged(event: BaseAttributesChanged): void {
-  let epoch = toEpoch(event.block.timestamp)
-  updateOrCreateEpoch(epoch)
+  updateOrCreateEpoch(event.block.timestamp)
 
   let tokenId = event.params.ottoId_
   let ottoEntity = getOttoEntity(tokenId)
   ottoEntity.baseRarityBoost = event.params.attrs_[7]
   ottoEntity.updateAt = event.block.timestamp
+  let epoch = toEpoch(event.block.timestamp)
   updateOttoRarityScore(ottoEntity, epoch)
   updateOrCreateOttoSnapshot(ottoEntity, epoch)
 }

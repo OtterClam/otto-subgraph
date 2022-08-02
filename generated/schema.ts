@@ -590,6 +590,7 @@ export class Epoch extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("num", Value.fromI32(0));
+    this.set("ottosSynced", Value.fromBoolean(false));
     this.set("totalOttos", Value.fromI32(0));
   }
 
@@ -626,6 +627,15 @@ export class Epoch extends Entity {
 
   set num(value: i32) {
     this.set("num", Value.fromI32(value));
+  }
+
+  get ottosSynced(): boolean {
+    let value = this.get("ottosSynced");
+    return value!.toBoolean();
+  }
+
+  set ottosSynced(value: boolean) {
+    this.set("ottosSynced", Value.fromBoolean(value));
   }
 
   get totalOttos(): i32 {
