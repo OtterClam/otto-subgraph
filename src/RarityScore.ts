@@ -254,7 +254,7 @@ function toEpochEndTimestamp(epoch: i32): BigInt {
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
   if (epoch < 3) {
     return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
-  } else if (epoch == 3 || epoch == 4) {
+  } else if (epoch == 3) {
     return BigInt.fromI64(firstEpochTs + EPOCH_3_EXTEND_TS + duration * (epoch + 1))
   } else {
     return BigInt.fromI64(firstEpochTs + EPOCH_3_EXTEND_TS + EPOCH_4_EXTEND_TS + duration * (epoch + 1))
