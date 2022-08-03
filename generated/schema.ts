@@ -15,31 +15,6 @@ export class Otto extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
-
-    this.set("tokenId", Value.fromBigInt(BigInt.zero()));
-    this.set("tokenURI", Value.fromString(""));
-    this.set("owner", Value.fromBytes(Bytes.empty()));
-    this.set("candidates", Value.fromBigIntArray(new Array(0)));
-    this.set("legendary", Value.fromBoolean(false));
-    this.set("legendaryBoost", Value.fromI32(0));
-    this.set("portalStatus", Value.fromString(""));
-    this.set("canOpenAt", Value.fromBigInt(BigInt.zero()));
-    this.set("summonAt", Value.fromBigInt(BigInt.zero()));
-    this.set("mintAt", Value.fromBigInt(BigInt.zero()));
-    this.set("updateAt", Value.fromBigInt(BigInt.zero()));
-    this.set("birthday", Value.fromBigInt(BigInt.zero()));
-    this.set("numericVisibleTraits", Value.fromBigInt(BigInt.zero()));
-    this.set("constellation", Value.fromI32(0));
-    this.set("constellationBoost", Value.fromI32(0));
-    this.set("epoch", Value.fromI32(0));
-    this.set("brs", Value.fromI32(0));
-    this.set("rrs", Value.fromI32(0));
-    this.set("rarityScore", Value.fromI32(0));
-    this.set("items", Value.fromStringArray(new Array(0)));
-    this.set("traits", Value.fromStringArray(new Array(0)));
-    this.set("diceCount", Value.fromI32(0));
-    this.set("epochRarityBoost", Value.fromI32(0));
-    this.set("baseRarityBoost", Value.fromI32(0));
   }
 
   save(): void {
@@ -48,8 +23,7 @@ export class Otto extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save Otto entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
+        `Entities of type Otto must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
       store.set("Otto", id.toString(), this);
     }
@@ -289,16 +263,6 @@ export class OttoItem extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
-
-    this.set("tokenId", Value.fromBigInt(BigInt.zero()));
-    this.set("tokenURI", Value.fromString(""));
-    this.set("wearable", Value.fromBoolean(false));
-    this.set("slot", Value.fromI32(0));
-    this.set("rootOwner", Value.fromBytes(Bytes.empty()));
-    this.set("owner", Value.fromBytes(Bytes.empty()));
-    this.set("amount", Value.fromI32(0));
-    this.set("updateAt", Value.fromBigInt(BigInt.zero()));
-    this.set("createdAt", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -307,8 +271,7 @@ export class OttoItem extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save OttoItem entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
+        `Entities of type OttoItem must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
       store.set("OttoItem", id.toString(), this);
     }
@@ -430,13 +393,6 @@ export class Trait extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
-
-    this.set("slot", Value.fromString(""));
-    this.set("code", Value.fromI32(0));
-    this.set("brs", Value.fromI32(0));
-    this.set("rrs", Value.fromI32(0));
-    this.set("count", Value.fromI32(0));
-    this.set("ottos", Value.fromStringArray(new Array(0)));
   }
 
   save(): void {
@@ -445,8 +401,7 @@ export class Trait extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save Trait entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
+        `Entities of type Trait must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
       store.set("Trait", id.toString(), this);
     }
@@ -524,10 +479,6 @@ export class Slot extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
-
-    this.set("maxCount", Value.fromI32(0));
-    this.set("topCountTraits", Value.fromStringArray(new Array(0)));
-    this.set("traits", Value.fromStringArray(new Array(0)));
   }
 
   save(): void {
@@ -536,8 +487,7 @@ export class Slot extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save Slot entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
+        `Entities of type Slot must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
       store.set("Slot", id.toString(), this);
     }
@@ -588,10 +538,6 @@ export class Epoch extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
-
-    this.set("num", Value.fromI32(0));
-    this.set("ottosSynced", Value.fromBoolean(false));
-    this.set("totalOttos", Value.fromI32(0));
   }
 
   save(): void {
@@ -600,8 +546,7 @@ export class Epoch extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save Epoch entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
+        `Entities of type Epoch must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
       store.set("Epoch", id.toString(), this);
     }
@@ -652,15 +597,6 @@ export class OttoProduct extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
-
-    this.set("productId", Value.fromBigInt(BigInt.zero()));
-    this.set("price", Value.fromBigInt(BigInt.zero()));
-    this.set("discountPrice", Value.fromBigInt(BigInt.zero()));
-    this.set("uri", Value.fromString(""));
-    this.set("amount", Value.fromI32(0));
-    this.set("type", Value.fromString(""));
-    this.set("factory", Value.fromBytes(Bytes.empty()));
-    this.set("updateAt", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -669,8 +605,7 @@ export class OttoProduct extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save OttoProduct entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
+        `Entities of type OttoProduct must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
       store.set("OttoProduct", id.toString(), this);
     }

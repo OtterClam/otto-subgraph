@@ -1,4 +1,4 @@
-import { Address, BigInt, store } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, store } from '@graphprotocol/graph-ts'
 import {
   CreateProduct,
   DeleteProduct,
@@ -37,6 +37,13 @@ function getProductEntity(productId: BigInt): OttoProduct {
   if (entity == null) {
     entity = new OttoProduct(id)
     entity.productId = productId
+    entity.price = BigInt.zero()
+    entity.discountPrice = BigInt.zero()
+    entity.uri = ''
+    entity.amount = 0
+    entity.type = ''
+    entity.factory = Bytes.empty()
+    entity.updateAt = BigInt.zero()
   }
   return entity
 }

@@ -288,6 +288,38 @@ export class OttoContract__infosResult {
     map.set("value7", ethereum.Value.fromUnsignedBigInt(this.value7));
     return map;
   }
+
+  getName(): string {
+    return this.value0;
+  }
+
+  getDescription(): string {
+    return this.value1;
+  }
+
+  getBirthday(): BigInt {
+    return this.value2;
+  }
+
+  getTraits(): BigInt {
+    return this.value3;
+  }
+
+  getValues(): BigInt {
+    return this.value4;
+  }
+
+  getAttributes(): BigInt {
+    return this.value5;
+  }
+
+  getAttributeBonuses(): BigInt {
+    return this.value6;
+  }
+
+  getFlags(): BigInt {
+    return this.value7;
+  }
 }
 
 export class OttoContract extends ethereum.SmartContract {

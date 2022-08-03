@@ -15,6 +15,8 @@ export function getItemEntity(itemId: BigInt, owner: Bytes, ottoId: BigInt | nul
     entity.owner = owner
     entity.parentTokenId = ottoId
     entity.amount = 0
+    entity.updateAt = BigInt.zero()
+    entity.createdAt = BigInt.zero()
   }
   return entity
 }
