@@ -1,7 +1,13 @@
 import { Address, BigInt, log, store } from '@graphprotocol/graph-ts'
 import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoContract'
 import { OpenPortal, OttoV2Contract, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
-import { EpochBoostsChanged, ItemEquipped, ItemTookOff, OttoV3Contract } from '../generated/Otto/OttoV3Contract'
+import {
+  EpochBoostsChanged,
+  ItemEquipped,
+  ItemTookOff,
+  OttoV3Contract,
+  BaseAttributesChanged,
+} from '../generated/Otto/OttoV3Contract'
 import { Otto } from '../generated/schema'
 import { OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
@@ -39,7 +45,6 @@ export function handleTransfer(event: TransferEvent): void {
       // handle owned items transfer
       let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
       let itemIds = ottoV3.ownedItemsOf(tokenId)
-      entity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
       for (let i = 0; i < itemIds.length; i++) {
         let itemId = itemIds[i]
         let itemEntity = getItemEntity(itemId, Address.fromString(OTTO), tokenId)
@@ -69,20 +74,18 @@ export function handleSummon(event: SummonOtto): void {
 }
 
 export function handleTraitsChanged(event: TraitsChanged): void {
-  updateOrCreateEpoch(toEpoch(event.block.timestamp))
-
   let tokenId = event.params.tokenId_
   let ottoEntity = getOttoEntity(tokenId)
-  updateV2(ottoEntity, tokenId)
   ottoEntity.updateAt = event.block.timestamp
   if (tokenId.ge(BigInt.fromString(OTTO_RARITY_SCORE_START_ID))) {
-    updateRarityScore(event.params.arr_, ottoEntity, event.block.timestamp, event.block.number)
+    updateRarityScore(event.params.arr_, ottoEntity, event.block.timestamp)
   }
   if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
     let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
     ottoEntity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
   }
   ottoEntity.save()
+  updateOrCreateEpoch(event.block.timestamp)
   log.info('handleTraitsChanged, otto: {}, item count: {}, legendaryBoost: {}', [
     tokenId.toString(),
     ottoEntity.items.length.toString(),
@@ -91,13 +94,14 @@ export function handleTraitsChanged(event: TraitsChanged): void {
 }
 
 export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
-  updateOrCreateEpoch(toEpoch(event.block.timestamp))
+  updateOrCreateEpoch(event.block.timestamp)
 
   let tokenId = event.params.ottoId_
   let ottoEntity = getOttoEntity(tokenId)
-  updateOttoRarityScore(ottoEntity, event.params.epoch_.toI32(), event.block.number)
+  ottoEntity.epochRarityBoost = event.params.attrs_[7]
   ottoEntity.diceCount = event.params.attrs_[8]
   ottoEntity.updateAt = event.block.timestamp
+  updateOttoRarityScore(ottoEntity, event.params.epoch_.toI32())
   let epoch = toEpoch(event.block.timestamp)
   if (epoch === event.params.epoch_.toI32()) {
     ottoEntity.save()
@@ -105,10 +109,21 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   updateOrCreateOttoSnapshot(ottoEntity, event.params.epoch_.toI32())
 }
 
+export function handleBaseAttributeChanged(event: BaseAttributesChanged): void {
+  updateOrCreateEpoch(event.block.timestamp)
+
+  let tokenId = event.params.ottoId_
+  let ottoEntity = getOttoEntity(tokenId)
+  ottoEntity.baseRarityBoost = event.params.attrs_[7]
+  ottoEntity.updateAt = event.block.timestamp
+  let epoch = toEpoch(event.block.timestamp)
+  updateOttoRarityScore(ottoEntity, epoch)
+  updateOrCreateOttoSnapshot(ottoEntity, epoch)
+}
+
 export function handleItemEquipped(event: ItemEquipped): void {
   let ottoId = event.params.ottoId_
   let entity = getOttoEntity(ottoId)
-  updateV2(entity, ottoId)
   entity.updateAt = event.block.timestamp
 
   let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
@@ -130,8 +145,6 @@ export function handleItemTookOff(event: ItemTookOff): void {
   let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
 
   let entity = getOttoEntity(ottoId)
-  updateV2(entity, ottoId)
-
   let items = entity.items
   let index = items.indexOf(itemEntity.id)
   items.splice(index, 1)
@@ -170,4 +183,5 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
   let birthdayDate = new Date(entity.birthday.toI64() * 1000)
   entity.constellation = parseConstellation(birthdayDate)
   entity.legendary = info.value6
+  entity.numericVisibleTraits = info.value4
 }

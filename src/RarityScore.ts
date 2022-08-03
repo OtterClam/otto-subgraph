@@ -2,10 +2,10 @@ import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 import { OttoV3Contract } from '../generated/Otto/OttoV3Contract'
 import { Epoch, Otto, Slot, Trait } from '../generated/schema'
 import {
+  LATEST_TIMESTAMP,
   OTTO,
   OTTOPIA_RARITY_SCORE_RANKING_DURATION,
   OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH,
-  OTTO_EPOCH_BOOST_BLOCK,
   OTTO_RARITY_SCORE_START_ID,
 } from './Constants'
 import { parseConstellation } from './utils/Constellation'
@@ -13,6 +13,7 @@ import { loadPFP } from './utils/PFP'
 
 const NUM_OTTO_TRAITS = 13
 const EPOCH_3_EXTEND_TS = 86400 * 2
+const EPOCH_4_EXTEND_TS = 86400 * 2
 
 function loadOrCreateSlots(): Array<Slot> {
   let slots = new Array<Slot>()
@@ -182,25 +183,9 @@ function calculateLegendaryBoost(otto: Otto): i32 {
   return boost
 }
 
-export function updateOttoRarityScore(otto: Otto, epoch: i32, block: BigInt): void {
-  let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
-  let totalBRS = 0
-  let epochBoost = 0
-  if (block >= BigInt.fromString(OTTO_EPOCH_BOOST_BLOCK)) {
-    let baseAttributes = ottoV3.try_baseAttributesOf(otto.tokenId)
-    let epochBoosts = ottoV3.try_epochBoostOf(otto.tokenId, BigInt.fromI32(epoch))
-    if (!baseAttributes.reverted && !epochBoosts.reverted) {
-      totalBRS = baseAttributes.value[7]
-      epochBoost = epochBoosts.value[7]
-    } else {
-      if (baseAttributes.reverted) {
-        log.error('load baseAttributesOf {} failed', [otto.tokenId.toString()])
-      }
-      if (epochBoosts.reverted) {
-        log.error('load epochBoostOf {} failed', [otto.tokenId.toString()])
-      }
-    }
-  }
+export function updateOttoRarityScore(otto: Otto, epoch: i32): void {
+  let totalBRS = otto.baseRarityBoost
+  let epochBoost = otto.epochRarityBoost
   let totalRRS = 0
   for (let i = 0; i < otto.traits.length; i++) {
     let traitId = otto.traits[i]
@@ -254,8 +239,13 @@ export function toEpoch(timestamp: BigInt): i32 {
     return (ts - firstEpochTs) / duration
   } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration) {
     return 3
+  } else if (
+    ts >= firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration &&
+    ts < firstEpochTs + EPOCH_3_EXTEND_TS + EPOCH_4_EXTEND_TS + 5 * duration
+  ) {
+    return 4
   } else {
-    return (ts + EPOCH_3_EXTEND_TS - firstEpochTs) / duration
+    return (ts - firstEpochTs - EPOCH_3_EXTEND_TS - EPOCH_4_EXTEND_TS) / duration
   }
 }
 
@@ -264,15 +254,16 @@ function toEpochEndTimestamp(epoch: i32): BigInt {
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
   if (epoch < 3) {
     return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
-  } else {
+  } else if (epoch == 3) {
     return BigInt.fromI64(firstEpochTs + EPOCH_3_EXTEND_TS + duration * (epoch + 1))
+  } else {
+    return BigInt.fromI64(firstEpochTs + EPOCH_3_EXTEND_TS + EPOCH_4_EXTEND_TS + duration * (epoch + 1))
   }
 }
 
-export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigInt, block: BigInt): void {
+export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigInt): void {
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
-  let dirtyOttoIds = new Array<string>()
   let dirtyOldTraits = new Array<Trait>()
   let epoch = toEpoch(timestamp)
 
@@ -351,7 +342,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   }
 
   // log.warning(' dirty trais ids: {}', [dirtyOldTraits.map<string>((t) => t.id).join(', ')])
-  // log.warning(' dirty trais count: {}', [dirtyOldTraits.length.toString()])
+  log.warning('handleTraitsChanged, dirty trait count: {}', [dirtyOldTraits.length.toString()])
 
   // update all changed traits
   for (let i = 0; i < dirtyOldTraits.length; i++) {
@@ -360,7 +351,6 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
     let slot = slots[slotIndex]
     dirtyTrait.rrs = calculateRRS(dirtyTrait.count, slot.maxCount)
     dirtyTrait.save()
-    collectOttoIds(dirtyOttoIds, dirtyTrait)
   }
 
   // update all new slot & trait
@@ -369,8 +359,24 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
     newTraits[i].save()
   }
 
+  // log.warning('current otto id: {}', [otto.id])
+
+  otto.traits = newTraits.map<string>((t) => t.id)
+  updateOttoRarityScore(otto, epoch)
+  updateOrCreateOttoSnapshot(otto, epoch)
+
+  if (timestamp.toI32() < LATEST_TIMESTAMP) {
+    return
+  }
+
+  let dirtyOttoIds = new Array<string>()
+  for (let i = 0; i < dirtyOldTraits.length; i++) {
+    let dirtyTrait = dirtyOldTraits[i]
+    collectOttoIds(dirtyOttoIds, dirtyTrait)
+  }
+
   // log.warning('dirty otto : {}', [dirtyOttoIds.join(', ')])
-  // log.warning('dirty otto count: {} hash: {}', [dirtyOttoIds.length.toString(), hash])
+  log.warning('handleTraitsChanged, dirty otto count: {}', [dirtyOttoIds.length.toString()])
   // update all changed otto
   for (let i = 0; i < dirtyOttoIds.length; i++) {
     let id = dirtyOttoIds[i]
@@ -378,19 +384,14 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
     if (dirtyOtto == null) {
       continue
     }
-    updateOttoRarityScore(dirtyOtto, epoch, block)
+    updateOttoRarityScore(dirtyOtto, epoch)
     updateOrCreateOttoSnapshot(dirtyOtto, epoch)
     dirtyOtto.save()
   }
-
-  // log.warning('current otto id: {}', [otto.id])
-
-  otto.traits = newTraits.map<string>((t) => t.id)
-  updateOttoRarityScore(otto, epoch, block)
-  updateOrCreateOttoSnapshot(otto, epoch)
 }
 
-export function updateOrCreateEpoch(epoch: i32): void {
+export function updateOrCreateEpoch(timestamp: BigInt): void {
+  let epoch = toEpoch(timestamp)
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
   let total = ottoV3.totalSupply().toI32() - offset
@@ -407,12 +408,28 @@ export function updateOrCreateEpoch(epoch: i32): void {
       if (otto == null) {
         continue
       }
+      updateOttoRarityScore(otto, epoch)
+      if (epoch > 0) {
+        updateOrCreateOttoSnapshot(otto, epoch - 1)
+      }
+
       // clear epoch rarity boost when new epoch starts
       otto.epochRarityBoost = 0
       otto.diceCount = 0
       otto.save()
       updateOrCreateOttoSnapshot(otto, epoch)
     }
+  } else if (timestamp.toI32() >= LATEST_TIMESTAMP && !epochEntity.ottosSynced) {
+    for (let i = offset; i < total; i++) {
+      let id = OTTO + '-' + i.toString()
+      let otto = Otto.load(id)
+      if (otto == null) {
+        continue
+      }
+      updateOttoRarityScore(otto, epoch)
+      otto.save()
+    }
+    epochEntity.ottosSynced = true
   }
   epochEntity.totalOttos = total
   epochEntity.save()

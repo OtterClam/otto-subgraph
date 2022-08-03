@@ -39,6 +39,7 @@ export class Otto extends Entity {
     this.set("traits", Value.fromStringArray(new Array(0)));
     this.set("diceCount", Value.fromI32(0));
     this.set("epochRarityBoost", Value.fromI32(0));
+    this.set("baseRarityBoost", Value.fromI32(0));
   }
 
   save(): void {
@@ -272,6 +273,15 @@ export class Otto extends Entity {
 
   set epochRarityBoost(value: i32) {
     this.set("epochRarityBoost", Value.fromI32(value));
+  }
+
+  get baseRarityBoost(): i32 {
+    let value = this.get("baseRarityBoost");
+    return value!.toI32();
+  }
+
+  set baseRarityBoost(value: i32) {
+    this.set("baseRarityBoost", Value.fromI32(value));
   }
 }
 
@@ -580,6 +590,7 @@ export class Epoch extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("num", Value.fromI32(0));
+    this.set("ottosSynced", Value.fromBoolean(false));
     this.set("totalOttos", Value.fromI32(0));
   }
 
@@ -616,6 +627,15 @@ export class Epoch extends Entity {
 
   set num(value: i32) {
     this.set("num", Value.fromI32(value));
+  }
+
+  get ottosSynced(): boolean {
+    let value = this.get("ottosSynced");
+    return value!.toBoolean();
+  }
+
+  set ottosSynced(value: boolean) {
+    this.set("ottosSynced", Value.fromBoolean(value));
   }
 
   get totalOttos(): i32 {
