@@ -390,15 +390,17 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   }
 }
 
-export function updateOrCreateEpoch(timestamp: BigInt): void {
+export function updateOrCreateEpoch(timestamp: BigInt): boolean {
   let epoch = toEpoch(timestamp)
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
   let total = ottoV3.totalSupply().toI32() - offset
 
+  let epochCreated = false
   let epochId = 'ottopia_epoch_' + epoch.toString()
   let epochEntity = Epoch.load(epochId)
   if (epochEntity == null) {
+    epochCreated = true
     log.warning('create epoch: {}', [epochId])
     epochEntity = new Epoch(epochId)
     epochEntity.num = epoch
@@ -412,12 +414,6 @@ export function updateOrCreateEpoch(timestamp: BigInt): void {
       if (epoch > 0) {
         updateOrCreateOttoSnapshot(otto, epoch - 1)
       }
-
-      // clear epoch rarity boost when new epoch starts
-      otto.epochRarityBoost = 0
-      otto.diceCount = 0
-      otto.save()
-      updateOrCreateOttoSnapshot(otto, epoch)
     }
   } else if (timestamp.toI32() >= LATEST_TIMESTAMP && !epochEntity.ottosSynced) {
     for (let i = offset; i < total; i++) {
@@ -433,4 +429,25 @@ export function updateOrCreateEpoch(timestamp: BigInt): void {
   }
   epochEntity.totalOttos = total
   epochEntity.save()
+  return epochCreated
+}
+
+export function createSnapshotsForAllOttos(timestamp: BigInt): void {
+  let epoch = toEpoch(timestamp)
+  let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
+  let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
+  let total = ottoV3.totalSupply().toI32() - offset
+  for (let i = offset; i < total; i++) {
+    let id = OTTO + '-' + i.toString()
+    let otto = Otto.load(id)
+    if (otto == null) {
+      continue
+    }
+    // clear epoch rarity boost when new epoch starts
+    otto.epochRarityBoost = 0
+    otto.diceCount = 0
+    updateOttoRarityScore(otto, epoch)
+    otto.save()
+    updateOrCreateOttoSnapshot(otto, epoch)
+  }
 }

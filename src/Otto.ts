@@ -17,6 +17,7 @@ import {
   updateRarityScore,
   toEpoch,
   updateOrCreateEpoch,
+  createSnapshotsForAllOttos,
 } from './RarityScore'
 import { parseConstellation } from './utils/Constellation'
 
@@ -74,6 +75,8 @@ export function handleSummon(event: SummonOtto): void {
 }
 
 export function handleTraitsChanged(event: TraitsChanged): void {
+  const epochCreated = updateOrCreateEpoch(event.block.timestamp)
+
   let tokenId = event.params.tokenId_
   let ottoEntity = getOttoEntity(tokenId)
   ottoEntity.updateAt = event.block.timestamp
@@ -85,16 +88,19 @@ export function handleTraitsChanged(event: TraitsChanged): void {
     ottoEntity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
   }
   ottoEntity.save()
-  updateOrCreateEpoch(event.block.timestamp)
-  log.info('handleTraitsChanged, otto: {}, item count: {}, legendaryBoost: {}', [
-    tokenId.toString(),
-    ottoEntity.items.length.toString(),
-    ottoEntity.legendaryBoost.toString(),
-  ])
+
+  if (epochCreated) {
+    createSnapshotsForAllOttos(event.block.timestamp)
+  }
+  // log.info('handleTraitsChanged, otto: {}, item count: {}, legendaryBoost: {}', [
+  //   tokenId.toString(),
+  //   ottoEntity.items.length.toString(),
+  //   ottoEntity.legendaryBoost.toString(),
+  // ])
 }
 
 export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
-  updateOrCreateEpoch(event.block.timestamp)
+  const epochCreated = updateOrCreateEpoch(event.block.timestamp)
 
   let tokenId = event.params.ottoId_
   let ottoEntity = getOttoEntity(tokenId)
@@ -107,10 +113,14 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
     ottoEntity.save()
   }
   updateOrCreateOttoSnapshot(ottoEntity, event.params.epoch_.toI32())
+
+  if (epochCreated) {
+    createSnapshotsForAllOttos(event.block.timestamp)
+  }
 }
 
 export function handleBaseAttributeChanged(event: BaseAttributesChanged): void {
-  updateOrCreateEpoch(event.block.timestamp)
+  const epochCreated = updateOrCreateEpoch(event.block.timestamp)
 
   let tokenId = event.params.ottoId_
   let ottoEntity = getOttoEntity(tokenId)
@@ -119,6 +129,10 @@ export function handleBaseAttributeChanged(event: BaseAttributesChanged): void {
   let epoch = toEpoch(event.block.timestamp)
   updateOttoRarityScore(ottoEntity, epoch)
   updateOrCreateOttoSnapshot(ottoEntity, epoch)
+
+  if (epochCreated) {
+    createSnapshotsForAllOttos(event.block.timestamp)
+  }
 }
 
 export function handleItemEquipped(event: ItemEquipped): void {
