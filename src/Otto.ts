@@ -1,4 +1,4 @@
-import { Address, BigInt, log, store } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, log, store } from '@graphprotocol/graph-ts'
 import { OttoContract, Transfer as TransferEvent } from '../generated/Otto/OttoContract'
 import { OpenPortal, OttoV2Contract, SummonOtto, TraitsChanged } from '../generated/Otto/OttoV2Contract'
 import {
@@ -13,10 +13,11 @@ import { OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from '
 import { getItemEntity, updateEntity } from './OttoItemHelper'
 import {
   updateOrCreateOttoSnapshot,
-  updateOttoRarityScore,
+  calculateOttoRarityScore,
   updateRarityScore,
   toEpoch,
   updateOrCreateEpoch,
+  createSnapshotsForAllOttos,
 } from './RarityScore'
 import { parseConstellation } from './utils/Constellation'
 
@@ -74,6 +75,8 @@ export function handleSummon(event: SummonOtto): void {
 }
 
 export function handleTraitsChanged(event: TraitsChanged): void {
+  const epochCreated = updateOrCreateEpoch(event.block.timestamp)
+
   let tokenId = event.params.tokenId_
   let ottoEntity = getOttoEntity(tokenId)
   ottoEntity.updateAt = event.block.timestamp
@@ -85,58 +88,69 @@ export function handleTraitsChanged(event: TraitsChanged): void {
     ottoEntity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
   }
   ottoEntity.save()
-  updateOrCreateEpoch(event.block.timestamp)
-  log.info('handleTraitsChanged, otto: {}, item count: {}, legendaryBoost: {}', [
-    tokenId.toString(),
-    ottoEntity.items.length.toString(),
-    ottoEntity.legendaryBoost.toString(),
-  ])
+
+  if (epochCreated) {
+    createSnapshotsForAllOttos(event.block.timestamp)
+  }
+  // log.info('handleTraitsChanged, otto: {}, item count: {}, legendaryBoost: {}', [
+  //   tokenId.toString(),
+  //   ottoEntity.items.length.toString(),
+  //   ottoEntity.legendaryBoost.toString(),
+  // ])
 }
 
 export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
-  updateOrCreateEpoch(event.block.timestamp)
+  const epochCreated = updateOrCreateEpoch(event.block.timestamp)
 
   let tokenId = event.params.ottoId_
   let ottoEntity = getOttoEntity(tokenId)
   ottoEntity.epochRarityBoost = event.params.attrs_[7]
   ottoEntity.diceCount = event.params.attrs_[8]
   ottoEntity.updateAt = event.block.timestamp
-  updateOttoRarityScore(ottoEntity, event.params.epoch_.toI32())
+  calculateOttoRarityScore(ottoEntity, event.params.epoch_.toI32())
   let epoch = toEpoch(event.block.timestamp)
   if (epoch === event.params.epoch_.toI32()) {
     ottoEntity.save()
   }
   updateOrCreateOttoSnapshot(ottoEntity, event.params.epoch_.toI32())
+
+  if (epochCreated) {
+    createSnapshotsForAllOttos(event.block.timestamp)
+  }
 }
 
 export function handleBaseAttributeChanged(event: BaseAttributesChanged): void {
-  updateOrCreateEpoch(event.block.timestamp)
+  const epochCreated = updateOrCreateEpoch(event.block.timestamp)
 
   let tokenId = event.params.ottoId_
   let ottoEntity = getOttoEntity(tokenId)
   ottoEntity.baseRarityBoost = event.params.attrs_[7]
   ottoEntity.updateAt = event.block.timestamp
   let epoch = toEpoch(event.block.timestamp)
-  updateOttoRarityScore(ottoEntity, epoch)
+  calculateOttoRarityScore(ottoEntity, epoch)
   updateOrCreateOttoSnapshot(ottoEntity, epoch)
+
+  if (epochCreated) {
+    createSnapshotsForAllOttos(event.block.timestamp)
+  }
 }
 
 export function handleItemEquipped(event: ItemEquipped): void {
   let ottoId = event.params.ottoId_
-  let entity = getOttoEntity(ottoId)
-  entity.updateAt = event.block.timestamp
+  let otto = getOttoEntity(ottoId)
+  otto.updateAt = event.block.timestamp
 
   let itemEntity = getItemEntity(event.params.itemId_, Address.fromString(OTTO), ottoId)
   itemEntity.amount++
-  itemEntity.rootOwner = entity.owner
+  itemEntity.rootOwner = otto.owner
   itemEntity.parentTokenId = ottoId
   updateEntity(itemEntity, event.block.timestamp)
   itemEntity.save()
 
-  let items = entity.items
+  let items = otto.items
   items.push(itemEntity.id)
-  entity.items = items
-  entity.save()
+  otto.items = items
+  otto.save()
 }
 
 export function handleItemTookOff(event: ItemTookOff): void {
@@ -164,6 +178,30 @@ function getOttoEntity(tokenId: BigInt): Otto {
     entity = new Otto(id)
     entity.tokenId = tokenId
     entity.epoch = -1
+    entity.traits = []
+    entity.owner = Bytes.empty()
+    entity.tokenURI = ''
+    entity.candidates = []
+    entity.portalStatus = ''
+    entity.legendary = false
+    entity.legendaryBoost = 0
+    entity.brs = 0
+    entity.rrs = 0
+    entity.rarityScore = 0
+    entity.canOpenAt = BigInt.zero()
+    entity.summonAt = BigInt.zero()
+    entity.epoch = -1
+    entity.updateAt = BigInt.zero()
+    entity.mintAt = BigInt.zero()
+    entity.birthday = BigInt.zero()
+    entity.items = []
+    entity.numericVisibleTraits = BigInt.zero()
+    entity.constellation = 1
+    entity.constellationBoost = 0
+    entity.traits = []
+    entity.diceCount = 0
+    entity.epochRarityBoost = 0
+    entity.baseRarityBoost = 0
   }
   return entity
 }

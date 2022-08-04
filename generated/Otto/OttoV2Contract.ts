@@ -383,6 +383,34 @@ export class OttoV2Contract__infosResult {
     map.set("value6", ethereum.Value.fromBoolean(this.value6));
     return map;
   }
+
+  getMintAt(): BigInt {
+    return this.value0;
+  }
+
+  getCanOpenAt(): BigInt {
+    return this.value1;
+  }
+
+  getSummonAt(): BigInt {
+    return this.value2;
+  }
+
+  getBirthday(): BigInt {
+    return this.value3;
+  }
+
+  getTraits(): BigInt {
+    return this.value4;
+  }
+
+  getPortalStatus(): i32 {
+    return this.value5;
+  }
+
+  getLegendary(): boolean {
+    return this.value6;
+  }
 }
 
 export class OttoV2Contract extends ethereum.SmartContract {

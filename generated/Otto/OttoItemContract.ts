@@ -335,6 +335,14 @@ export class OttoItemContract__attributesOfResult {
     map.set("value1", ethereum.Value.fromI32Array(this.value1));
     return map;
   }
+
+  getValue0(): Array<i32> {
+    return this.value0;
+  }
+
+  getValue1(): Array<i32> {
+    return this.value1;
+  }
 }
 
 export class OttoItemContract__decodeResult {
@@ -357,6 +365,14 @@ export class OttoItemContract__decodeResult {
       ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value1))
     );
     return map;
+  }
+
+  getSlot_(): i32 {
+    return this.value0;
+  }
+
+  getCode_(): i32 {
+    return this.value1;
   }
 }
 

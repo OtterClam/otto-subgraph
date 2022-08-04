@@ -240,6 +240,18 @@ export class OttopiaStoreContract__airdropInfosResult {
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     return map;
   }
+
+  getStartId(): BigInt {
+    return this.value0;
+  }
+
+  getEndId(): BigInt {
+    return this.value1;
+  }
+
+  getAmount(): BigInt {
+    return this.value2;
+  }
 }
 
 export class OttopiaStoreContract__productsResult {
@@ -262,6 +274,22 @@ export class OttopiaStoreContract__productsResult {
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     map.set("value3", ethereum.Value.fromString(this.value3));
     return map;
+  }
+
+  getPrice(): BigInt {
+    return this.value0;
+  }
+
+  getDiscountPrice(): BigInt {
+    return this.value1;
+  }
+
+  getAmount(): BigInt {
+    return this.value2;
+  }
+
+  getTyp(): string {
+    return this.value3;
   }
 }
 

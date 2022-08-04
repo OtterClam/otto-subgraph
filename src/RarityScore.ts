@@ -22,6 +22,9 @@ function loadOrCreateSlots(): Array<Slot> {
     let slot = Slot.load(slotId)
     if (slot == null) {
       slot = new Slot(slotId)
+      slot.maxCount = 0
+      slot.topCountTraits = []
+      slot.traits = []
       //   log.warning('slot created {}', [slotId])
       // } else {
       //   log.warning('slot loaded {}', [slotId])
@@ -55,6 +58,9 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
       trait.slot = slotId
       trait.code = firstCode
       trait.brs = brs
+      trait.rrs = 0
+      trait.count = 1
+      trait.ottos = []
       let slotTraits = slots[i].traits
       slotTraits.push(trait.id)
       slots[i].traits = slotTraits
@@ -183,7 +189,7 @@ function calculateLegendaryBoost(otto: Otto): i32 {
   return boost
 }
 
-export function updateOttoRarityScore(otto: Otto, epoch: i32): void {
+export function calculateOttoRarityScore(otto: Otto, epoch: i32): void {
   let totalBRS = otto.baseRarityBoost
   let epochBoost = otto.epochRarityBoost
   let totalRRS = 0
@@ -342,7 +348,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   }
 
   // log.warning(' dirty trais ids: {}', [dirtyOldTraits.map<string>((t) => t.id).join(', ')])
-  log.warning('handleTraitsChanged, dirty trait count: {}', [dirtyOldTraits.length.toString()])
+  // log.warning('handleTraitsChanged, dirty trait count: {}', [dirtyOldTraits.length.toString()])
 
   // update all changed traits
   for (let i = 0; i < dirtyOldTraits.length; i++) {
@@ -362,7 +368,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   // log.warning('current otto id: {}', [otto.id])
 
   otto.traits = newTraits.map<string>((t) => t.id)
-  updateOttoRarityScore(otto, epoch)
+  calculateOttoRarityScore(otto, epoch)
   updateOrCreateOttoSnapshot(otto, epoch)
 
   if (timestamp.toI32() < LATEST_TIMESTAMP) {
@@ -384,53 +390,76 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
     if (dirtyOtto == null) {
       continue
     }
-    updateOttoRarityScore(dirtyOtto, epoch)
+    calculateOttoRarityScore(dirtyOtto, epoch)
     updateOrCreateOttoSnapshot(dirtyOtto, epoch)
     dirtyOtto.save()
   }
 }
 
-export function updateOrCreateEpoch(timestamp: BigInt): void {
+export function updateOrCreateEpoch(timestamp: BigInt): boolean {
   let epoch = toEpoch(timestamp)
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
   let total = ottoV3.totalSupply().toI32() - offset
 
+  let epochCreated = false
   let epochId = 'ottopia_epoch_' + epoch.toString()
   let epochEntity = Epoch.load(epochId)
   if (epochEntity == null) {
+    epochCreated = true
     log.warning('create epoch: {}', [epochId])
     epochEntity = new Epoch(epochId)
     epochEntity.num = epoch
+    epochEntity.ottosSynced = false
     for (let i = offset; i < total; i++) {
       let id = OTTO + '-' + i.toString()
       let otto = Otto.load(id)
       if (otto == null) {
+        log.critical('otto not found: {}', [id])
         continue
       }
-      updateOttoRarityScore(otto, epoch)
+      calculateOttoRarityScore(otto, epoch)
       if (epoch > 0) {
         updateOrCreateOttoSnapshot(otto, epoch - 1)
       }
-
-      // clear epoch rarity boost when new epoch starts
-      otto.epochRarityBoost = 0
-      otto.diceCount = 0
-      otto.save()
-      updateOrCreateOttoSnapshot(otto, epoch)
     }
   } else if (timestamp.toI32() >= LATEST_TIMESTAMP && !epochEntity.ottosSynced) {
+    log.warning('sync all ottos {} in latest epoch: {}', [total.toString(), epoch.toString()])
     for (let i = offset; i < total; i++) {
       let id = OTTO + '-' + i.toString()
       let otto = Otto.load(id)
       if (otto == null) {
+        log.critical('otto not found: {}', [id])
         continue
       }
-      updateOttoRarityScore(otto, epoch)
+      calculateOttoRarityScore(otto, epoch)
       otto.save()
     }
     epochEntity.ottosSynced = true
   }
   epochEntity.totalOttos = total
   epochEntity.save()
+  return epochCreated
+}
+
+export function createSnapshotsForAllOttos(timestamp: BigInt): void {
+  let epoch = toEpoch(timestamp)
+  let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
+  let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
+  let total = ottoV3.totalSupply().toI32()
+  log.warning('createSnapshotsForAllOttos, epoch created: {}, total: {}', [epoch.toString(), total.toString()])
+  for (let i = offset; i < total; i++) {
+    let id = OTTO + '-' + i.toString()
+    let otto = Otto.load(id)
+    if (otto == null) {
+      log.critical('otto not found: {}', [id])
+      continue
+    }
+    // clear epoch rarity boost when new epoch starts
+    otto.epochRarityBoost = 0
+    otto.diceCount = 0
+    calculateOttoRarityScore(otto, epoch)
+    otto.save()
+    updateOrCreateOttoSnapshot(otto, epoch)
+  }
 }
