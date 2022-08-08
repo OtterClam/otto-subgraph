@@ -171,7 +171,7 @@ export function handleItemTookOff(event: ItemTookOff): void {
   store.remove('OttoItem', itemEntity.id)
 }
 
-function getOttoEntity(tokenId: BigInt): Otto {
+export function getOttoEntity(tokenId: BigInt): Otto {
   let id = OTTO + '-' + tokenId.toString()
   let entity = Otto.load(id)
   if (entity == null) {

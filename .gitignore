@@ -16,7 +16,6 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
-
 # nyc test coverage
 .nyc_output
 
@@ -66,3 +65,4 @@ data
 
 subgraph.yaml
 src/Constants.ts
+tests/.bin
