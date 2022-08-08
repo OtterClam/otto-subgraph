@@ -59,7 +59,7 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
       trait.code = firstCode
       trait.brs = brs
       trait.rrs = 0
-      trait.count = 1
+      trait.count = 0
       trait.ottos = []
       let slotTraits = slots[i].traits
       slotTraits.push(trait.id)
@@ -382,7 +382,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
   }
 
   // log.warning('dirty otto : {}', [dirtyOttoIds.join(', ')])
-  log.warning('handleTraitsChanged, dirty otto count: {}', [dirtyOttoIds.length.toString()])
+  // log.warning('handleTraitsChanged, dirty otto count: {}', [dirtyOttoIds.length.toString()])
   // update all changed otto
   for (let i = 0; i < dirtyOttoIds.length; i++) {
     let id = dirtyOttoIds[i]
@@ -400,14 +400,14 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
   let epoch = toEpoch(timestamp)
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
-  let total = ottoV3.totalSupply().toI32() - offset
+  let total = ottoV3.totalSupply().toI32()
 
   let epochCreated = false
   let epochId = 'ottopia_epoch_' + epoch.toString()
   let epochEntity = Epoch.load(epochId)
   if (epochEntity == null) {
     epochCreated = true
-    log.warning('create epoch: {}', [epochId])
+    // log.warning('create epoch: {}', [epochId])
     epochEntity = new Epoch(epochId)
     epochEntity.num = epoch
     epochEntity.ottosSynced = false
@@ -424,7 +424,7 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
       }
     }
   } else if (timestamp.toI32() >= LATEST_TIMESTAMP && !epochEntity.ottosSynced) {
-    log.warning('sync all ottos {} in latest epoch: {}', [total.toString(), epoch.toString()])
+    // log.warning('sync all ottos {} in latest epoch: {}', [total.toString(), epoch.toString()])
     for (let i = offset; i < total; i++) {
       let id = OTTO + '-' + i.toString()
       let otto = Otto.load(id)
@@ -447,7 +447,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
   let total = ottoV3.totalSupply().toI32()
-  log.warning('createSnapshotsForAllOttos, epoch created: {}, total: {}', [epoch.toString(), total.toString()])
+  // log.warning('createSnapshotsForAllOttos, epoch created: {}, total: {}', [epoch.toString(), total.toString()])
   for (let i = offset; i < total; i++) {
     let id = OTTO + '-' + i.toString()
     let otto = Otto.load(id)

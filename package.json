@@ -25,7 +25,8 @@
     "deploy:local": "yarn create-local && yarn config:local && yarn codegen && yarn build && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 otterclam/otto",
     "create-local": "graph create --node http://localhost:8020/ otterclam/otto",
     "remove-local": "graph remove --node http://localhost:8020/ otterclam/otto",
-    "deploy:fork": "yarn create-local && yarn config:local && yarn codegen && yarn build && graph deploy otterclam/otto --debug-fork QmSiLf38nDq9ZpEreZLbaamFghES35DjDZ8UNnb7Z5DVaJ --node http://localhost:8020/ --ipfs http://localhost:5001"
+    "deploy:fork": "yarn create-local && yarn config:local && yarn codegen && yarn build && graph deploy otterclam/otto --debug-fork QmSiLf38nDq9ZpEreZLbaamFghES35DjDZ8UNnb7Z5DVaJ --node http://localhost:8020/ --ipfs http://localhost:5001",
+    "test": "graph test"
   },
   "dependencies": {},
   "devDependencies": {
@@ -37,6 +38,7 @@
     "eslint": "^7.2.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "matchstick-as": "^0.5.0",
     "prettier": "^2.0.5",
     "typescript": "^3.9.3"
   }
