@@ -7,6 +7,7 @@
     "schema.graphql"
   ],
   "scripts": {
+    "config:unittest": "source .config.unittest && yarn _config",
     "config:local": "source .config.local && yarn _config",
     "config:testnet": "source .config.testnet && yarn _config",
     "config:mainnet": "source .config.mainnet && yarn _config",
