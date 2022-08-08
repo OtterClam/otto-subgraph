@@ -65,4 +65,4 @@ data
 
 subgraph.yaml
 src/Constants.ts
-test/.bin
+tests/.bin
