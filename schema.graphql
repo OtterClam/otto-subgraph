@@ -68,6 +68,8 @@ type Epoch @entity {
   num: Int!
   ottosSynced: Boolean!
   totalOttos: Int!
+  startedAt: Int!
+  endedAt: Int!
 }
 
 type OttoProduct @entity {

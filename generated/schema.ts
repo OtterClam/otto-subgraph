@@ -591,6 +591,24 @@ export class Epoch extends Entity {
   set totalOttos(value: i32) {
     this.set("totalOttos", Value.fromI32(value));
   }
+
+  get startedAt(): i32 {
+    let value = this.get("startedAt");
+    return value!.toI32();
+  }
+
+  set startedAt(value: i32) {
+    this.set("startedAt", Value.fromI32(value));
+  }
+
+  get endedAt(): i32 {
+    let value = this.get("endedAt");
+    return value!.toI32();
+  }
+
+  set endedAt(value: i32) {
+    this.set("endedAt", Value.fromI32(value));
+  }
 }
 
 export class OttoProduct extends Entity {
