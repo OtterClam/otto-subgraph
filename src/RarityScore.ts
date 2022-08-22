@@ -434,6 +434,7 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
         continue
       }
       if (epoch > 0) {
+        calculateOttoRarityScore(otto, epoch - 1)
         updateOrCreateOttoSnapshot(otto, epoch - 1)
       }
     }
