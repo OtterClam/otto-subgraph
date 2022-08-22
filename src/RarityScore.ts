@@ -14,6 +14,7 @@ import { loadPFP } from './utils/PFP'
 const NUM_OTTO_TRAITS = 13
 const EPOCH_3_EXTEND_TS = 86400 * 2
 const EPOCH_4_EXTEND_TS = 86400 * 2
+const S1_END_EPOCH = 6
 
 function loadOrCreateSlots(): Array<Slot> {
   let slots = new Array<Slot>()
@@ -234,6 +235,7 @@ export function toEpoch(timestamp: BigInt): i32 {
   let ts = timestamp.toI32()
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
+  let endTs = toEpochEndTimestamp(S1_END_EPOCH - 1).toI32() // 2022-08-19
   // log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
   //   ts.toString(),
   //   firstEpochTs.toString(),
@@ -241,6 +243,8 @@ export function toEpoch(timestamp: BigInt): i32 {
   // ])
   if (ts < firstEpochTs) {
     return 0
+  } else if (ts >= endTs) {
+    return S1_END_EPOCH
   } else if (ts >= firstEpochTs && ts < firstEpochTs + 3 * duration) {
     return (ts - firstEpochTs) / duration
   } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration) {
@@ -268,11 +272,14 @@ function toEpochEndTimestamp(epoch: i32): BigInt {
 }
 
 export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigInt): void {
+  let epoch = toEpoch(timestamp)
+  if (epoch >= S1_END_EPOCH) {
+    return
+  }
+
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
   let dirtyOldTraits = new Array<Trait>()
-  let epoch = toEpoch(timestamp)
-
   if (otto.traits.length == 0) {
     // new otto created
     // add all traits
@@ -411,6 +418,14 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
     epochEntity = new Epoch(epochId)
     epochEntity.num = epoch
     epochEntity.ottosSynced = false
+    if (epoch == 0) {
+      epochEntity.startedAt = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
+      epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
+    } else {
+      epochEntity.startedAt = toEpochEndTimestamp(epoch - 1).toI32()
+      epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
+    }
+
     for (let i = offset; i < total; i++) {
       let id = OTTO + '-' + i.toString()
       let otto = Otto.load(id)
@@ -418,8 +433,8 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
         log.critical('otto not found: {}', [id])
         continue
       }
-      calculateOttoRarityScore(otto, epoch)
       if (epoch > 0) {
+        calculateOttoRarityScore(otto, epoch - 1)
         updateOrCreateOttoSnapshot(otto, epoch - 1)
       }
     }
