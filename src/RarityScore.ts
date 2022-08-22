@@ -433,7 +433,6 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
         log.critical('otto not found: {}', [id])
         continue
       }
-      calculateOttoRarityScore(otto, epoch)
       if (epoch > 0) {
         updateOrCreateOttoSnapshot(otto, epoch - 1)
       }
