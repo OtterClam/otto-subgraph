@@ -273,10 +273,6 @@ function toEpochEndTimestamp(epoch: i32): BigInt {
 
 export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigInt): void {
   let epoch = toEpoch(timestamp)
-  if (epoch >= S1_END_EPOCH) {
-    return
-  }
-
   let slots = loadOrCreateSlots()
   let newTraits = loadOrCreateTraits(slots, codes)
   let dirtyOldTraits = new Array<Trait>()
