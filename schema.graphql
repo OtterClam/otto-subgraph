@@ -21,6 +21,8 @@ type Otto @entity {
   numericVisibleTraits: BigInt!
   constellation: Int!
   constellationBoost: Int!
+  epochThemeBoost: Int!
+  epochThemeBoostMultiplier: Int!
   epoch: Int!
   brs: Int!
   rrs: Int!
@@ -54,6 +56,7 @@ type Trait @entity {
   rrs: Int! # base rarity score
   count: Int!
   ottos: [Otto!]!
+  labels: [String!]!
 }
 
 type Slot @entity {
@@ -70,6 +73,7 @@ type Epoch @entity {
   totalOttos: Int!
   startedAt: Int!
   endedAt: Int!
+  themeLabels: [String!]!
 }
 
 type OttoProduct @entity {
