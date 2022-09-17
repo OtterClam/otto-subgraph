@@ -16,9 +16,9 @@ const EPOCH_3_EXTEND_TS = 86400 * 2
 const EPOCH_4_EXTEND_TS = 86400 * 2
 const S1_END_EPOCH = 6
 
-const TRAIT_LABEL_BOOST_BASE = 60
-const TRAIT_LABEL_BOOST_MULTIPLIER = [100, 150, 170, 200, 250]
-const traitLabelEpochBoosts: Array<string[]> = [
+const THEME_BOOST_BASE = 60
+const THEME_BOOST_MULTIPLIER = [100, 150, 170, 200, 250]
+const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   [],
   [],
   [],
@@ -82,7 +82,7 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
       slots[i].traits = slotTraits
 
       let labels = new Array<string>()
-      if (traitJson.get('label') != null) {
+      if (traitJson.get('labels') != null) {
         const labelArray = traitJson.get('labels')!.toArray()
         for (let k = 0; k < labelArray.length; k++) {
           labels.push(labelArray[k].toObject().get('v')!.toString())
@@ -215,22 +215,20 @@ function calculateLegendaryBoost(otto: Otto): i32 {
   return boost
 }
 
-function calculateTraitLabelBoost(otto: Otto, epoch: i32): i32 {
-  const epochLabels = traitLabelEpochBoosts[epoch]
+function calculateTraitLabelBoost(otto: Otto, traits: Trait[], epoch: i32): i32 {
+  const epochLabels = EPOCH_THEME_BOOST_LABEL[epoch]
   let boost = 0
   let matchTraitCount = -1
-  let multiplier = 1
 
-  for (let i = 0; i < otto.traits.length; i++) {
-    let traitId = otto.traits[i]
-    let trait = Trait.load(traitId)
+  for (let i = 0; i < traits.length; i++) {
+    let trait = traits[i]
     let match = false
     if (trait == null) {
       continue
     }
     for (let j = 0; j < trait.labels.length; j++) {
       if (epochLabels.indexOf(trait.labels[j]) !== -1) {
-        boost += TRAIT_LABEL_BOOST_BASE
+        boost += THEME_BOOST_BASE
         match = true
       }
     }
@@ -238,14 +236,15 @@ function calculateTraitLabelBoost(otto: Otto, epoch: i32): i32 {
       matchTraitCount++
     }
   }
-  otto.epochThemeBoostMultiplier = matchTraitCount == -1 ? 0 : TRAIT_LABEL_BOOST_MULTIPLIER[matchTraitCount] / 100
-  return boost * multiplier
+  otto.epochThemeBoostMultiplier = matchTraitCount == -1 ? 1 : THEME_BOOST_MULTIPLIER[matchTraitCount]
+  return (boost * otto.epochThemeBoostMultiplier) / 100
 }
 
 export function calculateOttoRarityScore(otto: Otto, epoch: i32): void {
   let totalBRS = otto.baseRarityBoost
   let epochBoost = otto.epochRarityBoost
   let totalRRS = 0
+  let traits: Array<Trait> = []
   for (let i = 0; i < otto.traits.length; i++) {
     let traitId = otto.traits[i]
     let trait = Trait.load(traitId)
@@ -259,12 +258,13 @@ export function calculateOttoRarityScore(otto: Otto, epoch: i32): void {
     }
     totalRRS += trait.rrs
     totalBRS += trait.brs
+    traits.push(trait)
   }
 
   // log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
   otto.legendaryBoost = calculateLegendaryBoost(otto)
   otto.constellationBoost = calculateConstellationBoost(otto.birthday, epoch)
-  otto.epochThemeBoost = calculateTraitLabelBoost(otto, epoch)
+  otto.epochThemeBoost = calculateTraitLabelBoost(otto, traits, epoch)
   otto.epochRarityBoost = epochBoost
   otto.brs = totalBRS + otto.constellationBoost + otto.legendaryBoost + epochBoost + otto.epochThemeBoost
   otto.rrs = totalRRS
@@ -467,7 +467,8 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
     epochEntity = new Epoch(epochId)
     epochEntity.num = epoch
     epochEntity.ottosSynced = false
-    epochEntity.themeLabels = traitLabelEpochBoosts[epoch]
+    epochEntity.themeLabels = EPOCH_THEME_BOOST_LABEL[epoch]
+    epochEntity.themeBoostBase = THEME_BOOST_BASE
     if (epoch == 0) {
       epochEntity.startedAt = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
       epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
@@ -520,6 +521,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
       log.critical('otto not found: {}', [id])
       continue
     }
+    // log.warning('create snapshot for otto: {}', [otto.id])
     // clear epoch rarity boost when new epoch starts
     otto.epochRarityBoost = 0
     otto.diceCount = 0

@@ -12,10 +12,13 @@ export function getItemEntity(itemId: BigInt, owner: Bytes, ottoId: BigInt | nul
   if (entity == null) {
     entity = new OttoItem(id)
     entity.tokenId = itemId
+    entity.tokenURI = ''
+    entity.wearable = false
+    entity.slot = 0
+    entity.rootOwner = owner
     entity.owner = owner
     entity.parentTokenId = ottoId
     entity.amount = 0
-    entity.tokenURI = ''
     entity.updateAt = BigInt.zero()
     entity.createdAt = BigInt.zero()
   }

@@ -74,6 +74,7 @@ type Epoch @entity {
   startedAt: Int!
   endedAt: Int!
   themeLabels: [String!]!
+  themeBoostBase: Int!
 }
 
 type OttoProduct @entity {

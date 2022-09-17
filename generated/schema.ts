@@ -645,6 +645,15 @@ export class Epoch extends Entity {
   set themeLabels(value: Array<string>) {
     this.set("themeLabels", Value.fromStringArray(value));
   }
+
+  get themeBoostBase(): i32 {
+    let value = this.get("themeBoostBase");
+    return value!.toI32();
+  }
+
+  set themeBoostBase(value: i32) {
+    this.set("themeBoostBase", Value.fromI32(value));
+  }
 }
 
 export class OttoProduct extends Entity {
