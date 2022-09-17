@@ -215,7 +215,7 @@ function calculateLegendaryBoost(otto: Otto): i32 {
   return boost
 }
 
-function calculateTraitLabelBoost(otto: Otto, traits: Trait[], epoch: i32): i32 {
+function calculateEpochThemeBoost(otto: Otto, traits: Trait[], epoch: i32): i32 {
   const epochLabels = EPOCH_THEME_BOOST_LABEL[epoch]
   let boost = 0
   let matchTraitCount = -1
@@ -264,7 +264,7 @@ export function calculateOttoRarityScore(otto: Otto, epoch: i32): void {
   // log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
   otto.legendaryBoost = calculateLegendaryBoost(otto)
   otto.constellationBoost = calculateConstellationBoost(otto.birthday, epoch)
-  otto.epochThemeBoost = calculateTraitLabelBoost(otto, traits, epoch)
+  otto.epochThemeBoost = calculateEpochThemeBoost(otto, traits, epoch)
   otto.epochRarityBoost = epochBoost
   otto.brs = totalBRS + otto.constellationBoost + otto.legendaryBoost + epochBoost + otto.epochThemeBoost
   otto.rrs = totalRRS
