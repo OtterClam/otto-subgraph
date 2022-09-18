@@ -289,6 +289,8 @@ export function toEpoch(timestamp: BigInt): i32 {
   let ts = timestamp.toI32()
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
+  let s1EndTs = toEpochEndTimestamp(S1_END_EPOCH).toI32() // 2022-08-19
+
   // log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
   //   ts.toString(),
   //   firstEpochTs.toString(),
@@ -298,6 +300,8 @@ export function toEpoch(timestamp: BigInt): i32 {
     return 0
   } else if (ts >= RARITY_S2_START) {
     return (ts - RARITY_S2_START) / duration + S1_END_EPOCH + 1
+  } else if (ts >= s1EndTs && ts < RARITY_S2_START) {
+    return S1_END_EPOCH + 1
   } else if (ts >= firstEpochTs && ts < firstEpochTs + 3 * duration) {
     return (ts - firstEpochTs) / duration
   } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration) {
