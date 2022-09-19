@@ -29,6 +29,7 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   // epoch 6
   ['red', 'creature'],
 ]
+const CONSTELLATION_BOOST = 50
 
 function loadOrCreateSlots(): Array<Slot> {
   let slots = new Array<Slot>()
@@ -197,7 +198,7 @@ function calculateConstellationBoost(birthday: BigInt, epoch: i32): i32 {
   let competitionDate = new Date(ts.toI64() * 1000)
   let birthdayDate = new Date(birthday.toI64() * 1000)
   if (parseConstellation(competitionDate) == parseConstellation(birthdayDate)) {
-    boost += 50
+    boost += CONSTELLATION_BOOST
   }
   if (
     competitionDate.getUTCMonth() == birthdayDate.getUTCMonth() &&
@@ -486,6 +487,9 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
       epochEntity.startedAt = toEpochEndTimestamp(epoch - 1).toI32()
       epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
     }
+
+    epochEntity.constellationBoost = CONSTELLATION_BOOST
+    epochEntity.constellation = parseConstellation(new Date(i64(epochEntity.endedAt) * 1000))
 
     for (let i = offset; i < total; i++) {
       let id = OTTO + '-' + i.toString()

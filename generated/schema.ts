@@ -654,6 +654,24 @@ export class Epoch extends Entity {
   set themeBoostBase(value: i32) {
     this.set("themeBoostBase", Value.fromI32(value));
   }
+
+  get constellation(): i32 {
+    let value = this.get("constellation");
+    return value!.toI32();
+  }
+
+  set constellation(value: i32) {
+    this.set("constellation", Value.fromI32(value));
+  }
+
+  get constellationBoost(): i32 {
+    let value = this.get("constellationBoost");
+    return value!.toI32();
+  }
+
+  set constellationBoost(value: i32) {
+    this.set("constellationBoost", Value.fromI32(value));
+  }
 }
 
 export class OttoProduct extends Entity {
