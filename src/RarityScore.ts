@@ -14,7 +14,8 @@ import { loadPFP } from './utils/PFP'
 const NUM_OTTO_TRAITS = 13
 const EPOCH_3_EXTEND_TS = 86400 * 2
 const EPOCH_4_EXTEND_TS = 86400 * 2
-const S1_END_EPOCH = 6
+const S1_END_EPOCH = 5
+const RARITY_S2_START = 1663545600 // 2022-9-19 0:00 UTC
 
 const THEME_BOOST_BASE = 60
 const THEME_BOOST_MULTIPLIER = [100, 150, 170, 200, 250]
@@ -28,6 +29,7 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   // epoch 6
   ['red', 'creature'],
 ]
+const CONSTELLATION_BOOST = 50
 
 function loadOrCreateSlots(): Array<Slot> {
   let slots = new Array<Slot>()
@@ -196,7 +198,7 @@ function calculateConstellationBoost(birthday: BigInt, epoch: i32): i32 {
   let competitionDate = new Date(ts.toI64() * 1000)
   let birthdayDate = new Date(birthday.toI64() * 1000)
   if (parseConstellation(competitionDate) == parseConstellation(birthdayDate)) {
-    boost += 50
+    boost += CONSTELLATION_BOOST
   }
   if (
     competitionDate.getUTCMonth() == birthdayDate.getUTCMonth() &&
@@ -288,7 +290,8 @@ export function toEpoch(timestamp: BigInt): i32 {
   let ts = timestamp.toI32()
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
-  let endTs = toEpochEndTimestamp(S1_END_EPOCH - 1).toI32() // 2022-08-19
+  let s1EndTs = toEpochEndTimestamp(S1_END_EPOCH).toI32() // 2022-08-19
+
   // log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
   //   ts.toString(),
   //   firstEpochTs.toString(),
@@ -296,8 +299,10 @@ export function toEpoch(timestamp: BigInt): i32 {
   // ])
   if (ts < firstEpochTs) {
     return 0
-  } else if (ts >= endTs) {
-    return S1_END_EPOCH
+  } else if (ts >= RARITY_S2_START) {
+    return (ts - RARITY_S2_START) / duration + S1_END_EPOCH + 1
+  } else if (ts >= s1EndTs && ts < RARITY_S2_START) {
+    return S1_END_EPOCH + 1
   } else if (ts >= firstEpochTs && ts < firstEpochTs + 3 * duration) {
     return (ts - firstEpochTs) / duration
   } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration) {
@@ -315,7 +320,9 @@ export function toEpoch(timestamp: BigInt): i32 {
 function toEpochEndTimestamp(epoch: i32): BigInt {
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
-  if (epoch < 3) {
+  if (epoch > S1_END_EPOCH) {
+    return BigInt.fromI64(RARITY_S2_START + duration * (epoch - S1_END_EPOCH))
+  } else if (epoch < 3) {
     return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
   } else if (epoch == 3) {
     return BigInt.fromI64(firstEpochTs + EPOCH_3_EXTEND_TS + duration * (epoch + 1))
@@ -469,13 +476,20 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
     epochEntity.ottosSynced = false
     epochEntity.themeLabels = EPOCH_THEME_BOOST_LABEL[epoch]
     epochEntity.themeBoostBase = THEME_BOOST_BASE
-    if (epoch == 0) {
+    if (epoch > S1_END_EPOCH) {
+      // season 2
+      epochEntity.startedAt = RARITY_S2_START
+      epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
+    } else if (epoch == 0) {
       epochEntity.startedAt = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
       epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
     } else {
       epochEntity.startedAt = toEpochEndTimestamp(epoch - 1).toI32()
       epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
     }
+
+    epochEntity.constellationBoost = CONSTELLATION_BOOST
+    epochEntity.constellation = parseConstellation(new Date(i64(epochEntity.endedAt) * 1000))
 
     for (let i = offset; i < total; i++) {
       let id = OTTO + '-' + i.toString()
