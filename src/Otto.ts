@@ -198,6 +198,8 @@ export function getOttoEntity(tokenId: BigInt): Otto {
     entity.numericVisibleTraits = BigInt.zero()
     entity.constellation = 1
     entity.constellationBoost = 0
+    entity.epochThemeBoost = 0
+    entity.epochThemeBoostMultiplier = 1
     entity.traits = []
     entity.diceCount = 0
     entity.epochRarityBoost = 0

@@ -1,4 +1,4 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, JSONValue, log, TypedMap } from '@graphprotocol/graph-ts'
 import { OttoV3Contract } from '../generated/Otto/OttoV3Contract'
 import { Epoch, Otto, Slot, Trait } from '../generated/schema'
 import {
@@ -15,6 +15,19 @@ const NUM_OTTO_TRAITS = 13
 const EPOCH_3_EXTEND_TS = 86400 * 2
 const EPOCH_4_EXTEND_TS = 86400 * 2
 const S1_END_EPOCH = 6
+
+const THEME_BOOST_BASE = 60
+const THEME_BOOST_MULTIPLIER = [100, 150, 170, 200, 250]
+const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  // epoch 6
+  ['red', 'creature'],
+]
 
 function loadOrCreateSlots(): Array<Slot> {
   let slots = new Array<Slot>()
@@ -43,12 +56,14 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
     let slotId = slots[i].id
     let slotProps = PFP.toObject().get(i.toString())!.toArray()
     let firstCode = 0
+    let traitJson: TypedMap<string, JSONValue> = new TypedMap()
     let brs = 0
     for (let j = 0; j < slotProps.length; j++) {
       firstCode = slotProps[j].toObject().get('first_code')!.toBigInt().toI32()
       let len = slotProps[j].toObject().get('length')!.toBigInt().toI32()
       if (code >= firstCode && code < firstCode + len) {
-        brs = slotProps[j].toObject().get('brs')!.toBigInt().toI32()
+        traitJson = slotProps[j].toObject()
+        brs = traitJson.get('brs')!.toBigInt().toI32()
         break
       }
     }
@@ -62,9 +77,19 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
       trait.rrs = 0
       trait.count = 0
       trait.ottos = []
-      let slotTraits = slots[i].traits
+      const slotTraits = slots[i].traits
       slotTraits.push(trait.id)
       slots[i].traits = slotTraits
+
+      let labels = new Array<string>()
+      if (traitJson.get('labels') != null) {
+        const labelArray = traitJson.get('labels')!.toArray()
+        for (let k = 0; k < labelArray.length; k++) {
+          labels.push(labelArray[k].toObject().get('v')!.toString())
+        }
+      }
+      trait.labels = labels
+
       // log.warning('trait created {}', [traitId])
       // } else {
       //   log.warning('trait loaded {}', [traitId])
@@ -190,10 +215,36 @@ function calculateLegendaryBoost(otto: Otto): i32 {
   return boost
 }
 
+function calculateEpochThemeBoost(otto: Otto, traits: Trait[], epoch: i32): i32 {
+  const epochLabels = EPOCH_THEME_BOOST_LABEL[epoch]
+  let boost = 0
+  let matchTraitCount = -1
+
+  for (let i = 0; i < traits.length; i++) {
+    let trait = traits[i]
+    let match = false
+    if (trait == null) {
+      continue
+    }
+    for (let j = 0; j < trait.labels.length; j++) {
+      if (epochLabels.indexOf(trait.labels[j]) !== -1) {
+        boost += THEME_BOOST_BASE
+        match = true
+      }
+    }
+    if (match) {
+      matchTraitCount++
+    }
+  }
+  otto.epochThemeBoostMultiplier = matchTraitCount == -1 ? 1 : THEME_BOOST_MULTIPLIER[matchTraitCount]
+  return (boost * otto.epochThemeBoostMultiplier) / 100
+}
+
 export function calculateOttoRarityScore(otto: Otto, epoch: i32): void {
   let totalBRS = otto.baseRarityBoost
   let epochBoost = otto.epochRarityBoost
   let totalRRS = 0
+  let traits: Array<Trait> = []
   for (let i = 0; i < otto.traits.length; i++) {
     let traitId = otto.traits[i]
     let trait = Trait.load(traitId)
@@ -207,13 +258,15 @@ export function calculateOttoRarityScore(otto: Otto, epoch: i32): void {
     }
     totalRRS += trait.rrs
     totalBRS += trait.brs
+    traits.push(trait)
   }
 
   // log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
   otto.legendaryBoost = calculateLegendaryBoost(otto)
   otto.constellationBoost = calculateConstellationBoost(otto.birthday, epoch)
+  otto.epochThemeBoost = calculateEpochThemeBoost(otto, traits, epoch)
   otto.epochRarityBoost = epochBoost
-  otto.brs = totalBRS + otto.constellationBoost + otto.legendaryBoost + epochBoost
+  otto.brs = totalBRS + otto.constellationBoost + otto.legendaryBoost + epochBoost + otto.epochThemeBoost
   otto.rrs = totalRRS
   otto.rarityScore = otto.brs + otto.rrs
 }
@@ -414,6 +467,8 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
     epochEntity = new Epoch(epochId)
     epochEntity.num = epoch
     epochEntity.ottosSynced = false
+    epochEntity.themeLabels = EPOCH_THEME_BOOST_LABEL[epoch]
+    epochEntity.themeBoostBase = THEME_BOOST_BASE
     if (epoch == 0) {
       epochEntity.startedAt = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
       epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
@@ -466,6 +521,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
       log.critical('otto not found: {}', [id])
       continue
     }
+    // log.warning('create snapshot for otto: {}', [otto.id])
     // clear epoch rarity boost when new epoch starts
     otto.epochRarityBoost = 0
     otto.diceCount = 0

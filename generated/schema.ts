@@ -177,6 +177,24 @@ export class Otto extends Entity {
     this.set("constellationBoost", Value.fromI32(value));
   }
 
+  get epochThemeBoost(): i32 {
+    let value = this.get("epochThemeBoost");
+    return value!.toI32();
+  }
+
+  set epochThemeBoost(value: i32) {
+    this.set("epochThemeBoost", Value.fromI32(value));
+  }
+
+  get epochThemeBoostMultiplier(): i32 {
+    let value = this.get("epochThemeBoostMultiplier");
+    return value!.toI32();
+  }
+
+  set epochThemeBoostMultiplier(value: i32) {
+    this.set("epochThemeBoostMultiplier", Value.fromI32(value));
+  }
+
   get epoch(): i32 {
     let value = this.get("epoch");
     return value!.toI32();
@@ -473,6 +491,15 @@ export class Trait extends Entity {
   set ottos(value: Array<string>) {
     this.set("ottos", Value.fromStringArray(value));
   }
+
+  get labels(): Array<string> {
+    let value = this.get("labels");
+    return value!.toStringArray();
+  }
+
+  set labels(value: Array<string>) {
+    this.set("labels", Value.fromStringArray(value));
+  }
 }
 
 export class Slot extends Entity {
@@ -608,6 +635,24 @@ export class Epoch extends Entity {
 
   set endedAt(value: i32) {
     this.set("endedAt", Value.fromI32(value));
+  }
+
+  get themeLabels(): Array<string> {
+    let value = this.get("themeLabels");
+    return value!.toStringArray();
+  }
+
+  set themeLabels(value: Array<string>) {
+    this.set("themeLabels", Value.fromStringArray(value));
+  }
+
+  get themeBoostBase(): i32 {
+    let value = this.get("themeBoostBase");
+    return value!.toI32();
+  }
+
+  set themeBoostBase(value: i32) {
+    this.set("themeBoostBase", Value.fromI32(value));
   }
 }
 
