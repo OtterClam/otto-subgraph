@@ -28,6 +28,8 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   [],
   // epoch 6
   ['red', 'creature'],
+  // epoch 7
+  ['green', 'plant', 'green_thumb'],
 ]
 const CONSTELLATION_BOOST = 50
 
