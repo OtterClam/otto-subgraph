@@ -43,8 +43,10 @@ export function handleTransfer(event: TransferEvent): void {
     updateV2(entity, tokenId)
 
     if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
-      // handle owned items transfer
       let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
+      entity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
+
+      // handle owned items transfer
       let itemIds = ottoV3.ownedItemsOf(tokenId)
       for (let i = 0; i < itemIds.length; i++) {
         let itemId = itemIds[i]
@@ -228,6 +230,6 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
       : info.getBirthday()
   let birthdayDate = new Date(entity.birthday.toI64() * 1000)
   entity.constellation = parseConstellation(birthdayDate)
-  entity.legendary = info.value6
-  entity.numericVisibleTraits = info.value4
+  entity.legendary = info.getLegendary()
+  entity.numericVisibleTraits = info.getTraits()
 }
