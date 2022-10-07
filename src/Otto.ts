@@ -46,8 +46,10 @@ export function handleTransfer(event: TransferEvent): void {
     updateV2(entity, tokenId)
 
     if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
-      // handle owned items transfer
       let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
+      entity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
+
+      // handle owned items transfer
       let itemIds = ottoV3.ownedItemsOf(tokenId)
       for (let i = 0; i < itemIds.length; i++) {
         let itemId = itemIds[i]
@@ -263,13 +265,16 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
   entity.mintAt = info.value0
   entity.canOpenAt = info.value1
   entity.summonAt = info.value2
-  // fix overflow when birthday timestamp < 0, wrong date but works
-  entity.birthday = BigInt.fromU64(0x7fffffffffffffff)
-    .minus(info.value3.bitAnd(BigInt.fromU64(0x7fffffffffffffff)))
-    .plus(BigInt.fromI32(1))
-    .times(BigInt.fromI32(-1))
+  // fix overflow when birthday timestamp < 0
+  entity.birthday =
+    info.getBirthday() > BigInt.fromU64(0x7fffffffffffffff)
+      ? BigInt.fromU64(0x7fffffffffffffff)
+          .minus(info.value3.bitAnd(BigInt.fromU64(0x7fffffffffffffff)))
+          .plus(BigInt.fromI32(1))
+          .times(BigInt.fromI32(-1))
+      : info.getBirthday()
   let birthdayDate = new Date(entity.birthday.toI64() * 1000)
   entity.constellation = parseConstellation(birthdayDate)
-  entity.legendary = info.value6
-  entity.numericVisibleTraits = info.value4
+  entity.legendary = info.getLegendary()
+  entity.numericVisibleTraits = info.getTraits()
 }
