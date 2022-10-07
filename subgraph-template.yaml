@@ -127,4 +127,8 @@ dataSources:
           handler: handleFinish
         - event: Revive(indexed uint256,indexed uint256)
           handler: handleRevive
+        - event: PassUpdated(indexed uint256,indexed uint256)
+          handler: handlePassUpdated
+        - event: RestingUntilUpdated(indexed uint256,uint256,uint256)
+          handler: handleRestingUntilUpdated
       file: ./src/Adventure.ts

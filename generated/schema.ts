@@ -347,6 +347,23 @@ export class Otto extends Entity {
   set passes(value: Array<string>) {
     this.set("passes", Value.fromStringArray(value));
   }
+
+  get latestPass(): string | null {
+    let value = this.get("latestPass");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set latestPass(value: string | null) {
+    if (!value) {
+      this.unset("latestPass");
+    } else {
+      this.set("latestPass", Value.fromString(<string>value));
+    }
+  }
 }
 
 export class OttoItem extends Entity {
@@ -908,13 +925,13 @@ export class AdventurePass extends Entity {
     this.set("departureAt", Value.fromBigInt(value));
   }
 
-  get canFinishedAt(): BigInt {
-    let value = this.get("canFinishedAt");
+  get canFinishAt(): BigInt {
+    let value = this.get("canFinishAt");
     return value!.toBigInt();
   }
 
-  set canFinishedAt(value: BigInt) {
-    this.set("canFinishedAt", Value.fromBigInt(value));
+  set canFinishAt(value: BigInt) {
+    this.set("canFinishAt", Value.fromBigInt(value));
   }
 
   get finishedAt(): BigInt {
@@ -953,31 +970,49 @@ export class AdventurePass extends Entity {
     this.set("revived", Value.fromBoolean(value));
   }
 
-  get exp(): i32 {
+  get exp(): BigInt {
     let value = this.get("exp");
-    return value!.toI32();
+    return value!.toBigInt();
   }
 
-  set exp(value: i32) {
-    this.set("exp", Value.fromI32(value));
+  set exp(value: BigInt) {
+    this.set("exp", Value.fromBigInt(value));
   }
 
-  get ap(): i32 {
+  get ap(): BigInt {
     let value = this.get("ap");
-    return value!.toI32();
+    return value!.toBigInt();
   }
 
-  set ap(value: i32) {
-    this.set("ap", Value.fromI32(value));
+  set ap(value: BigInt) {
+    this.set("ap", Value.fromBigInt(value));
   }
 
-  get tcp(): i32 {
+  get tcp(): BigInt {
     let value = this.get("tcp");
+    return value!.toBigInt();
+  }
+
+  set tcp(value: BigInt) {
+    this.set("tcp", Value.fromBigInt(value));
+  }
+
+  get expMultiplier(): i32 {
+    let value = this.get("expMultiplier");
     return value!.toI32();
   }
 
-  set tcp(value: i32) {
-    this.set("tcp", Value.fromI32(value));
+  set expMultiplier(value: i32) {
+    this.set("expMultiplier", Value.fromI32(value));
+  }
+
+  get itemAmountMultiplier(): i32 {
+    let value = this.get("itemAmountMultiplier");
+    return value!.toI32();
+  }
+
+  set itemAmountMultiplier(value: i32) {
+    this.set("itemAmountMultiplier", Value.fromI32(value));
   }
 
   get items(): Array<BigInt> {

@@ -41,6 +41,7 @@ type Otto @entity {
   restingUntil: BigInt!
   baseAttributes: [Int!]!
   passes: [AdventurePass!]!
+  latestPass: AdventurePass
 }
 
 type OttoItem @entity {
@@ -105,13 +106,15 @@ type AdventurePass @entity {
   locId: BigInt!
   otto: Otto!
   departureAt: BigInt!
-  canFinishedAt: BigInt!
+  canFinishAt: BigInt!
   finishedAt: BigInt!
   seed: BigInt!
   success: Boolean!
   revived: Boolean!
-  exp: Int!
-  ap: Int!
-  tcp: Int!
+  exp: BigInt!
+  ap: BigInt!
+  tcp: BigInt!
+  expMultiplier: Int!
+  itemAmountMultiplier: Int!
   items: [BigInt!]!
 }
