@@ -246,7 +246,7 @@ export function getOttoEntity(tokenId: BigInt): Otto {
     entity.attributePoints = 0
     entity.ap = BigInt.zero()
     entity.exp = BigInt.zero()
-    entity.level = 0
+    entity.level = 1
     entity.lastLevelUpAt = BigInt.zero()
     entity.restingUntil = BigInt.zero()
     entity.baseAttributes = []
