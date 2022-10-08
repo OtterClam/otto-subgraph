@@ -108,6 +108,7 @@ type AdventurePass @entity {
   departureAt: BigInt!
   canFinishAt: BigInt!
   finishedAt: BigInt!
+  finishedTx: String
   seed: BigInt!
   success: Boolean!
   revived: Boolean!

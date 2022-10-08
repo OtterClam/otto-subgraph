@@ -943,6 +943,23 @@ export class AdventurePass extends Entity {
     this.set("finishedAt", Value.fromBigInt(value));
   }
 
+  get finishedTx(): string | null {
+    let value = this.get("finishedTx");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set finishedTx(value: string | null) {
+    if (!value) {
+      this.unset("finishedTx");
+    } else {
+      this.set("finishedTx", Value.fromString(<string>value));
+    }
+  }
+
   get seed(): BigInt {
     let value = this.get("seed");
     return value!.toBigInt();

@@ -49,6 +49,7 @@ export function handleFinish(event: Finish): void {
   passEntity.ap = pass.rewards.ap
   passEntity.tcp = pass.rewards.tcp
   passEntity.items = pass.rewards.items
+  passEntity.finishedTx = event.transaction.hash.toHexString()
   passEntity.save()
 }
 
