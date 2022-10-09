@@ -55,7 +55,6 @@ export function handleFinish(event: Finish): void {
 
 export function handleRevive(event: Revive): void {
   const passEntity = getPassEntity(event.params.passId)
-  passEntity.success = true
   passEntity.revived = true
   passEntity.save()
 }
