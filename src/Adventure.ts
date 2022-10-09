@@ -86,6 +86,20 @@ function getPassEntity(id: BigInt): AdventurePass {
   let entity = AdventurePass.load(entityId)
   if (entity == null) {
     entity = new AdventurePass(entityId)
+    entity.locId = BigInt.zero()
+    entity.otto = ''
+    entity.departureAt = BigInt.zero()
+    entity.canFinishAt = BigInt.zero()
+    entity.finishedAt = BigInt.zero()
+    entity.seed = BigInt.zero()
+    entity.success = false
+    entity.revived = false
+    entity.exp = BigInt.zero()
+    entity.ap = BigInt.zero()
+    entity.tcp = BigInt.zero()
+    entity.expMultiplier = 1
+    entity.itemAmountMultiplier = 1
+    entity.items = []
   }
   return entity
 }
