@@ -312,6 +312,15 @@ export class Otto extends Entity {
     this.set("level", Value.fromI32(value));
   }
 
+  get nextLevelExp(): BigInt {
+    let value = this.get("nextLevelExp");
+    return value!.toBigInt();
+  }
+
+  set nextLevelExp(value: BigInt) {
+    this.set("nextLevelExp", Value.fromBigInt(value));
+  }
+
   get lastLevelUpAt(): BigInt {
     let value = this.get("lastLevelUpAt");
     return value!.toBigInt();
