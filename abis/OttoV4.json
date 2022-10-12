@@ -346,6 +346,12 @@
         "internalType": "uint32",
         "name": "attributePoints_",
         "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "nextLevelExp_",
+        "type": "uint32"
       }
     ],
     "name": "LevelUp",

@@ -37,6 +37,7 @@ type Otto @entity {
   ap: BigInt!
   exp: BigInt!
   level: Int!
+  nextLevelExp: BigInt!
   lastLevelUpAt: BigInt!
   restingUntil: BigInt!
   baseAttributes: [Int!]!

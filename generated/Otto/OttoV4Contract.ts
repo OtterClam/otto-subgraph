@@ -392,6 +392,10 @@ export class LevelUp__Params {
   get attributePoints_(): BigInt {
     return this._event.parameters[5].value.toBigInt();
   }
+
+  get nextLevelExp_(): BigInt {
+    return this._event.parameters[6].value.toBigInt();
+  }
 }
 
 export class OpenPortal extends ethereum.Event {

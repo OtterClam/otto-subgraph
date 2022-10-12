@@ -195,6 +195,7 @@ export function handleLevelUp(event: LevelUp): void {
   ottoEntity.exp = event.params.toExp_
   ottoEntity.attributePoints = event.params.attributePoints_.toI32()
   ottoEntity.lastLevelUpAt = event.block.timestamp
+  ottoEntity.nextLevelExp = event.params.nextLevelExp_
   ottoEntity.updateAt = event.block.timestamp
   ottoEntity.save()
 }
@@ -251,6 +252,7 @@ export function getOttoEntity(tokenId: BigInt): Otto {
     entity.restingUntil = BigInt.zero()
     entity.baseAttributes = []
     entity.passes = []
+    entity.nextLevelExp = BigInt.fromI32(100)
   }
   return entity
 }
