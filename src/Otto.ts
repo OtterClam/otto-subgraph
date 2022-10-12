@@ -236,11 +236,11 @@ export function getOttoEntity(tokenId: BigInt): Otto {
     entity.birthday = BigInt.zero()
     entity.items = []
     entity.numericVisibleTraits = BigInt.zero()
+    entity.numericRawTraits = BigInt.zero()
     entity.constellation = 1
     entity.constellationBoost = 0
     entity.epochThemeBoost = 0
     entity.epochThemeBoostMultiplier = 1
-    entity.traits = []
     entity.diceCount = 0
     entity.epochRarityBoost = 0
     entity.baseRarityBoost = 0
@@ -279,4 +279,5 @@ function updateV2(entity: Otto, tokenId: BigInt): void {
   entity.constellation = parseConstellation(birthdayDate)
   entity.legendary = info.getLegendary()
   entity.numericVisibleTraits = info.getTraits()
+  entity.numericRawTraits = info.getTraits()
 }

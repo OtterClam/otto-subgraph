@@ -159,6 +159,15 @@ export class Otto extends Entity {
     this.set("numericVisibleTraits", Value.fromBigInt(value));
   }
 
+  get numericRawTraits(): BigInt {
+    let value = this.get("numericRawTraits");
+    return value!.toBigInt();
+  }
+
+  set numericRawTraits(value: BigInt) {
+    this.set("numericRawTraits", Value.fromBigInt(value));
+  }
+
   get constellation(): i32 {
     let value = this.get("constellation");
     return value!.toI32();
