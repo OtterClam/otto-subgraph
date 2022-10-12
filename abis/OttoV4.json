@@ -369,13 +369,19 @@
       {
         "indexed": false,
         "internalType": "uint32",
-        "name": "attributePoints_",
+        "name": "fromNextLevelExp_",
         "type": "uint32"
       },
       {
         "indexed": false,
         "internalType": "uint32",
-        "name": "nextLevelExp_",
+        "name": "toNextLevelExp_",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "attributePoints_",
         "type": "uint32"
       }
     ],

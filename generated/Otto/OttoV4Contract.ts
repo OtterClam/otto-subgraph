@@ -415,12 +415,16 @@ export class LevelUp__Params {
     return this._event.parameters[4].value.toBigInt();
   }
 
-  get attributePoints_(): BigInt {
+  get fromNextLevelExp_(): BigInt {
     return this._event.parameters[5].value.toBigInt();
   }
 
-  get nextLevelExp_(): BigInt {
+  get toNextLevelExp_(): BigInt {
     return this._event.parameters[6].value.toBigInt();
+  }
+
+  get attributePoints_(): BigInt {
+    return this._event.parameters[7].value.toBigInt();
   }
 }
 

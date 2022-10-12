@@ -46,7 +46,7 @@ dataSources:
           handler: handleBaseAttributesChanged
         - event: ExpIncreased(indexed uint256,uint32,uint32)
           handler: handleExpIncreased
-        - event: LevelUp(indexed uint256,uint32,uint32,uint32,uint32,uint32,uint32)
+        - event: LevelUp(indexed uint256,uint32,uint32,uint32,uint32,uint32,uint32,uint32)
           handler: handleLevelUp
         - event: ApIncreased(indexed uint256,uint32,uint32)
           handler: handleApIncreased
