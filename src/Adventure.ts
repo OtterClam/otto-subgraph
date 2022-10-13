@@ -86,6 +86,7 @@ function getPassEntity(id: BigInt): AdventurePass {
   let entity = AdventurePass.load(entityId)
   if (entity == null) {
     entity = new AdventurePass(entityId)
+    entity.passId = id
     entity.locId = BigInt.zero()
     entity.otto = ''
     entity.departureAt = BigInt.zero()

@@ -916,6 +916,15 @@ export class AdventurePass extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get passId(): BigInt {
+    let value = this.get("passId");
+    return value!.toBigInt();
+  }
+
+  set passId(value: BigInt) {
+    this.set("passId", Value.fromBigInt(value));
+  }
+
   get locId(): BigInt {
     let value = this.get("locId");
     return value!.toBigInt();

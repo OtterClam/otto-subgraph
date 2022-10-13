@@ -105,6 +105,7 @@ type OttoProduct @entity {
 
 type AdventurePass @entity {
   id: ID!
+  passId: BigInt!
   locId: BigInt!
   otto: Otto!
   departureAt: BigInt!
