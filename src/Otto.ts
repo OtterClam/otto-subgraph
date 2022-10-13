@@ -8,7 +8,7 @@ import {
   ItemTookOff,
   OttoV3Contract,
 } from '../generated/Otto/OttoV3Contract'
-import { ApIncreased, ExpIncreased, LevelUp } from '../generated/Otto/OttoV4Contract'
+import { ApIncreased, ExpIncreased, LevelUp, OttoV4Contract } from '../generated/Otto/OttoV4Contract'
 import { Otto } from '../generated/schema'
 import { ADVENTURE, OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
@@ -127,10 +127,12 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
 
 export function handleBaseAttributesChanged(event: BaseAttributesChanged): void {
   const epochCreated = updateOrCreateEpoch(event.block.timestamp)
+  const ottoV4 = OttoV4Contract.bind(Address.fromString(OTTO))
   let tokenId = event.params.ottoId_
   let ottoEntity = getOttoEntity(tokenId)
   ottoEntity.baseAttributes = event.params.attrs_
   ottoEntity.updateAt = event.block.timestamp
+  ottoEntity.attributePoints = ottoV4.infos(tokenId).getAttributePoints().toI32()
 
   if (ottoEntity.baseRarityBoost != event.params.attrs_[7]) {
     ottoEntity.baseRarityBoost = event.params.attrs_[7]
