@@ -10,7 +10,7 @@ import {
 } from '../generated/Otto/OttoV3Contract'
 import { ApIncreased, ExpIncreased, LevelUp, OttoV4Contract } from '../generated/Otto/OttoV4Contract'
 import { Otto } from '../generated/schema'
-import { ADVENTURE, OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK } from './Constants'
+import { ADVENTURE, OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_V4_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
 import {
   calculateOttoRarityScore,
@@ -132,7 +132,9 @@ export function handleBaseAttributesChanged(event: BaseAttributesChanged): void 
   let ottoEntity = getOttoEntity(tokenId)
   ottoEntity.baseAttributes = event.params.attrs_
   ottoEntity.updateAt = event.block.timestamp
-  ottoEntity.attributePoints = ottoV4.infos(tokenId).getAttributePoints().toI32()
+  if (event.block.number > BigInt.fromString(OTTO_V4_BLOCK)) {
+    ottoEntity.attributePoints = ottoV4.infos(tokenId).getAttributePoints().toI32()
+  }
 
   if (ottoEntity.baseRarityBoost != event.params.attrs_[7]) {
     ottoEntity.baseRarityBoost = event.params.attrs_[7]
