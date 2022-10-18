@@ -7,7 +7,7 @@ dataSources:
     network: ${SUBGRAPH_NETWORK}
     source:
       address: '${SUBGRAPH_OTTO_ADDRESS}'
-      abi: OttoV3Contract
+      abi: OttoV4Contract
       startBlock: ${SUBGRAPH_OTTO_STARTBLOCK}
     mapping:
       kind: ethereum/events
@@ -15,8 +15,6 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Otto
-        - OttoV2
-        - OttoV3
       abis:
         - name: OttoContract
           file: ./abis/Otto.json
@@ -24,6 +22,8 @@ dataSources:
           file: ./abis/OttoV2.json
         - name: OttoV3Contract
           file: ./abis/OttoV3.json
+        - name: OttoV4Contract
+          file: ./abis/OttoV4.json
         - name: OttoItemContract
           file: ./abis/OttoItem.json
         # --------------------
@@ -42,7 +42,14 @@ dataSources:
           handler: handleItemTookOff
         - event: EpochBoostsChanged(indexed uint256,indexed uint32,int16[9])
           handler: handleEpochBoostChanged
-
+        - event: BaseAttributesChanged(indexed uint256,int16[8])
+          handler: handleBaseAttributesChanged
+        - event: ExpIncreased(indexed uint256,uint32,uint32)
+          handler: handleExpIncreased
+        - event: LevelUp(indexed uint256,uint32,uint32,uint32,uint32,uint32,uint32,uint32)
+          handler: handleLevelUp
+        - event: ApIncreased(indexed uint256,uint32,uint32)
+          handler: handleApIncreased
       file: ./src/Otto.ts
 
   - kind: ethereum/contract
@@ -95,3 +102,33 @@ dataSources:
         - event: DeleteProduct(indexed uint256)
           handler: handleDelete
       file: ./src/OttopiaStore.ts
+
+  - kind: ethereum/contract
+    name: Adventure
+    network: ${SUBGRAPH_NETWORK}
+    source:
+      address: '${SUBGRAPH_ADVENTURE_ADDRESS}'
+      abi: AdventureContract
+      startBlock: ${SUBGRAPH_ADVENTURE_START_BLOCK}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - AdventurePass
+      abis:
+        - name: AdventureContract
+          file: ./abis/Adventure.json
+        # --------------------
+      eventHandlers:
+        - event: Departure(indexed uint256,indexed uint256)
+          handler: handleDeparture
+        - event: Finish(indexed uint256,indexed uint256,bool)
+          handler: handleFinish
+        - event: Revive(indexed uint256,indexed uint256)
+          handler: handleRevive
+        - event: PassUpdated(indexed uint256,indexed uint256)
+          handler: handlePassUpdated
+        - event: RestingUntilUpdated(indexed uint256,uint256,uint256)
+          handler: handleRestingUntilUpdated
+      file: ./src/Adventure.ts

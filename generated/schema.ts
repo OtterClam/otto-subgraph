@@ -159,6 +159,15 @@ export class Otto extends Entity {
     this.set("numericVisibleTraits", Value.fromBigInt(value));
   }
 
+  get numericRawTraits(): BigInt {
+    let value = this.get("numericRawTraits");
+    return value!.toBigInt();
+  }
+
+  set numericRawTraits(value: BigInt) {
+    this.set("numericRawTraits", Value.fromBigInt(value));
+  }
+
   get constellation(): i32 {
     let value = this.get("constellation");
     return value!.toI32();
@@ -274,6 +283,104 @@ export class Otto extends Entity {
 
   set baseRarityBoost(value: i32) {
     this.set("baseRarityBoost", Value.fromI32(value));
+  }
+
+  get attributePoints(): i32 {
+    let value = this.get("attributePoints");
+    return value!.toI32();
+  }
+
+  set attributePoints(value: i32) {
+    this.set("attributePoints", Value.fromI32(value));
+  }
+
+  get ap(): BigInt {
+    let value = this.get("ap");
+    return value!.toBigInt();
+  }
+
+  set ap(value: BigInt) {
+    this.set("ap", Value.fromBigInt(value));
+  }
+
+  get exp(): BigInt {
+    let value = this.get("exp");
+    return value!.toBigInt();
+  }
+
+  set exp(value: BigInt) {
+    this.set("exp", Value.fromBigInt(value));
+  }
+
+  get level(): i32 {
+    let value = this.get("level");
+    return value!.toI32();
+  }
+
+  set level(value: i32) {
+    this.set("level", Value.fromI32(value));
+  }
+
+  get nextLevelExp(): BigInt {
+    let value = this.get("nextLevelExp");
+    return value!.toBigInt();
+  }
+
+  set nextLevelExp(value: BigInt) {
+    this.set("nextLevelExp", Value.fromBigInt(value));
+  }
+
+  get lastLevelUpAt(): BigInt {
+    let value = this.get("lastLevelUpAt");
+    return value!.toBigInt();
+  }
+
+  set lastLevelUpAt(value: BigInt) {
+    this.set("lastLevelUpAt", Value.fromBigInt(value));
+  }
+
+  get restingUntil(): BigInt {
+    let value = this.get("restingUntil");
+    return value!.toBigInt();
+  }
+
+  set restingUntil(value: BigInt) {
+    this.set("restingUntil", Value.fromBigInt(value));
+  }
+
+  get baseAttributes(): Array<i32> {
+    let value = this.get("baseAttributes");
+    return value!.toI32Array();
+  }
+
+  set baseAttributes(value: Array<i32>) {
+    this.set("baseAttributes", Value.fromI32Array(value));
+  }
+
+  get passes(): Array<string> {
+    let value = this.get("passes");
+    return value!.toStringArray();
+  }
+
+  set passes(value: Array<string>) {
+    this.set("passes", Value.fromStringArray(value));
+  }
+
+  get latestPass(): string | null {
+    let value = this.get("latestPass");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set latestPass(value: string | null) {
+    if (!value) {
+      this.unset("latestPass");
+    } else {
+      this.set("latestPass", Value.fromString(<string>value));
+    }
   }
 }
 
@@ -775,5 +882,189 @@ export class OttoProduct extends Entity {
 
   set updateAt(value: BigInt) {
     this.set("updateAt", Value.fromBigInt(value));
+  }
+}
+
+export class AdventurePass extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save AdventurePass entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type AdventurePass must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("AdventurePass", id.toString(), this);
+    }
+  }
+
+  static load(id: string): AdventurePass | null {
+    return changetype<AdventurePass | null>(store.get("AdventurePass", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get passId(): BigInt {
+    let value = this.get("passId");
+    return value!.toBigInt();
+  }
+
+  set passId(value: BigInt) {
+    this.set("passId", Value.fromBigInt(value));
+  }
+
+  get locId(): BigInt {
+    let value = this.get("locId");
+    return value!.toBigInt();
+  }
+
+  set locId(value: BigInt) {
+    this.set("locId", Value.fromBigInt(value));
+  }
+
+  get otto(): string {
+    let value = this.get("otto");
+    return value!.toString();
+  }
+
+  set otto(value: string) {
+    this.set("otto", Value.fromString(value));
+  }
+
+  get departureAt(): BigInt {
+    let value = this.get("departureAt");
+    return value!.toBigInt();
+  }
+
+  set departureAt(value: BigInt) {
+    this.set("departureAt", Value.fromBigInt(value));
+  }
+
+  get canFinishAt(): BigInt {
+    let value = this.get("canFinishAt");
+    return value!.toBigInt();
+  }
+
+  set canFinishAt(value: BigInt) {
+    this.set("canFinishAt", Value.fromBigInt(value));
+  }
+
+  get finishedAt(): BigInt {
+    let value = this.get("finishedAt");
+    return value!.toBigInt();
+  }
+
+  set finishedAt(value: BigInt) {
+    this.set("finishedAt", Value.fromBigInt(value));
+  }
+
+  get finishedTx(): string | null {
+    let value = this.get("finishedTx");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set finishedTx(value: string | null) {
+    if (!value) {
+      this.unset("finishedTx");
+    } else {
+      this.set("finishedTx", Value.fromString(<string>value));
+    }
+  }
+
+  get seed(): BigInt {
+    let value = this.get("seed");
+    return value!.toBigInt();
+  }
+
+  set seed(value: BigInt) {
+    this.set("seed", Value.fromBigInt(value));
+  }
+
+  get success(): boolean {
+    let value = this.get("success");
+    return value!.toBoolean();
+  }
+
+  set success(value: boolean) {
+    this.set("success", Value.fromBoolean(value));
+  }
+
+  get revived(): boolean {
+    let value = this.get("revived");
+    return value!.toBoolean();
+  }
+
+  set revived(value: boolean) {
+    this.set("revived", Value.fromBoolean(value));
+  }
+
+  get exp(): BigInt {
+    let value = this.get("exp");
+    return value!.toBigInt();
+  }
+
+  set exp(value: BigInt) {
+    this.set("exp", Value.fromBigInt(value));
+  }
+
+  get ap(): BigInt {
+    let value = this.get("ap");
+    return value!.toBigInt();
+  }
+
+  set ap(value: BigInt) {
+    this.set("ap", Value.fromBigInt(value));
+  }
+
+  get tcp(): BigInt {
+    let value = this.get("tcp");
+    return value!.toBigInt();
+  }
+
+  set tcp(value: BigInt) {
+    this.set("tcp", Value.fromBigInt(value));
+  }
+
+  get expMultiplier(): i32 {
+    let value = this.get("expMultiplier");
+    return value!.toI32();
+  }
+
+  set expMultiplier(value: i32) {
+    this.set("expMultiplier", Value.fromI32(value));
+  }
+
+  get itemAmountMultiplier(): i32 {
+    let value = this.get("itemAmountMultiplier");
+    return value!.toI32();
+  }
+
+  set itemAmountMultiplier(value: i32) {
+    this.set("itemAmountMultiplier", Value.fromI32(value));
+  }
+
+  get items(): Array<BigInt> {
+    let value = this.get("items");
+    return value!.toBigIntArray();
+  }
+
+  set items(value: Array<BigInt>) {
+    this.set("items", Value.fromBigIntArray(value));
   }
 }

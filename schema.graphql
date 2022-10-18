@@ -19,6 +19,7 @@ type Otto @entity {
   updateAt: BigInt!
   birthday: BigInt!
   numericVisibleTraits: BigInt!
+  numericRawTraits: BigInt!
   constellation: Int!
   constellationBoost: Int!
   epochThemeBoost: Int!
@@ -32,6 +33,17 @@ type Otto @entity {
   diceCount: Int!
   epochRarityBoost: Int!
   baseRarityBoost: Int!
+  # Adventure
+  attributePoints: Int!
+  ap: BigInt!
+  exp: BigInt!
+  level: Int!
+  nextLevelExp: BigInt!
+  lastLevelUpAt: BigInt!
+  restingUntil: BigInt!
+  baseAttributes: [Int!]!
+  passes: [AdventurePass!]!
+  latestPass: AdventurePass
 }
 
 type OttoItem @entity {
@@ -89,4 +101,24 @@ type OttoProduct @entity {
   type: String!
   factory: Bytes!
   updateAt: BigInt!
+}
+
+type AdventurePass @entity {
+  id: ID!
+  passId: BigInt!
+  locId: BigInt!
+  otto: Otto!
+  departureAt: BigInt!
+  canFinishAt: BigInt!
+  finishedAt: BigInt!
+  finishedTx: String
+  seed: BigInt!
+  success: Boolean!
+  revived: Boolean!
+  exp: BigInt!
+  ap: BigInt!
+  tcp: BigInt!
+  expMultiplier: Int!
+  itemAmountMultiplier: Int!
+  items: [BigInt!]!
 }
