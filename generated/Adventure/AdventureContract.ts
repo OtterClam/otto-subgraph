@@ -398,6 +398,10 @@ export class AdventureContract__latestPassOfResultValue0RewardsStruct extends et
   get items(): Array<BigInt> {
     return this[3].toBigIntArray();
   }
+
+  get bonuses(): Array<BigInt> {
+    return this[4].toBigIntArray();
+  }
 }
 
 export class AdventureContract__passResultValue0Struct extends ethereum.Tuple {
@@ -463,6 +467,10 @@ export class AdventureContract__passResultValue0RewardsStruct extends ethereum.T
 
   get items(): Array<BigInt> {
     return this[3].toBigIntArray();
+  }
+
+  get bonuses(): Array<BigInt> {
+    return this[4].toBigIntArray();
   }
 }
 
@@ -668,6 +676,29 @@ export class AdventureContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  allowedPotions(param0: BigInt): boolean {
+    let result = super.call(
+      "allowedPotions",
+      "allowedPotions(uint256):(bool)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+
+    return result[0].toBoolean();
+  }
+
+  try_allowedPotions(param0: BigInt): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "allowedPotions",
+      "allowedPotions(uint256):(bool)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
   canFinishAt(ottoId_: BigInt): BigInt {
     let result = super.call("canFinishAt", "canFinishAt(uint256):(uint256)", [
       ethereum.Value.fromUnsignedBigInt(ottoId_)
@@ -824,7 +855,7 @@ export class AdventureContract extends ethereum.SmartContract {
   ): AdventureContract__latestPassOfResultValue0Struct {
     let result = super.call(
       "latestPassOf",
-      "latestPassOf(uint256):((uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,(uint32,uint32,uint32,uint256[]),uint32,uint32))",
+      "latestPassOf(uint256):((uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,(uint32,uint32,uint32,uint256[],uint256[]),uint32,uint32))",
       [ethereum.Value.fromUnsignedBigInt(ottoId_)]
     );
 
@@ -838,7 +869,7 @@ export class AdventureContract extends ethereum.SmartContract {
   ): ethereum.CallResult<AdventureContract__latestPassOfResultValue0Struct> {
     let result = super.tryCall(
       "latestPassOf",
-      "latestPassOf(uint256):((uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,(uint32,uint32,uint32,uint256[]),uint32,uint32))",
+      "latestPassOf(uint256):((uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,(uint32,uint32,uint32,uint256[],uint256[]),uint32,uint32))",
       [ethereum.Value.fromUnsignedBigInt(ottoId_)]
     );
     if (result.reverted) {
@@ -992,7 +1023,7 @@ export class AdventureContract extends ethereum.SmartContract {
   pass(passId_: BigInt): AdventureContract__passResultValue0Struct {
     let result = super.call(
       "pass",
-      "pass(uint256):((uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,(uint32,uint32,uint32,uint256[]),uint32,uint32))",
+      "pass(uint256):((uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,(uint32,uint32,uint32,uint256[],uint256[]),uint32,uint32))",
       [ethereum.Value.fromUnsignedBigInt(passId_)]
     );
 
@@ -1006,7 +1037,7 @@ export class AdventureContract extends ethereum.SmartContract {
   ): ethereum.CallResult<AdventureContract__passResultValue0Struct> {
     let result = super.tryCall(
       "pass",
-      "pass(uint256):((uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,(uint32,uint32,uint32,uint256[]),uint32,uint32))",
+      "pass(uint256):((uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,(uint32,uint32,uint32,uint256[],uint256[]),uint32,uint32))",
       [ethereum.Value.fromUnsignedBigInt(passId_)]
     );
     if (result.reverted) {
@@ -1160,20 +1191,50 @@ export class AdventureContract extends ethereum.SmartContract {
   }
 }
 
-export class DepartureCall extends ethereum.Call {
-  get inputs(): DepartureCall__Inputs {
-    return new DepartureCall__Inputs(this);
+export class AllowPotionsCall extends ethereum.Call {
+  get inputs(): AllowPotionsCall__Inputs {
+    return new AllowPotionsCall__Inputs(this);
   }
 
-  get outputs(): DepartureCall__Outputs {
-    return new DepartureCall__Outputs(this);
+  get outputs(): AllowPotionsCall__Outputs {
+    return new AllowPotionsCall__Outputs(this);
   }
 }
 
-export class DepartureCall__Inputs {
-  _call: DepartureCall;
+export class AllowPotionsCall__Inputs {
+  _call: AllowPotionsCall;
 
-  constructor(call: DepartureCall) {
+  constructor(call: AllowPotionsCall) {
+    this._call = call;
+  }
+
+  get potions_(): Array<BigInt> {
+    return this._call.inputValues[0].value.toBigIntArray();
+  }
+}
+
+export class AllowPotionsCall__Outputs {
+  _call: AllowPotionsCall;
+
+  constructor(call: AllowPotionsCall) {
+    this._call = call;
+  }
+}
+
+export class ExploreCall extends ethereum.Call {
+  get inputs(): ExploreCall__Inputs {
+    return new ExploreCall__Inputs(this);
+  }
+
+  get outputs(): ExploreCall__Outputs {
+    return new ExploreCall__Outputs(this);
+  }
+}
+
+export class ExploreCall__Inputs {
+  _call: ExploreCall;
+
+  constructor(call: ExploreCall) {
     this._call = call;
   }
 
@@ -1189,28 +1250,28 @@ export class DepartureCall__Inputs {
     return this._call.inputValues[2].value.toBigInt();
   }
 
-  get inputs_(): Array<DepartureCallInputs_Struct> {
+  get inputs_(): Array<ExploreCallInputs_Struct> {
     return this._call.inputValues[3].value.toTupleArray<
-      DepartureCallInputs_Struct
+      ExploreCallInputs_Struct
     >();
   }
 
-  get sig_(): DepartureCallSig_Struct {
-    return changetype<DepartureCallSig_Struct>(
+  get sig_(): ExploreCallSig_Struct {
+    return changetype<ExploreCallSig_Struct>(
       this._call.inputValues[4].value.toTuple()
     );
   }
 }
 
-export class DepartureCall__Outputs {
-  _call: DepartureCall;
+export class ExploreCall__Outputs {
+  _call: ExploreCall;
 
-  constructor(call: DepartureCall) {
+  constructor(call: ExploreCall) {
     this._call = call;
   }
 }
 
-export class DepartureCallInputs_Struct extends ethereum.Tuple {
+export class ExploreCallInputs_Struct extends ethereum.Tuple {
   get typ(): i32 {
     return this[0].toI32();
   }
@@ -1224,7 +1285,7 @@ export class DepartureCallInputs_Struct extends ethereum.Tuple {
   }
 }
 
-export class DepartureCallSig_Struct extends ethereum.Tuple {
+export class ExploreCallSig_Struct extends ethereum.Tuple {
   get nonce(): string {
     return this[0].toString();
   }
@@ -1311,6 +1372,10 @@ export class FinishCallRewards_Struct extends ethereum.Tuple {
 
   get items(): Array<BigInt> {
     return this[3].toBigIntArray();
+  }
+
+  get bonuses(): Array<BigInt> {
+    return this[4].toBigIntArray();
   }
 }
 
@@ -1405,6 +1470,18 @@ export class InitializeCall__Inputs {
 
   get signer_(): Address {
     return this._call.inputValues[6].value.toAddress();
+  }
+
+  get reviveProduct_(): BigInt {
+    return this._call.inputValues[7].value.toBigInt();
+  }
+
+  get finishImmediatelyProduct_(): BigInt {
+    return this._call.inputValues[8].value.toBigInt();
+  }
+
+  get potions_(): Array<BigInt> {
+    return this._call.inputValues[9].value.toBigIntArray();
   }
 }
 
@@ -1678,6 +1755,70 @@ export class SetItemAmountMultiplierCall__Outputs {
   _call: SetItemAmountMultiplierCall;
 
   constructor(call: SetItemAmountMultiplierCall) {
+    this._call = call;
+  }
+}
+
+export class SetProductsCall extends ethereum.Call {
+  get inputs(): SetProductsCall__Inputs {
+    return new SetProductsCall__Inputs(this);
+  }
+
+  get outputs(): SetProductsCall__Outputs {
+    return new SetProductsCall__Outputs(this);
+  }
+}
+
+export class SetProductsCall__Inputs {
+  _call: SetProductsCall;
+
+  constructor(call: SetProductsCall) {
+    this._call = call;
+  }
+
+  get reviveProduct_(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get finishImmediatelyProduct_(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class SetProductsCall__Outputs {
+  _call: SetProductsCall;
+
+  constructor(call: SetProductsCall) {
+    this._call = call;
+  }
+}
+
+export class SetSignerCall extends ethereum.Call {
+  get inputs(): SetSignerCall__Inputs {
+    return new SetSignerCall__Inputs(this);
+  }
+
+  get outputs(): SetSignerCall__Outputs {
+    return new SetSignerCall__Outputs(this);
+  }
+}
+
+export class SetSignerCall__Inputs {
+  _call: SetSignerCall;
+
+  constructor(call: SetSignerCall) {
+    this._call = call;
+  }
+
+  get signer_(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetSignerCall__Outputs {
+  _call: SetSignerCall;
+
+  constructor(call: SetSignerCall) {
     this._call = call;
   }
 }

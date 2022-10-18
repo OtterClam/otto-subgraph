@@ -441,6 +441,38 @@
   {
     "inputs": [
       {
+        "internalType": "uint256[]",
+        "name": "potions_",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "allowPotions",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "allowedPotions",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "ottoId_",
         "type": "uint256"
@@ -452,6 +484,25 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
+      }
+    ],
+    "name": "expMultiplierOf",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
       }
     ],
     "stateMutability": "view",
@@ -519,28 +570,9 @@
         "type": "tuple"
       }
     ],
-    "name": "departure",
+    "name": "explore",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "ottoId_",
-        "type": "uint256"
-      }
-    ],
-    "name": "expMultiplierOf",
-    "outputs": [
-      {
-        "internalType": "uint32",
-        "name": "",
-        "type": "uint32"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -580,6 +612,11 @@
           {
             "internalType": "uint256[]",
             "name": "items",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "bonuses",
             "type": "uint256[]"
           }
         ],
@@ -754,6 +791,21 @@
         "internalType": "address",
         "name": "signer_",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reviveProduct_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "finishImmediatelyProduct_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "potions_",
+        "type": "uint256[]"
       }
     ],
     "name": "initialize",
@@ -852,6 +904,11 @@
               {
                 "internalType": "uint256[]",
                 "name": "items",
+                "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "bonuses",
                 "type": "uint256[]"
               }
             ],
@@ -1063,6 +1120,11 @@
                 "internalType": "uint256[]",
                 "name": "items",
                 "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "bonuses",
+                "type": "uint256[]"
               }
             ],
             "internalType": "struct Adventure.Rewards",
@@ -1214,6 +1276,37 @@
       }
     ],
     "name": "setItemAmountMultiplier",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "reviveProduct_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "finishImmediatelyProduct_",
+        "type": "uint256"
+      }
+    ],
+    "name": "setProducts",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "signer_",
+        "type": "address"
+      }
+    ],
+    "name": "setSigner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
