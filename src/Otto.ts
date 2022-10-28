@@ -91,6 +91,7 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
     let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
     ottoEntity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
+    ottoEntity.numericRawTraits = ottoV3.infos(tokenId).getTraits()
   }
   ottoEntity.save()
 
