@@ -37,6 +37,13 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
 ]
 const CONSTELLATION_BOOST = 50
 
+function getEpochThemeLabels(epoch: i32): Array<string> {
+  if (epoch < EPOCH_THEME_BOOST_LABEL.length) {
+    return EPOCH_THEME_BOOST_LABEL[epoch]
+  }
+  return []
+}
+
 function loadOrCreateSlots(): Array<Slot> {
   let slots = new Array<Slot>()
   for (let i = 0; i < NUM_OTTO_TRAITS; i++) {
@@ -224,7 +231,7 @@ function calculateLegendaryBoost(otto: Otto): i32 {
 }
 
 function calculateEpochThemeBoost(otto: Otto, traits: Trait[], epoch: i32): i32 {
-  const epochLabels = EPOCH_THEME_BOOST_LABEL[epoch]
+  const epochLabels = getEpochThemeLabels(epoch)
   let boost = 0
   let matchTraitCount = -1
 
@@ -480,7 +487,7 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
     epochEntity = new Epoch(epochId)
     epochEntity.num = epoch
     epochEntity.ottosSynced = false
-    epochEntity.themeLabels = EPOCH_THEME_BOOST_LABEL[epoch]
+    epochEntity.themeLabels = getEpochThemeLabels(epoch)
     epochEntity.themeBoostBase = THEME_BOOST_BASE
     if (epoch > S1_END_EPOCH) {
       // season 2
