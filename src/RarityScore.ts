@@ -38,7 +38,7 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
 const CONSTELLATION_BOOST = 50
 
 function getEpochThemeLabels(epoch: i32): Array<string> {
-  if (epoch.num < EPOCH_THEME_BOOST_LABEL.length) {
+  if (epoch < EPOCH_THEME_BOOST_LABEL.length) {
     return EPOCH_THEME_BOOST_LABEL[epoch]
   }
   return []
