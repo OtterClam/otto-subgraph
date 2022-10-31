@@ -552,6 +552,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
     // clear epoch rarity boost when new epoch starts
     otto.epochRarityBoost = 0
     otto.diceCount = 0
+    otto.ap = 0
     calculateOttoRarityScore(otto, epoch)
     otto.save()
     updateOrCreateOttoSnapshot(otto, epoch)

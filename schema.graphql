@@ -35,7 +35,7 @@ type Otto @entity {
   baseRarityBoost: Int!
   # Adventure
   attributePoints: Int!
-  ap: BigInt!
+  ap: Int!
   exp: BigInt!
   level: Int!
   nextLevelExp: BigInt!
