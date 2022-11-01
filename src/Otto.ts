@@ -258,6 +258,7 @@ export function getOttoEntity(tokenId: BigInt): Otto {
     entity.baseAttributes = []
     entity.passes = []
     entity.nextLevelExp = BigInt.fromI32(100)
+    entity.passesCount = 0
   }
   return entity
 }
