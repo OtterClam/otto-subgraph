@@ -80,13 +80,20 @@ export function handleSummon(event: SummonOtto): void {
 }
 
 export function handleTraitsChanged(event: TraitsChanged): void {
+  let arr = event.params.arr_
+  let bugHash = Bytes.fromHexString('0x7c25aa9f6892240b569978b791f61ab9b7617f3925ce80be3d8c4490ec8f4bae')
   const epochCreated = updateOrCreateEpoch(event.block.timestamp)
 
   let tokenId = event.params.tokenId_
   let ottoEntity = getOttoEntity(tokenId)
+  if (event.transaction.hash.toHexString() == bugHash.toHexString() && arr[7] == 8932) {
+    log.warning('bug hash found {}', [arr[7].toString()])
+    arr[7] = 9051
+    log.warning('fix to {}', [arr[7].toString()])
+  }
   ottoEntity.updateAt = event.block.timestamp
   if (tokenId.ge(BigInt.fromString(OTTO_RARITY_SCORE_START_ID))) {
-    updateRarityScore(event.params.arr_, ottoEntity, event.block.timestamp)
+    updateRarityScore(arr, ottoEntity, event.block.timestamp)
   }
   if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
     let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
