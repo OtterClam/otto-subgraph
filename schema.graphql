@@ -36,7 +36,7 @@ type Otto @entity {
   # Adventure
   attributePoints: Int!
   ap: Int!
-  apUpdatedAt: BigInt!
+  apRank: BigInt!
   exp: BigInt!
   level: Int!
   nextLevelExp: BigInt!

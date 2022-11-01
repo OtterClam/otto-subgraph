@@ -303,13 +303,13 @@ export class Otto extends Entity {
     this.set("ap", Value.fromI32(value));
   }
 
-  get apUpdatedAt(): BigInt {
-    let value = this.get("apUpdatedAt");
+  get apRank(): BigInt {
+    let value = this.get("apRank");
     return value!.toBigInt();
   }
 
-  set apUpdatedAt(value: BigInt) {
-    this.set("apUpdatedAt", Value.fromBigInt(value));
+  set apRank(value: BigInt) {
+    this.set("apRank", Value.fromBigInt(value));
   }
 
   get exp(): BigInt {
