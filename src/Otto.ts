@@ -210,6 +210,7 @@ export function handleApIncreased(event: ApIncreased): void {
 
   let ottoEntity = getOttoEntity(event.params.ottoId_)
   ottoEntity.ap += event.params.inc_.toI32()
+  ottoEntity.apUpdatedAt = event.block.timestamp
   ottoEntity.updateAt = event.block.timestamp
   ottoEntity.save()
 
@@ -257,6 +258,7 @@ export function getOttoEntity(tokenId: BigInt): Otto {
     entity.baseRarityBoost = 0
     entity.attributePoints = 0
     entity.ap = 0
+    entity.apUpdatedAt = BigInt.zero()
     entity.exp = BigInt.zero()
     entity.level = 1
     entity.lastLevelUpAt = BigInt.zero()
