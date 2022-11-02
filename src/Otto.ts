@@ -88,9 +88,9 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   let tokenId = event.params.tokenId_
   let ottoEntity = getOttoEntity(tokenId)
   if (bugMatched) {
-    log.warning('bug hash found {}', [arr[7].toString()])
+    log.info('bug hash found {}', [arr[7].toString()])
     arr[7] = 9051
-    log.warning('fix to {}', [arr[7].toString()])
+    log.info('fix to {}', [arr[7].toString()])
   }
   ottoEntity.updateAt = event.block.timestamp
   if (tokenId.ge(BigInt.fromString(OTTO_RARITY_SCORE_START_ID))) {
@@ -99,7 +99,11 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
     let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
     if (bugMatched) {
-      ottoEntity.numericVisibleTraits = ottoV3.toNumericTraits(arr)
+      let traits = BigInt.fromI32(0)
+      for (let i = 0; i < arr.length; i++) {
+        traits = traits.leftShift(16 * u8(i)).plus(BigInt.fromI32(arr[i]))
+      }
+      ottoEntity.numericVisibleTraits = traits
     } else {
       ottoEntity.numericVisibleTraits = ottoV3.numericTraitsOf(tokenId)
     }
