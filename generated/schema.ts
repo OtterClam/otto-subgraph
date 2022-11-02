@@ -294,13 +294,22 @@ export class Otto extends Entity {
     this.set("attributePoints", Value.fromI32(value));
   }
 
-  get ap(): BigInt {
+  get ap(): i32 {
     let value = this.get("ap");
+    return value!.toI32();
+  }
+
+  set ap(value: i32) {
+    this.set("ap", Value.fromI32(value));
+  }
+
+  get apRank(): BigInt {
+    let value = this.get("apRank");
     return value!.toBigInt();
   }
 
-  set ap(value: BigInt) {
-    this.set("ap", Value.fromBigInt(value));
+  set apRank(value: BigInt) {
+    this.set("apRank", Value.fromBigInt(value));
   }
 
   get exp(): BigInt {
