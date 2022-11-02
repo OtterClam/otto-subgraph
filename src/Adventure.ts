@@ -36,6 +36,7 @@ export function handleDeparture(event: Departure): void {
   passes.push(passEntity.id)
   otto.passes = passes
   otto.latestPass = passEntity.id
+  otto.passesCount += 1
   otto.save()
 }
 

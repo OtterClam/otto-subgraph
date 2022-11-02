@@ -218,10 +218,19 @@ export function handleLevelUp(event: LevelUp): void {
 }
 
 export function handleApIncreased(event: ApIncreased): void {
+  const epochCreated = updateOrCreateEpoch(event.block.timestamp)
+
   let ottoEntity = getOttoEntity(event.params.ottoId_)
-  ottoEntity.ap = event.params.total_
+  ottoEntity.ap += event.params.inc_.toI32()
+  ottoEntity.apRank = BigInt.fromI32(ottoEntity.ap)
+    .leftShift(32)
+    .plus(BigInt.fromI32(i32.MAX_VALUE - event.block.timestamp.toI32()))
   ottoEntity.updateAt = event.block.timestamp
   ottoEntity.save()
+
+  if (epochCreated) {
+    createSnapshotsForAllOttos(event.block.timestamp)
+  }
 }
 
 export function getOttoEntityId(tokenId: BigInt): string {
@@ -262,7 +271,8 @@ export function getOttoEntity(tokenId: BigInt): Otto {
     entity.epochRarityBoost = 0
     entity.baseRarityBoost = 0
     entity.attributePoints = 0
-    entity.ap = BigInt.zero()
+    entity.ap = 0
+    entity.apRank = BigInt.zero()
     entity.exp = BigInt.zero()
     entity.level = 1
     entity.lastLevelUpAt = BigInt.zero()
@@ -270,6 +280,7 @@ export function getOttoEntity(tokenId: BigInt): Otto {
     entity.baseAttributes = []
     entity.passes = []
     entity.nextLevelExp = BigInt.fromI32(100)
+    entity.passesCount = 0
   }
   return entity
 }
