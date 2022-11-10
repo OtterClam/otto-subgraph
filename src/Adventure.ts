@@ -52,6 +52,12 @@ export function handleFinish(event: Finish): void {
   passEntity.items = pass.rewards.items
   passEntity.finishedTx = event.transaction.hash.toHexString()
   passEntity.save()
+
+  const otto = getOttoEntity(pass.ottoId)
+  otto.finishedPassesCount += 1
+  if (event.params.success) {
+    otto.succeededPassesCount += 1
+  }
 }
 
 export function handleRevive(event: Revive): void {

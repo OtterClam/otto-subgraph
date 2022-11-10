@@ -400,6 +400,24 @@ export class Otto extends Entity {
   set passesCount(value: i32) {
     this.set("passesCount", Value.fromI32(value));
   }
+
+  get finishedPassesCount(): i32 {
+    let value = this.get("finishedPassesCount");
+    return value!.toI32();
+  }
+
+  set finishedPassesCount(value: i32) {
+    this.set("finishedPassesCount", Value.fromI32(value));
+  }
+
+  get succeededPassesCount(): i32 {
+    let value = this.get("succeededPassesCount");
+    return value!.toI32();
+  }
+
+  set succeededPassesCount(value: i32) {
+    this.set("succeededPassesCount", Value.fromI32(value));
+  }
 }
 
 export class OttoItem extends Entity {

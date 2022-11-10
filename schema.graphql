@@ -46,6 +46,8 @@ type Otto @entity {
   passes: [AdventurePass!]!
   latestPass: AdventurePass
   passesCount: Int!
+  finishedPassesCount: Int!
+  succeededPassesCount: Int!
 }
 
 type OttoItem @entity {
