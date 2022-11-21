@@ -203,12 +203,13 @@ export function handleExpIncreased(event: ExpIncreased): void {
 
 export function handleLevelUp(event: LevelUp): void {
   let ottoEntity = getOttoEntity(event.params.ottoId_)
+  const ottoV4 = OttoV4Contract.bind(Address.fromString(OTTO))
   ottoEntity.level = event.params.toLv_.toI32()
   ottoEntity.exp = event.params.toExp_
-  ottoEntity.attributePoints = event.params.attributePoints_.toI32()
   ottoEntity.lastLevelUpAt = event.block.timestamp
   ottoEntity.nextLevelExp = event.params.toNextLevelExp_
   ottoEntity.updateAt = event.block.timestamp
+  ottoEntity.attributePoints = ottoV4.infos(event.params.ottoId_).getAttributePoints().toI32()
   ottoEntity.save()
 }
 
