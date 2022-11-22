@@ -16,6 +16,9 @@ const EPOCH_3_EXTEND_TS = 86400 * 2
 const EPOCH_4_EXTEND_TS = 86400 * 2
 const S1_END_EPOCH = 5
 const RARITY_S2_START = 1663545600 // 2022-9-19 0:00 UTC
+const S2_END_EPOCH = 9
+const RARITY_S3_DURATION = 3 * 7 * 24 * 60 * 60 // 3 weeks
+const RARITY_S3_START = 1669593600 // 2022-11-28 0:00 UTC
 
 const THEME_BOOST_BASE = 60
 const THEME_BOOST_MULTIPLIER = [100, 150, 170, 200, 250]
@@ -304,6 +307,7 @@ export function toEpoch(timestamp: BigInt): i32 {
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
   let s1EndTs = toEpochEndTimestamp(S1_END_EPOCH).toI32() // 2022-08-19
+  let s2EndTs = toEpochEndTimestamp(S2_END_EPOCH).toI32() // 2022-11-14
 
   // log.warning('toEpoch ts {}, firstEpochTs {}, duration {}', [
   //   ts.toString(),
@@ -316,6 +320,10 @@ export function toEpoch(timestamp: BigInt): i32 {
     return (ts - RARITY_S2_START) / duration + S1_END_EPOCH + 1
   } else if (ts >= s1EndTs && ts < RARITY_S2_START) {
     return S1_END_EPOCH + 1
+  } else if (ts >= RARITY_S3_START) {
+    return (ts - RARITY_S3_START) / RARITY_S3_DURATION + S2_END_EPOCH + 2
+  } else if (ts >= s2EndTs && ts < RARITY_S3_START) {
+    return S2_END_EPOCH + 1
   } else if (ts >= firstEpochTs && ts < firstEpochTs + 3 * duration) {
     return (ts - firstEpochTs) / duration
   } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration) {
@@ -335,6 +343,12 @@ function toEpochEndTimestamp(epoch: i32): BigInt {
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
   if (epoch > S1_END_EPOCH) {
     return BigInt.fromI64(RARITY_S2_START + duration * (epoch - S1_END_EPOCH))
+  } else if (epoch > S2_END_EPOCH) {
+    if (epoch == S2_END_EPOCH + 1) {
+      return BigInt.fromI64(RARITY_S3_START)
+    } else {
+      return BigInt.fromI64(RARITY_S3_START + RARITY_S3_DURATION * (epoch - S2_END_EPOCH - 1))
+    }
   } else if (epoch < 3) {
     return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
   } else if (epoch == 3) {
