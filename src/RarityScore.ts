@@ -321,7 +321,7 @@ export function toEpoch(timestamp: BigInt): i32 {
   } else if (ts >= s1EndTs && ts < RARITY_S2_START) {
     return S1_END_EPOCH + 1
   } else if (ts >= RARITY_S3_START) {
-    return (ts - RARITY_S3_START) / RARITY_S3_DURATION + S2_END_EPOCH + 1
+    return (ts - RARITY_S3_START) / RARITY_S3_DURATION + S2_END_EPOCH + 2
   } else if (ts >= s2EndTs && ts < RARITY_S3_START) {
     return S2_END_EPOCH + 1
   } else if (ts >= firstEpochTs && ts < firstEpochTs + 3 * duration) {
@@ -344,7 +344,11 @@ function toEpochEndTimestamp(epoch: i32): BigInt {
   if (epoch > S1_END_EPOCH) {
     return BigInt.fromI64(RARITY_S2_START + duration * (epoch - S1_END_EPOCH))
   } else if (epoch > S2_END_EPOCH) {
-    return BigInt.fromI64(RARITY_S3_START + RARITY_S3_DURATION * (epoch - S2_END_EPOCH))
+    if (epoch == S2_END_EPOCH + 1) {
+      return BigInt.fromI64(RARITY_S3_START)
+    } else {
+      return BigInt.fromI64(RARITY_S3_START + RARITY_S3_DURATION * (epoch - S2_END_EPOCH - 1))
+    }
   } else if (epoch < 3) {
     return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
   } else if (epoch == 3) {
