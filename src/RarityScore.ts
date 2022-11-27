@@ -37,6 +37,10 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   ['orange', 'spooky', 'halloween'],
   // epoch 9
   ['yellow', 'golden', 'food', 'fast-food'],
+  // epoch 10 skip
+  [],
+  // epoch 11
+  ['earth', 'adventure', 'egyptian'],
 ]
 const CONSTELLATION_BOOST = 50
 
