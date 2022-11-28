@@ -507,11 +507,7 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
     epochEntity.ottosSynced = false
     epochEntity.themeLabels = getEpochThemeLabels(epoch)
     epochEntity.themeBoostBase = THEME_BOOST_BASE
-    if (epoch > S1_END_EPOCH) {
-      // season 2
-      epochEntity.startedAt = RARITY_S2_START
-      epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
-    } else if (epoch == 0) {
+    if (epoch == 0) {
       epochEntity.startedAt = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
       epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
     } else {
