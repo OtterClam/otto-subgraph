@@ -58,6 +58,7 @@ export function handleFinish(event: Finish): void {
   if (event.params.success) {
     otto.succeededPassesCount += 1
   }
+  otto.save()
 }
 
 export function handleRevive(event: Revive): void {
