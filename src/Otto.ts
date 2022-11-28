@@ -22,7 +22,8 @@ import {
 } from './RarityScore'
 import { parseConstellation } from './utils/Constellation'
 
-let PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
+const TEAM_OTTO_ID = BigInt.fromI32(20)
+const PortalStatus = ['UNOPENED', 'OPENED', 'SUMMONED']
 
 export function handleTransfer(event: TransferEvent): void {
   let tokenId = event.params.tokenId
@@ -215,14 +216,15 @@ export function handleLevelUp(event: LevelUp): void {
 
 export function handleApIncreased(event: ApIncreased): void {
   const epochCreated = updateOrCreateEpoch(event.block.timestamp)
-
-  let ottoEntity = getOttoEntity(event.params.ottoId_)
-  ottoEntity.ap += event.params.inc_.toI32()
-  ottoEntity.apRank = BigInt.fromI32(ottoEntity.ap)
-    .leftShift(32)
-    .plus(BigInt.fromI32(i32.MAX_VALUE - event.block.timestamp.toI32()))
-  ottoEntity.updateAt = event.block.timestamp
-  ottoEntity.save()
+  if (event.params.ottoId_.gt(TEAM_OTTO_ID)) {
+    let ottoEntity = getOttoEntity(event.params.ottoId_)
+    ottoEntity.ap += event.params.inc_.toI32()
+    ottoEntity.apRank = BigInt.fromI32(ottoEntity.ap)
+      .leftShift(32)
+      .plus(BigInt.fromI32(i32.MAX_VALUE - event.block.timestamp.toI32()))
+    ottoEntity.updateAt = event.block.timestamp
+    ottoEntity.save()
+  }
 
   if (epochCreated) {
     createSnapshotsForAllOttos(event.block.timestamp)

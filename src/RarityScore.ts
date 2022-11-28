@@ -556,14 +556,13 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
 export function createSnapshotsForAllOttos(timestamp: BigInt): void {
   let epoch = toEpoch(timestamp)
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
-  let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
   let total = ottoV3.totalSupply().toI32()
   // log.warning('createSnapshotsForAllOttos, epoch created: {}, total: {}', [epoch.toString(), total.toString()])
-  for (let i = offset; i < total; i++) {
+  for (let i = 0; i < total; i++) {
     let id = OTTO + '-' + i.toString()
     let otto = Otto.load(id)
     if (otto == null) {
-      log.critical('otto not found: {}', [id])
+      log.warning('otto not found: {}', [id])
       continue
     }
     // log.warning('create snapshot for otto: {}', [otto.id])
