@@ -320,14 +320,14 @@ export function toEpoch(timestamp: BigInt): i32 {
   // ])
   if (ts < firstEpochTs) {
     return 0
-  } else if (ts >= RARITY_S2_START) {
-    return (ts - RARITY_S2_START) / duration + S1_END_EPOCH + 1
-  } else if (ts >= s1EndTs && ts < RARITY_S2_START) {
-    return S1_END_EPOCH + 1
   } else if (ts >= RARITY_S3_START) {
     return (ts - RARITY_S3_START) / RARITY_S3_DURATION + S2_END_EPOCH + 2
   } else if (ts >= s2EndTs && ts < RARITY_S3_START) {
     return S2_END_EPOCH + 1
+  } else if (ts >= RARITY_S2_START) {
+    return (ts - RARITY_S2_START) / duration + S1_END_EPOCH + 1
+  } else if (ts >= s1EndTs && ts < RARITY_S2_START) {
+    return S1_END_EPOCH + 1
   } else if (ts >= firstEpochTs && ts < firstEpochTs + 3 * duration) {
     return (ts - firstEpochTs) / duration
   } else if (ts >= firstEpochTs + 3 * duration && ts < firstEpochTs + EPOCH_3_EXTEND_TS + 4 * duration) {
@@ -345,14 +345,14 @@ export function toEpoch(timestamp: BigInt): i32 {
 function toEpochEndTimestamp(epoch: i32): BigInt {
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
-  if (epoch > S1_END_EPOCH) {
-    return BigInt.fromI64(RARITY_S2_START + duration * (epoch - S1_END_EPOCH))
-  } else if (epoch > S2_END_EPOCH) {
+  if (epoch > S2_END_EPOCH) {
     if (epoch == S2_END_EPOCH + 1) {
       return BigInt.fromI64(RARITY_S3_START)
     } else {
       return BigInt.fromI64(RARITY_S3_START + RARITY_S3_DURATION * (epoch - S2_END_EPOCH - 1))
     }
+  } else if (epoch > S1_END_EPOCH) {
+    return BigInt.fromI64(RARITY_S2_START + duration * (epoch - S1_END_EPOCH))
   } else if (epoch < 3) {
     return BigInt.fromI64(firstEpochTs + duration * (epoch + 1))
   } else if (epoch == 3) {
@@ -507,11 +507,7 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
     epochEntity.ottosSynced = false
     epochEntity.themeLabels = getEpochThemeLabels(epoch)
     epochEntity.themeBoostBase = THEME_BOOST_BASE
-    if (epoch > S1_END_EPOCH) {
-      // season 2
-      epochEntity.startedAt = RARITY_S2_START
-      epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
-    } else if (epoch == 0) {
+    if (epoch == 0) {
       epochEntity.startedAt = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
       epochEntity.endedAt = toEpochEndTimestamp(epoch).toI32()
     } else {
@@ -570,6 +566,8 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
     otto.epochRarityBoost = 0
     otto.diceCount = 0
     otto.ap = 0
+    otto.finishedPassesCount = 0
+    otto.succeededPassesCount = 0
     otto.apRank = BigInt.zero()
     calculateOttoRarityScore(otto, epoch)
     otto.save()
