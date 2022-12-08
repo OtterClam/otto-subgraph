@@ -344,6 +344,25 @@
       },
       {
         "indexed": false,
+        "internalType": "uint256[]",
+        "name": "candidates_",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "CandidatesCorrected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "uint32",
         "name": "fromLv_",
         "type": "uint32"
@@ -1436,6 +1455,44 @@
         "internalType": "uint256",
         "name": "ottoId_",
         "type": "uint256"
+      }
+    ],
+    "name": "expOf",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
+      }
+    ],
+    "name": "levelOf",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
       },
       {
         "components": [
@@ -1606,6 +1663,30 @@
     "name": "increaseExp",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "ottoId_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "inc_",
+        "type": "uint32"
+      }
+    ],
+    "name": "willLevelUp",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1787,6 +1868,25 @@
         "type": "uint256"
       }
     ],
+    "name": "numericRawTraitsOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId_",
+        "type": "uint256"
+      }
+    ],
     "name": "numericTraitsOf",
     "outputs": [
       {
@@ -1924,6 +2024,24 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "traits",
+        "type": "uint256"
+      }
+    ],
+    "name": "correctTraits",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId_",
+        "type": "uint256"
+      },
+      {
         "internalType": "uint256[]",
         "name": "candidates_",
         "type": "uint256[]"
@@ -1935,6 +2053,24 @@
       }
     ],
     "name": "openPortal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "traits",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "correctCandidates",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
