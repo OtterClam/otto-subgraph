@@ -8,7 +8,13 @@ import {
   ItemTookOff,
   OttoV3Contract,
 } from '../generated/Otto/OttoV3Contract'
-import { ApIncreased, ExpIncreased, LevelUp, OttoV4Contract } from '../generated/Otto/OttoV4Contract'
+import {
+  ApIncreased,
+  ExpIncreased,
+  LevelUp,
+  OttoV4Contract,
+  CandidatesCorrected,
+} from '../generated/Otto/OttoV4Contract'
 import { Otto } from '../generated/schema'
 import { ADVENTURE, OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_V4_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
@@ -77,6 +83,13 @@ export function handleSummon(event: SummonOtto): void {
   let entity = getOttoEntity(tokenId)
   updateV2(entity, tokenId)
   entity.updateAt = event.block.timestamp
+  entity.save()
+}
+
+export function handleCandidatesCorrected(event: CandidatesCorrected): void {
+  let ottoId = event.params.ottoId_
+  let entity = getOttoEntity(ottoId)
+  entity.candidates = event.params.candidates_
   entity.save()
 }
 
