@@ -41,6 +41,8 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   [],
   // epoch 11
   ['earth', 'adventure', 'egyptian'],
+  // epoch 12
+  ['white', 'winter', 'christmas'],
 ]
 const CONSTELLATION_BOOST = 50
 
