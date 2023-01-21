@@ -237,6 +237,9 @@ export function handleApIncreased(event: ApIncreased): void {
       .plus(BigInt.fromI32(i32.MAX_VALUE - event.block.timestamp.toI32()))
     ottoEntity.updateAt = event.block.timestamp
     ottoEntity.save()
+
+    let epoch = toEpoch(event.block.timestamp)
+    updateOrCreateOttoSnapshot(ottoEntity, epoch)
   }
 
   if (epochCreated) {
