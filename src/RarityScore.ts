@@ -45,6 +45,8 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   ['white', 'winter', 'christmas'],
   // epoch 13
   ['rabbit', 'lunar new year', 'red'],
+  // epoch 14
+  ["valentine's day", 'sakura', 'pink'],
 ]
 const CONSTELLATION_BOOST = 50
 
