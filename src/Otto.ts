@@ -130,10 +130,10 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   const epochCreated = updateOrCreateEpoch(event.block.timestamp)
   let epoch = toEpoch(event.block.timestamp)
   let ottoEntity = getOttoEntity(event.params.ottoId_)
-  if (!epochCreated && epoch !== event.params.epoch_.toI32()) {
-    let epochOtto = Otto.load(event.params.ottoId_.toString() + '-' + epoch.toString())
+  if (epoch !== event.params.epoch_.toI32()) {
+    const epochOtto = Otto.load(ottoEntity.id + '-' + epoch.toString())
     if (ottoEntity == null) {
-      log.warning('otto {}-{} not found, should not happened', [event.params.ottoId_.toString(), epoch.toString()])
+      log.warning('otto {}-{} not found, should not happened', [ottoEntity.id, epoch.toString()])
       return
     }
     ottoEntity = epochOtto as Otto
