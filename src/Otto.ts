@@ -131,7 +131,7 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   let epoch = toEpoch(event.block.timestamp)
   let ottoEntity = getOttoEntity(event.params.ottoId_)
   if (epoch !== event.params.epoch_.toI32()) {
-    const epochOtto = Otto.load(ottoEntity.id + '-' + epoch.toString())
+    const epochOtto = Otto.load(ottoEntity.id + '-' + event.params.epoch_.toString())
     if (ottoEntity == null) {
       log.warning('otto {}-{} not found, should not happened', [ottoEntity.id, epoch.toString()])
       return
@@ -144,7 +144,7 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   ottoEntity.updateAt = event.block.timestamp
   calculateOttoRarityScore(ottoEntity, event.params.epoch_.toI32())
   ottoEntity.save()
-  if (epochCreated || epoch === event.params.epoch_.toI32()) {
+  if (epoch === event.params.epoch_.toI32()) {
     updateOrCreateOttoSnapshot(ottoEntity, epoch)
   }
 
