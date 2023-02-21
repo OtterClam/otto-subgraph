@@ -10,10 +10,10 @@ import {
 } from '../generated/Otto/OttoV3Contract'
 import {
   ApIncreased,
+  CandidatesCorrected,
   ExpIncreased,
   LevelUp,
   OttoV4Contract,
-  CandidatesCorrected,
 } from '../generated/Otto/OttoV4Contract'
 import { Otto } from '../generated/schema'
 import { ADVENTURE, OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_V4_BLOCK } from './Constants'
@@ -127,12 +127,12 @@ export function handleTraitsChanged(event: TraitsChanged): void {
 }
 
 export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
-  const epochCreated = updateOrCreateEpoch(event.block.timestamp)
+  const newEpochCreated = updateOrCreateEpoch(event.block.timestamp)
   let epoch = toEpoch(event.block.timestamp)
   let ottoEntity = getOttoEntity(event.params.ottoId_)
   if (epoch !== event.params.epoch_.toI32()) {
     const epochOtto = Otto.load(ottoEntity.id + '-' + event.params.epoch_.toString())
-    if (ottoEntity == null) {
+    if (epochOtto == null) {
       log.warning('otto {}-{} not found, should not happened', [ottoEntity.id, epoch.toString()])
       return
     }
@@ -148,7 +148,7 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
     updateOrCreateOttoSnapshot(ottoEntity, epoch)
   }
 
-  if (epochCreated) {
+  if (newEpochCreated) {
     createSnapshotsForAllOttos(event.block.timestamp)
   }
 }
