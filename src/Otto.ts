@@ -133,7 +133,6 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   if (epoch !== event.params.epoch_.toI32()) {
     const epochOtto = Otto.load(getOttoEntityId(event.params.ottoId_) + '-' + event.params.epoch_.toString())
     if (ottoEntity == null) {
-      log.warning('otto {}-{} not found, should not happened', [ottoEntity.id, epoch.toString()])
       return
     }
     ottoEntity = epochOtto as Otto
