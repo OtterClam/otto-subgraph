@@ -129,14 +129,16 @@ export function handleTraitsChanged(event: TraitsChanged): void {
 export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   const newEpochCreated = updateOrCreateEpoch(event.block.timestamp)
   let epoch = toEpoch(event.block.timestamp)
-  let ottoEntity = getOttoEntity(event.params.ottoId_)
+  let ottoEntity: Otto
   if (epoch !== event.params.epoch_.toI32()) {
-    const epochOtto = Otto.load(ottoEntity.id + '-' + event.params.epoch_.toString())
-    if (epochOtto == null) {
+    const epochOtto = Otto.load(getOttoEntityId(event.params.ottoId_) + '-' + event.params.epoch_.toString())
+    if (ottoEntity == null) {
       log.warning('otto {}-{} not found, should not happened', [ottoEntity.id, epoch.toString()])
       return
     }
     ottoEntity = epochOtto as Otto
+  } else {
+    ottoEntity = getOttoEntity(event.params.ottoId_)
   }
   ottoEntity.baseAttributes = event.params.attrs_
   ottoEntity.epochRarityBoost = event.params.attrs_[7]
