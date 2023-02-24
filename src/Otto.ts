@@ -132,7 +132,7 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   let ottoEntity: Otto
   if (epoch !== event.params.epoch_.toI32()) {
     const epochOtto = Otto.load(getOttoEntityId(event.params.ottoId_) + '-' + event.params.epoch_.toString())
-    if (ottoEntity == null) {
+    if (epochOtto == null) {
       return
     }
     ottoEntity = epochOtto as Otto
