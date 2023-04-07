@@ -51,6 +51,8 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   ['blue', 'resort', 'oceanic'],
   // epoch 16
   ['rainbow', 'clam', 'carnival'],
+  // epoch 17
+  ['black', 'cyberpunk', 'cat'],
 ]
 const CONSTELLATION_BOOST = 50
 
