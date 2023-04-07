@@ -139,7 +139,8 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   } else {
     ottoEntity = getOttoEntity(event.params.ottoId_)
   }
-  ottoEntity.baseAttributes = event.params.attrs_
+  // We don't have epoch attributes boost for now, so we don't need to update it
+  // ottoEntity.baseAttributes = event.params.attrs_
   ottoEntity.epochRarityBoost = event.params.attrs_[7]
   ottoEntity.diceCount = event.params.attrs_[8]
   ottoEntity.updateAt = event.block.timestamp
