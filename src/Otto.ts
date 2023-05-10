@@ -16,12 +16,13 @@ import {
   OttoV4Contract,
 } from '../generated/Otto/OttoV4Contract'
 import { Otto } from '../generated/schema'
-import { ADVENTURE, OTTO, OTTO_RARITY_SCORE_START_ID, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_V4_BLOCK } from './Constants'
+import { ADVENTURE, OTTO, OTTO_V2_BLOCK, OTTO_V3_BLOCK, OTTO_V4_BLOCK } from './Constants'
 import { getItemEntity, updateEntity } from './OttoItemHelper'
 import {
   calculateOttoRarityScore,
   createSnapshotsForAllOttos,
   toEpoch,
+  rarityScoreOttoIdOffset,
   updateOrCreateEpoch,
   updateOrCreateOttoSnapshot,
   updateRarityScore,
@@ -96,6 +97,7 @@ export function handleCandidatesCorrected(event: CandidatesCorrected): void {
 export function handleTraitsChanged(event: TraitsChanged): void {
   let arr = event.params.arr_
   let bugHash = Bytes.fromHexString('0x7c25aa9f6892240b569978b791f61ab9b7617f3925ce80be3d8c4490ec8f4bae')
+  let epoch = toEpoch(event.block.timestamp)
   const epochCreated = updateOrCreateEpoch(event.block.timestamp)
 
   let tokenId = event.params.tokenId_
@@ -106,7 +108,7 @@ export function handleTraitsChanged(event: TraitsChanged): void {
     log.warning('fix to {}', [arr[7].toString()])
   }
   ottoEntity.updateAt = event.block.timestamp
-  if (tokenId.ge(BigInt.fromString(OTTO_RARITY_SCORE_START_ID))) {
+  if (tokenId.ge(rarityScoreOttoIdOffset(epoch))) {
     updateRarityScore(arr, ottoEntity, event.block.timestamp)
   }
   if (event.block.number >= BigInt.fromString(OTTO_V3_BLOCK)) {
