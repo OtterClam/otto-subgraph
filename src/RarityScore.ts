@@ -320,6 +320,14 @@ export function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
   entity.save()
 }
 
+export function rarityScoreOttoIdOffset(epoch: i32): BigInt {
+  if (epoch >= 18) {
+    return BigInt.fromString('20')
+  } else {
+    return BigInt.fromString(OTTO_RARITY_SCORE_START_ID)
+  }
+}
+
 export function toEpoch(timestamp: BigInt): i32 {
   let ts = timestamp.toI32()
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
@@ -507,7 +515,7 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
 export function updateOrCreateEpoch(timestamp: BigInt): boolean {
   let epoch = toEpoch(timestamp)
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
-  let offset = BigInt.fromString(OTTO_RARITY_SCORE_START_ID).toI32()
+  let offset = rarityScoreOttoIdOffset(epoch).toI32()
   let total = ottoV3.totalSupply().toI32()
 
   let epochCreated = false
