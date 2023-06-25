@@ -59,6 +59,8 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   ['red', 'magical', 'fire'],
   // epoch 20
   ['sparkle', 'cosmos', 'otter'],
+  // epoch 21
+  ['matsuri', 'summer', 'fireworks'],
 ]
 const CONSTELLATION_BOOST = 50
 
