@@ -63,6 +63,8 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   ['matsuri', 'summer', 'fireworks'],
   // epoch 22
   ['fish', 'lightning', 'ottovenger'],
+  // epoch 23
+  ['school', 'green', 'plant'],
 ]
 const CONSTELLATION_BOOST = 50
 
