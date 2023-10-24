@@ -69,6 +69,8 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   ['jellyfish', 'sport', 'diving'],
   // epoch 25
   ['moon', 'mapleleaf', 'rabbit'],
+  // epoch 26
+  ['graffiti', 'sun', 'wings'],
 ]
 const CONSTELLATION_BOOST = 50
 
