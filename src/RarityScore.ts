@@ -73,6 +73,8 @@ const EPOCH_THEME_BOOST_LABEL: Array<string[]> = [
   ['graffiti', 'sun', 'wings'],
   // epoch 27
   ['ribbon-bow', 'firefly', 'tree'],
+  // epoch 28
+  ['gold', 'cactus', 'cowotto'],
 ]
 const CONSTELLATION_BOOST = 50
 
