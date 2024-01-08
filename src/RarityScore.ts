@@ -95,9 +95,7 @@ function loadOrCreateSlots(): Array<Slot> {
       slot.maxCount = 0
       slot.topCountTraits = []
       slot.traits = []
-      //   log.warning('slot created {}', [slotId])
-      // } else {
-      //   log.warning('slot loaded {}', [slotId])
+      // log.warning('slot loaded {}', [slotId])
     }
     slots.push(slot)
   }
@@ -146,9 +144,7 @@ function loadOrCreateTraits(slots: Array<Slot>, codes: Array<i32>): Array<Trait>
       }
       trait.labels = labels
 
-      // log.warning('trait created {}', [traitId])
-      // } else {
-      //   log.warning('trait loaded {}', [traitId])
+      // log.warning('trait loaded {}', [traitId])
     }
     traits.push(trait)
   }
@@ -206,9 +202,7 @@ function collectOttoIds(ids: Array<string>, trait: Trait): void {
     let ottoId = trait.ottos[i]
     if (ids.indexOf(ottoId) == -1) {
       ids.push(ottoId)
-      //   log.warning('collect changed otto {}', [ottoId])
-      // } else {
-      //   log.warning('skip collecting changed otto {}', [ottoId])
+      // log.warning('collect changed otto {}', [ottoId])
     }
   }
 }
@@ -217,9 +211,7 @@ function collectTrait(traits: Array<Trait>, trait: Trait): void {
   let traitIds = traits.map<string>((t) => t.id)
   if (traitIds.indexOf(trait.id) == -1) {
     traits.push(trait)
-    //   log.warning('collect changed trait {}', [trait.id])
-    // } else {
-    //   log.warning('skip collecting changed trait {}', [trait.id])
+    // log.warning('collect changed trait {}', [trait.id])
   }
 }
 
@@ -317,7 +309,7 @@ export function calculateOttoRarityScore(otto: Otto, epoch: i32): void {
     traits.push(trait)
   }
 
-  // log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
+  log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
   otto.legendaryBoost = calculateLegendaryBoost(otto)
   otto.constellationBoost = calculateConstellationBoost(otto.birthday, epoch)
   otto.epochThemeBoost = calculateEpochThemeBoost(otto, traits, epoch)
@@ -363,7 +355,8 @@ export function toEpoch(timestamp: BigInt): i32 {
   if (ts < firstEpochTs) {
     return 0
   } else if (ts >= RARITY_S3_START) {
-    return (ts - RARITY_S3_START) / RARITY_S3_DURATION + S2_END_EPOCH + 2
+    let computedEpoch = (ts - RARITY_S3_START) / RARITY_S3_DURATION + S2_END_EPOCH + 2
+    return computedEpoch > 29 ? 29 : computedEpoch
   } else if (ts >= s2EndTs && ts < RARITY_S3_START) {
     return S2_END_EPOCH + 1
   } else if (ts >= RARITY_S2_START) {
@@ -603,7 +596,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
       log.warning('otto not found: {}', [id])
       continue
     }
-    // log.warning('create snapshot for otto: {}', [otto.id])
+    log.warning('create snapshot for otto: {}', [otto.id])
     // clear epoch rarity boost when new epoch starts
     otto.epochRarityBoost = 0
     otto.diceCount = 0
@@ -613,6 +606,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
     otto.apRank = BigInt.zero()
     calculateOttoRarityScore(otto, epoch)
     otto.save()
+    log.warning('create snapshot after rarity score for otto: {}', [otto.id])
     updateOrCreateOttoSnapshot(otto, epoch)
   }
 }

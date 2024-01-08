@@ -1,6 +1,11 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 schema:
   file: ./schema.graphql
+features:
+  - grafting
+graft:
+  base: QmdC5wPTd1xuk8t5ZdHXcq2eWigno7C1dAzVMJSWzJqNHp
+  block: 51796281
 dataSources:
   - kind: ethereum/contract
     name: Otto

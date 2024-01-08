@@ -17,11 +17,13 @@
     "postinstall": "yarn codegen",
     "build": "graph build",
     "auth": "graph auth --product hosted-service",
+    "authstudio": "graph auth --studio",
     "deploy:mainnet": "yarn config:mainnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto",
     "deploy:mainnet-backup": "yarn config:mainnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto_backup",
     "deploy:testnet": "yarn config:testnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto_testnet",
     "deploy:testnet-dev": "yarn config:testnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto-dev-testnet",
     "deploy:xxxxx": "yarn config:xxxxx && yarn codegen && yarn build && graph deploy --product hosted-service d0c0q/xxxxx",
+    "deploy:eon": "graph deploy --studio test-eon",
     "deploy:perf": "yarn config:xxxxx && yarn codegen && yarn build && graph deploy --product hosted-service d0c0q/otto_perf",
     "deploy:dev": "yarn config:mainnet && yarn codegen && yarn build && graph deploy --product hosted-service otterclam/otto-dev",
     "deploy:local": "yarn create:local && yarn config:local && yarn codegen && yarn build && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 otterclam/otto",
@@ -34,7 +36,7 @@
     "test": "graph test"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.33.1",
+    "@graphprotocol/graph-cli": "0.50",
     "@graphprotocol/graph-ts": "0.27.0"
   },
   "devDependencies": {
