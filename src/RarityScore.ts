@@ -309,7 +309,7 @@ export function calculateOttoRarityScore(otto: Otto, epoch: i32): void {
     traits.push(trait)
   }
 
-  log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
+  // log.warning('change otto {} rrs from {} to {}', [otto.id, otto.rrs.toString(), totalRRS.toString()])
   otto.legendaryBoost = calculateLegendaryBoost(otto)
   otto.constellationBoost = calculateConstellationBoost(otto.birthday, epoch)
   otto.epochThemeBoost = calculateEpochThemeBoost(otto, traits, epoch)
@@ -596,7 +596,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
       log.warning('otto not found: {}', [id])
       continue
     }
-    log.warning('create snapshot for otto: {}', [otto.id])
+    // log.warning('create snapshot for otto: {}', [otto.id])
     // clear epoch rarity boost when new epoch starts
     otto.epochRarityBoost = 0
     otto.diceCount = 0
@@ -606,7 +606,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
     otto.apRank = BigInt.zero()
     calculateOttoRarityScore(otto, epoch)
     otto.save()
-    log.warning('create snapshot after rarity score for otto: {}', [otto.id])
+    // log.warning('create snapshot after rarity score for otto: {}', [otto.id])
     updateOrCreateOttoSnapshot(otto, epoch)
   }
 }
