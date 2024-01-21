@@ -19,6 +19,9 @@ const RARITY_S2_START = 1663545600 // 2022-9-19 0:00 UTC
 const S2_END_EPOCH = 9
 const RARITY_S3_DURATION = 3 * 7 * 24 * 60 * 60 // 3 weeks
 const RARITY_S3_START = 1669593600 // 2022-11-28 0:00 UTC
+const RARITY_S4_START = 1706745600 // 2024-02-01 0:00 UTC
+const RARITY_S4_END = 1709596800 // 2024-03-05 0:00 UTC
+const S4_EPOCH = 30
 
 const THEME_BOOST_BASE = 60
 const THEME_BOOST_MULTIPLIER = [100, 150, 170, 200, 250]
@@ -352,8 +355,10 @@ export function toEpoch(timestamp: BigInt): i32 {
   //   firstEpochTs.toString(),
   //   duration.toString(),
   // ])
-  if (ts < firstEpochTs) {
+  if (ts < firstEpochTs || ts > RARITY_S4_END) {
     return 0
+  } else if (ts >= RARITY_S4_START && ts <= RARITY_S4_END) {
+    return S4_EPOCH
   } else if (ts >= RARITY_S3_START) {
     let computedEpoch = (ts - RARITY_S3_START) / RARITY_S3_DURATION + S2_END_EPOCH + 2
     return computedEpoch > 29 ? 29 : computedEpoch
@@ -607,6 +612,9 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
     calculateOttoRarityScore(otto, epoch)
     otto.save()
     // log.warning('create snapshot after rarity score for otto: {}', [otto.id])
-    updateOrCreateOttoSnapshot(otto, epoch)
+    if (epoch < S4_EPOCH) {
+      // Omit untouched ottos from new epochs going forward
+      updateOrCreateOttoSnapshot(otto, epoch)
+    }
   }
 }
