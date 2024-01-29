@@ -29,21 +29,13 @@ export class Otto extends Entity {
     }
   }
 
-  static loadInBlock(id: string): Otto | null {
-    return changetype<Otto | null>(store.get_in_block("Otto", id));
-  }
-
   static load(id: string): Otto | null {
     return changetype<Otto | null>(store.get("Otto", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -52,11 +44,7 @@ export class Otto extends Entity {
 
   get tokenId(): BigInt {
     let value = this.get("tokenId");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set tokenId(value: BigInt) {
@@ -65,11 +53,7 @@ export class Otto extends Entity {
 
   get tokenURI(): string {
     let value = this.get("tokenURI");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set tokenURI(value: string) {
@@ -78,11 +62,7 @@ export class Otto extends Entity {
 
   get owner(): Bytes {
     let value = this.get("owner");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBytes();
-    }
+    return value!.toBytes();
   }
 
   set owner(value: Bytes) {
@@ -91,11 +71,7 @@ export class Otto extends Entity {
 
   get candidates(): Array<BigInt> {
     let value = this.get("candidates");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigIntArray();
-    }
+    return value!.toBigIntArray();
   }
 
   set candidates(value: Array<BigInt>) {
@@ -104,11 +80,7 @@ export class Otto extends Entity {
 
   get legendary(): boolean {
     let value = this.get("legendary");
-    if (!value || value.kind == ValueKind.NULL) {
-      return false;
-    } else {
-      return value.toBoolean();
-    }
+    return value!.toBoolean();
   }
 
   set legendary(value: boolean) {
@@ -117,11 +89,7 @@ export class Otto extends Entity {
 
   get legendaryBoost(): i32 {
     let value = this.get("legendaryBoost");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set legendaryBoost(value: i32) {
@@ -130,11 +98,7 @@ export class Otto extends Entity {
 
   get portalStatus(): string {
     let value = this.get("portalStatus");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set portalStatus(value: string) {
@@ -143,11 +107,7 @@ export class Otto extends Entity {
 
   get canOpenAt(): BigInt {
     let value = this.get("canOpenAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set canOpenAt(value: BigInt) {
@@ -156,11 +116,7 @@ export class Otto extends Entity {
 
   get summonAt(): BigInt {
     let value = this.get("summonAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set summonAt(value: BigInt) {
@@ -169,11 +125,7 @@ export class Otto extends Entity {
 
   get mintAt(): BigInt {
     let value = this.get("mintAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set mintAt(value: BigInt) {
@@ -182,11 +134,7 @@ export class Otto extends Entity {
 
   get updateAt(): BigInt {
     let value = this.get("updateAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set updateAt(value: BigInt) {
@@ -195,11 +143,7 @@ export class Otto extends Entity {
 
   get birthday(): BigInt {
     let value = this.get("birthday");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set birthday(value: BigInt) {
@@ -208,11 +152,7 @@ export class Otto extends Entity {
 
   get numericVisibleTraits(): BigInt {
     let value = this.get("numericVisibleTraits");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set numericVisibleTraits(value: BigInt) {
@@ -221,11 +161,7 @@ export class Otto extends Entity {
 
   get numericRawTraits(): BigInt {
     let value = this.get("numericRawTraits");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set numericRawTraits(value: BigInt) {
@@ -234,11 +170,7 @@ export class Otto extends Entity {
 
   get constellation(): i32 {
     let value = this.get("constellation");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set constellation(value: i32) {
@@ -247,11 +179,7 @@ export class Otto extends Entity {
 
   get constellationBoost(): i32 {
     let value = this.get("constellationBoost");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set constellationBoost(value: i32) {
@@ -260,11 +188,7 @@ export class Otto extends Entity {
 
   get epochThemeBoost(): i32 {
     let value = this.get("epochThemeBoost");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set epochThemeBoost(value: i32) {
@@ -273,11 +197,7 @@ export class Otto extends Entity {
 
   get epochThemeBoostMultiplier(): i32 {
     let value = this.get("epochThemeBoostMultiplier");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set epochThemeBoostMultiplier(value: i32) {
@@ -286,11 +206,7 @@ export class Otto extends Entity {
 
   get epoch(): i32 {
     let value = this.get("epoch");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set epoch(value: i32) {
@@ -299,11 +215,7 @@ export class Otto extends Entity {
 
   get brs(): i32 {
     let value = this.get("brs");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set brs(value: i32) {
@@ -312,11 +224,7 @@ export class Otto extends Entity {
 
   get rrs(): i32 {
     let value = this.get("rrs");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set rrs(value: i32) {
@@ -325,11 +233,7 @@ export class Otto extends Entity {
 
   get rarityScore(): i32 {
     let value = this.get("rarityScore");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set rarityScore(value: i32) {
@@ -338,11 +242,7 @@ export class Otto extends Entity {
 
   get items(): Array<string> {
     let value = this.get("items");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
   set items(value: Array<string>) {
@@ -351,11 +251,7 @@ export class Otto extends Entity {
 
   get traits(): Array<string> {
     let value = this.get("traits");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
   set traits(value: Array<string>) {
@@ -364,11 +260,7 @@ export class Otto extends Entity {
 
   get diceCount(): i32 {
     let value = this.get("diceCount");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set diceCount(value: i32) {
@@ -377,11 +269,7 @@ export class Otto extends Entity {
 
   get epochRarityBoost(): i32 {
     let value = this.get("epochRarityBoost");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set epochRarityBoost(value: i32) {
@@ -390,11 +278,7 @@ export class Otto extends Entity {
 
   get baseRarityBoost(): i32 {
     let value = this.get("baseRarityBoost");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set baseRarityBoost(value: i32) {
@@ -403,11 +287,7 @@ export class Otto extends Entity {
 
   get attributePoints(): i32 {
     let value = this.get("attributePoints");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set attributePoints(value: i32) {
@@ -416,11 +296,7 @@ export class Otto extends Entity {
 
   get ap(): i32 {
     let value = this.get("ap");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set ap(value: i32) {
@@ -429,11 +305,7 @@ export class Otto extends Entity {
 
   get apRank(): BigInt {
     let value = this.get("apRank");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set apRank(value: BigInt) {
@@ -442,11 +314,7 @@ export class Otto extends Entity {
 
   get exp(): BigInt {
     let value = this.get("exp");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set exp(value: BigInt) {
@@ -455,11 +323,7 @@ export class Otto extends Entity {
 
   get level(): i32 {
     let value = this.get("level");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set level(value: i32) {
@@ -468,11 +332,7 @@ export class Otto extends Entity {
 
   get nextLevelExp(): BigInt {
     let value = this.get("nextLevelExp");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set nextLevelExp(value: BigInt) {
@@ -481,11 +341,7 @@ export class Otto extends Entity {
 
   get lastLevelUpAt(): BigInt {
     let value = this.get("lastLevelUpAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set lastLevelUpAt(value: BigInt) {
@@ -494,11 +350,7 @@ export class Otto extends Entity {
 
   get restingUntil(): BigInt {
     let value = this.get("restingUntil");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set restingUntil(value: BigInt) {
@@ -507,11 +359,7 @@ export class Otto extends Entity {
 
   get baseAttributes(): Array<i32> {
     let value = this.get("baseAttributes");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toI32Array();
-    }
+    return value!.toI32Array();
   }
 
   set baseAttributes(value: Array<i32>) {
@@ -520,11 +368,7 @@ export class Otto extends Entity {
 
   get passes(): Array<string> {
     let value = this.get("passes");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
   set passes(value: Array<string>) {
@@ -550,11 +394,7 @@ export class Otto extends Entity {
 
   get passesCount(): i32 {
     let value = this.get("passesCount");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set passesCount(value: i32) {
@@ -563,11 +403,7 @@ export class Otto extends Entity {
 
   get finishedPassesCount(): i32 {
     let value = this.get("finishedPassesCount");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set finishedPassesCount(value: i32) {
@@ -576,11 +412,7 @@ export class Otto extends Entity {
 
   get succeededPassesCount(): i32 {
     let value = this.get("succeededPassesCount");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set succeededPassesCount(value: i32) {
@@ -606,21 +438,13 @@ export class OttoItem extends Entity {
     }
   }
 
-  static loadInBlock(id: string): OttoItem | null {
-    return changetype<OttoItem | null>(store.get_in_block("OttoItem", id));
-  }
-
   static load(id: string): OttoItem | null {
     return changetype<OttoItem | null>(store.get("OttoItem", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -629,11 +453,7 @@ export class OttoItem extends Entity {
 
   get tokenId(): BigInt {
     let value = this.get("tokenId");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set tokenId(value: BigInt) {
@@ -642,11 +462,7 @@ export class OttoItem extends Entity {
 
   get tokenURI(): string {
     let value = this.get("tokenURI");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set tokenURI(value: string) {
@@ -655,11 +471,7 @@ export class OttoItem extends Entity {
 
   get wearable(): boolean {
     let value = this.get("wearable");
-    if (!value || value.kind == ValueKind.NULL) {
-      return false;
-    } else {
-      return value.toBoolean();
-    }
+    return value!.toBoolean();
   }
 
   set wearable(value: boolean) {
@@ -668,11 +480,7 @@ export class OttoItem extends Entity {
 
   get slot(): i32 {
     let value = this.get("slot");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set slot(value: i32) {
@@ -681,11 +489,7 @@ export class OttoItem extends Entity {
 
   get rootOwner(): Bytes {
     let value = this.get("rootOwner");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBytes();
-    }
+    return value!.toBytes();
   }
 
   set rootOwner(value: Bytes) {
@@ -694,11 +498,7 @@ export class OttoItem extends Entity {
 
   get owner(): Bytes {
     let value = this.get("owner");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBytes();
-    }
+    return value!.toBytes();
   }
 
   set owner(value: Bytes) {
@@ -724,11 +524,7 @@ export class OttoItem extends Entity {
 
   get amount(): i32 {
     let value = this.get("amount");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set amount(value: i32) {
@@ -737,11 +533,7 @@ export class OttoItem extends Entity {
 
   get updateAt(): BigInt {
     let value = this.get("updateAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set updateAt(value: BigInt) {
@@ -750,11 +542,7 @@ export class OttoItem extends Entity {
 
   get createdAt(): BigInt {
     let value = this.get("createdAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set createdAt(value: BigInt) {
@@ -780,21 +568,13 @@ export class Trait extends Entity {
     }
   }
 
-  static loadInBlock(id: string): Trait | null {
-    return changetype<Trait | null>(store.get_in_block("Trait", id));
-  }
-
   static load(id: string): Trait | null {
     return changetype<Trait | null>(store.get("Trait", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -803,11 +583,7 @@ export class Trait extends Entity {
 
   get slot(): string {
     let value = this.get("slot");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set slot(value: string) {
@@ -816,11 +592,7 @@ export class Trait extends Entity {
 
   get code(): i32 {
     let value = this.get("code");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set code(value: i32) {
@@ -829,11 +601,7 @@ export class Trait extends Entity {
 
   get brs(): i32 {
     let value = this.get("brs");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set brs(value: i32) {
@@ -842,11 +610,7 @@ export class Trait extends Entity {
 
   get rrs(): i32 {
     let value = this.get("rrs");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set rrs(value: i32) {
@@ -855,11 +619,7 @@ export class Trait extends Entity {
 
   get count(): i32 {
     let value = this.get("count");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set count(value: i32) {
@@ -868,11 +628,7 @@ export class Trait extends Entity {
 
   get ottos(): Array<string> {
     let value = this.get("ottos");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
   set ottos(value: Array<string>) {
@@ -881,11 +637,7 @@ export class Trait extends Entity {
 
   get labels(): Array<string> {
     let value = this.get("labels");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
   set labels(value: Array<string>) {
@@ -911,21 +663,13 @@ export class Slot extends Entity {
     }
   }
 
-  static loadInBlock(id: string): Slot | null {
-    return changetype<Slot | null>(store.get_in_block("Slot", id));
-  }
-
   static load(id: string): Slot | null {
     return changetype<Slot | null>(store.get("Slot", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -934,11 +678,7 @@ export class Slot extends Entity {
 
   get maxCount(): i32 {
     let value = this.get("maxCount");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set maxCount(value: i32) {
@@ -947,11 +687,7 @@ export class Slot extends Entity {
 
   get topCountTraits(): Array<string> {
     let value = this.get("topCountTraits");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
   set topCountTraits(value: Array<string>) {
@@ -960,11 +696,7 @@ export class Slot extends Entity {
 
   get traits(): Array<string> {
     let value = this.get("traits");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
   set traits(value: Array<string>) {
@@ -990,21 +722,13 @@ export class Epoch extends Entity {
     }
   }
 
-  static loadInBlock(id: string): Epoch | null {
-    return changetype<Epoch | null>(store.get_in_block("Epoch", id));
-  }
-
   static load(id: string): Epoch | null {
     return changetype<Epoch | null>(store.get("Epoch", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -1013,11 +737,7 @@ export class Epoch extends Entity {
 
   get num(): i32 {
     let value = this.get("num");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set num(value: i32) {
@@ -1026,11 +746,7 @@ export class Epoch extends Entity {
 
   get ottosSynced(): boolean {
     let value = this.get("ottosSynced");
-    if (!value || value.kind == ValueKind.NULL) {
-      return false;
-    } else {
-      return value.toBoolean();
-    }
+    return value!.toBoolean();
   }
 
   set ottosSynced(value: boolean) {
@@ -1039,11 +755,7 @@ export class Epoch extends Entity {
 
   get totalOttos(): i32 {
     let value = this.get("totalOttos");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set totalOttos(value: i32) {
@@ -1052,11 +764,7 @@ export class Epoch extends Entity {
 
   get startedAt(): i32 {
     let value = this.get("startedAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set startedAt(value: i32) {
@@ -1065,11 +773,7 @@ export class Epoch extends Entity {
 
   get endedAt(): i32 {
     let value = this.get("endedAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set endedAt(value: i32) {
@@ -1078,11 +782,7 @@ export class Epoch extends Entity {
 
   get themeLabels(): Array<string> {
     let value = this.get("themeLabels");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
   set themeLabels(value: Array<string>) {
@@ -1091,11 +791,7 @@ export class Epoch extends Entity {
 
   get themeBoostBase(): i32 {
     let value = this.get("themeBoostBase");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set themeBoostBase(value: i32) {
@@ -1104,11 +800,7 @@ export class Epoch extends Entity {
 
   get constellation(): i32 {
     let value = this.get("constellation");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set constellation(value: i32) {
@@ -1117,11 +809,7 @@ export class Epoch extends Entity {
 
   get constellationBoost(): i32 {
     let value = this.get("constellationBoost");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set constellationBoost(value: i32) {
@@ -1147,23 +835,13 @@ export class OttoProduct extends Entity {
     }
   }
 
-  static loadInBlock(id: string): OttoProduct | null {
-    return changetype<OttoProduct | null>(
-      store.get_in_block("OttoProduct", id)
-    );
-  }
-
   static load(id: string): OttoProduct | null {
     return changetype<OttoProduct | null>(store.get("OttoProduct", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -1172,11 +850,7 @@ export class OttoProduct extends Entity {
 
   get productId(): BigInt {
     let value = this.get("productId");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set productId(value: BigInt) {
@@ -1185,11 +859,7 @@ export class OttoProduct extends Entity {
 
   get price(): BigInt {
     let value = this.get("price");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set price(value: BigInt) {
@@ -1198,11 +868,7 @@ export class OttoProduct extends Entity {
 
   get discountPrice(): BigInt {
     let value = this.get("discountPrice");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set discountPrice(value: BigInt) {
@@ -1211,11 +877,7 @@ export class OttoProduct extends Entity {
 
   get uri(): string {
     let value = this.get("uri");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set uri(value: string) {
@@ -1224,11 +886,7 @@ export class OttoProduct extends Entity {
 
   get amount(): i32 {
     let value = this.get("amount");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set amount(value: i32) {
@@ -1237,11 +895,7 @@ export class OttoProduct extends Entity {
 
   get type(): string {
     let value = this.get("type");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set type(value: string) {
@@ -1250,11 +904,7 @@ export class OttoProduct extends Entity {
 
   get factory(): Bytes {
     let value = this.get("factory");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBytes();
-    }
+    return value!.toBytes();
   }
 
   set factory(value: Bytes) {
@@ -1263,11 +913,7 @@ export class OttoProduct extends Entity {
 
   get updateAt(): BigInt {
     let value = this.get("updateAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set updateAt(value: BigInt) {
@@ -1293,23 +939,13 @@ export class AdventurePass extends Entity {
     }
   }
 
-  static loadInBlock(id: string): AdventurePass | null {
-    return changetype<AdventurePass | null>(
-      store.get_in_block("AdventurePass", id)
-    );
-  }
-
   static load(id: string): AdventurePass | null {
     return changetype<AdventurePass | null>(store.get("AdventurePass", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -1318,11 +954,7 @@ export class AdventurePass extends Entity {
 
   get passId(): BigInt {
     let value = this.get("passId");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set passId(value: BigInt) {
@@ -1331,11 +963,7 @@ export class AdventurePass extends Entity {
 
   get locId(): BigInt {
     let value = this.get("locId");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set locId(value: BigInt) {
@@ -1344,11 +972,7 @@ export class AdventurePass extends Entity {
 
   get otto(): string {
     let value = this.get("otto");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
   set otto(value: string) {
@@ -1357,11 +981,7 @@ export class AdventurePass extends Entity {
 
   get departureAt(): BigInt {
     let value = this.get("departureAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set departureAt(value: BigInt) {
@@ -1370,11 +990,7 @@ export class AdventurePass extends Entity {
 
   get canFinishAt(): BigInt {
     let value = this.get("canFinishAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set canFinishAt(value: BigInt) {
@@ -1383,11 +999,7 @@ export class AdventurePass extends Entity {
 
   get finishedAt(): BigInt {
     let value = this.get("finishedAt");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set finishedAt(value: BigInt) {
@@ -1413,11 +1025,7 @@ export class AdventurePass extends Entity {
 
   get seed(): BigInt {
     let value = this.get("seed");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set seed(value: BigInt) {
@@ -1426,11 +1034,7 @@ export class AdventurePass extends Entity {
 
   get success(): boolean {
     let value = this.get("success");
-    if (!value || value.kind == ValueKind.NULL) {
-      return false;
-    } else {
-      return value.toBoolean();
-    }
+    return value!.toBoolean();
   }
 
   set success(value: boolean) {
@@ -1439,11 +1043,7 @@ export class AdventurePass extends Entity {
 
   get revived(): boolean {
     let value = this.get("revived");
-    if (!value || value.kind == ValueKind.NULL) {
-      return false;
-    } else {
-      return value.toBoolean();
-    }
+    return value!.toBoolean();
   }
 
   set revived(value: boolean) {
@@ -1452,11 +1052,7 @@ export class AdventurePass extends Entity {
 
   get exp(): BigInt {
     let value = this.get("exp");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set exp(value: BigInt) {
@@ -1465,11 +1061,7 @@ export class AdventurePass extends Entity {
 
   get ap(): BigInt {
     let value = this.get("ap");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set ap(value: BigInt) {
@@ -1478,11 +1070,7 @@ export class AdventurePass extends Entity {
 
   get tcp(): BigInt {
     let value = this.get("tcp");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
   set tcp(value: BigInt) {
@@ -1491,11 +1079,7 @@ export class AdventurePass extends Entity {
 
   get expMultiplier(): i32 {
     let value = this.get("expMultiplier");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set expMultiplier(value: i32) {
@@ -1504,11 +1088,7 @@ export class AdventurePass extends Entity {
 
   get itemAmountMultiplier(): i32 {
     let value = this.get("itemAmountMultiplier");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
+    return value!.toI32();
   }
 
   set itemAmountMultiplier(value: i32) {
@@ -1517,11 +1097,7 @@ export class AdventurePass extends Entity {
 
   get items(): Array<BigInt> {
     let value = this.get("items");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigIntArray();
-    }
+    return value!.toBigIntArray();
   }
 
   set items(value: Array<BigInt>) {
