@@ -148,7 +148,7 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   ottoEntity.updateAt = event.block.timestamp
   calculateOttoRarityScore(ottoEntity, event.params.epoch_.toI32())
   ottoEntity.save()
-  if (epoch === event.params.epoch_.toI32()) {
+  if (epoch === event.params.epoch_.toI32() && !newEpochCreated) {
     updateOrCreateOttoSnapshot(ottoEntity, epoch)
   }
 
@@ -172,7 +172,9 @@ export function handleBaseAttributesChanged(event: BaseAttributesChanged): void 
     ottoEntity.baseRarityBoost = event.params.attrs_[7]
     let epoch = toEpoch(event.block.timestamp)
     calculateOttoRarityScore(ottoEntity, epoch)
-    updateOrCreateOttoSnapshot(ottoEntity, epoch)
+    if (!epochCreated) {
+      updateOrCreateOttoSnapshot(ottoEntity, epoch)
+    }
   }
 
   ottoEntity.save()
@@ -249,7 +251,9 @@ export function handleApIncreased(event: ApIncreased): void {
     ottoEntity.save()
 
     let epoch = toEpoch(event.block.timestamp)
-    updateOrCreateOttoSnapshot(ottoEntity, epoch)
+    if (!epochCreated) {
+      updateOrCreateOttoSnapshot(ottoEntity, epoch)
+    }
   }
 
   if (epochCreated) {
