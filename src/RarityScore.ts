@@ -385,7 +385,9 @@ export function toEpoch(timestamp: BigInt): i32 {
 function toEpochEndTimestamp(epoch: i32): BigInt {
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
-  if (epoch > S2_END_EPOCH) {
+  if (epoch = S4_EPOCH) {
+    return BigInt.fromI64(RARITY_S4_END)
+  } else if (epoch > S2_END_EPOCH) {
     if (epoch == S2_END_EPOCH + 1) {
       return BigInt.fromI64(RARITY_S3_START)
     } else {
