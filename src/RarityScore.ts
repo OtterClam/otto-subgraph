@@ -19,9 +19,9 @@ const RARITY_S2_START = 1663545600 // 2022-9-19 0:00 UTC
 const S2_END_EPOCH = 9
 const RARITY_S3_DURATION = 3 * 7 * 24 * 60 * 60 // 3 weeks
 const RARITY_S3_START = 1669593600 // 2022-11-28 0:00 UTC
+const RARITY_S4_DURATION = 33 * 24 * 60 * 60 // 33 days
 const RARITY_S4_START = 1706745600 // 2024-02-01 0:00 UTC
-const RARITY_S4_END = 1709596800 // 2024-03-05 0:00 UTC
-const S4_EPOCH = 30
+const S4_START_EPOCH = 30
 
 const THEME_BOOST_BASE = 60
 const THEME_BOOST_MULTIPLIER = [100, 150, 170, 200, 250]
@@ -355,10 +355,10 @@ export function toEpoch(timestamp: BigInt): i32 {
   //   firstEpochTs.toString(),
   //   duration.toString(),
   // ])
-  if (ts < firstEpochTs || ts > RARITY_S4_END) {
+  if (ts < firstEpochTs) {
     return 0
-  } else if (ts >= RARITY_S4_START && ts <= RARITY_S4_END) {
-    return S4_EPOCH
+  } else if (ts >= RARITY_S4_START) {
+    return (ts - RARITY_S4_START) / RARITY_S4_DURATION + S4_START_EPOCH
   } else if (ts >= RARITY_S3_START) {
     let computedEpoch = (ts - RARITY_S3_START) / RARITY_S3_DURATION + S2_END_EPOCH + 2
     return computedEpoch > 29 ? 29 : computedEpoch
@@ -385,8 +385,8 @@ export function toEpoch(timestamp: BigInt): i32 {
 function toEpochEndTimestamp(epoch: i32): BigInt {
   let firstEpochTs = OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH
   let duration = OTTOPIA_RARITY_SCORE_RANKING_DURATION
-  if (epoch = S4_EPOCH) {
-    return BigInt.fromI64(RARITY_S4_END)
+  if (epoch >= S4_START_EPOCH) {
+    return BigInt.fromI64(RARITY_S4_START + RARITY_S4_DURATION * (epoch - S4_START_EPOCH + 1))
   } else if (epoch > S2_END_EPOCH) {
     if (epoch == S2_END_EPOCH + 1) {
       return BigInt.fromI64(RARITY_S3_START)
@@ -614,7 +614,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
     calculateOttoRarityScore(otto, epoch)
     otto.save()
     // log.warning('create snapshot after rarity score for otto: {}', [otto.id])
-    if (epoch < S4_EPOCH) {
+    if (epoch < S4_START_EPOCH) {
       // Omit untouched ottos from new epochs going forward
       updateOrCreateOttoSnapshot(otto, epoch)
     }
