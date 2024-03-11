@@ -3,6 +3,9 @@ schema:
   file: ./schema.graphql
 features:
   - grafting
+graft:
+  - base: QmTSK7nSDaWcH1D2fApPKuZHMAiY68h6aaHVxHUQ5DRUvf
+  - block: 54299240
 dataSources:
   - kind: ethereum/contract
     name: Otto
