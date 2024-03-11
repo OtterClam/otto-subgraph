@@ -7,6 +7,7 @@ import {
   OTTOPIA_RARITY_SCORE_RANKING_DURATION,
   OTTOPIA_RARITY_SCORE_RANKING_FIRST_EPOCH,
   OTTO_RARITY_SCORE_START_ID,
+  SNAPSHOT_FIX_EPOCH,
 } from './Constants'
 import { parseConstellation } from './utils/Constellation'
 import { loadPFP } from './utils/PFP'
@@ -591,8 +592,23 @@ export function updateOrCreateEpoch(timestamp: BigInt): boolean {
   return epochCreated
 }
 
+export function resetOttoForNewEpoch(otto: Otto, epoch: i32): void {
+  otto.epochRarityBoost = 0
+  otto.diceCount = 0
+  otto.ap = 0
+  otto.finishedPassesCount = 0
+  otto.succeededPassesCount = 0
+  otto.apRank = BigInt.zero()
+  calculateOttoRarityScore(otto, epoch)
+  otto.save()
+}
+
 export function createSnapshotsForAllOttos(timestamp: BigInt): void {
   let epoch = toEpoch(timestamp)
+  if (epoch >= SNAPSHOT_FIX_EPOCH) {
+    // skip loop, track whether we need to reset at epoch-otto entity creation
+    return
+  }
   let ottoV3 = OttoV3Contract.bind(Address.fromString(OTTO))
   let total = ottoV3.totalSupply().toI32()
   // log.warning('createSnapshotsForAllOttos, epoch created: {}, total: {}', [epoch.toString(), total.toString()])
@@ -605,14 +621,7 @@ export function createSnapshotsForAllOttos(timestamp: BigInt): void {
     }
     // log.warning('create snapshot for otto: {}', [otto.id])
     // clear epoch rarity boost when new epoch starts
-    otto.epochRarityBoost = 0
-    otto.diceCount = 0
-    otto.ap = 0
-    otto.finishedPassesCount = 0
-    otto.succeededPassesCount = 0
-    otto.apRank = BigInt.zero()
-    calculateOttoRarityScore(otto, epoch)
-    otto.save()
+    resetOttoForNewEpoch(otto, epoch)
     // log.warning('create snapshot after rarity score for otto: {}', [otto.id])
     if (epoch < S4_START_EPOCH) {
       // Omit untouched ottos from new epochs going forward
