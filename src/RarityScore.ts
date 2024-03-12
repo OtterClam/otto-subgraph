@@ -326,6 +326,15 @@ export function calculateOttoRarityScore(otto: Otto, epoch: i32): void {
 export function updateOrCreateOttoSnapshot(otto: Otto, epoch: i32): void {
   let id = otto.id + '-' + epoch.toString()
   let entity = new Otto(id)
+  if (epoch >= SNAPSHOT_FIX_EPOCH) {
+    const persistedEntity = Otto.load(id)
+    if (persistedEntity == null) {
+      resetOttoForNewEpoch(otto, epoch)
+      entity = new Otto(id)
+    } else {
+      entity = persistedEntity
+    }
+  }
   for (let i = 0; i < otto.entries.length; i++) {
     if (['id', 'epoch'].includes(otto.entries[i].key)) {
       continue
@@ -528,7 +537,9 @@ export function updateRarityScore(codes: Array<i32>, otto: Otto, timestamp: BigI
       continue
     }
     calculateOttoRarityScore(dirtyOtto, epoch)
-    updateOrCreateOttoSnapshot(dirtyOtto, epoch)
+    if (epoch < SNAPSHOT_FIX_EPOCH) {
+      updateOrCreateOttoSnapshot(dirtyOtto, epoch)
+    }
     dirtyOtto.save()
   }
 }

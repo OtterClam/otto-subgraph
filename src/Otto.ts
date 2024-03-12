@@ -121,7 +121,6 @@ export function handleTraitsChanged(event: TraitsChanged): void {
   if (epochCreated) {
     createSnapshotsForAllOttos(event.block.timestamp)
     if (epoch >= SNAPSHOT_FIX_EPOCH) {
-      resetOttoForNewEpoch(ottoEntity, epoch)
       updateOrCreateOttoSnapshot(ottoEntity, epoch)
     }
   }
@@ -159,7 +158,6 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
   if (newEpochCreated) {
     createSnapshotsForAllOttos(event.block.timestamp)
     if (epoch >= SNAPSHOT_FIX_EPOCH) {
-      resetOttoForNewEpoch(ottoEntity, epoch)
       updateOrCreateOttoSnapshot(ottoEntity, epoch)
     }
   }
@@ -167,6 +165,7 @@ export function handleEpochBoostChanged(event: EpochBoostsChanged): void {
 
 export function handleBaseAttributesChanged(event: BaseAttributesChanged): void {
   const epochCreated = updateOrCreateEpoch(event.block.timestamp)
+  const epoch = toEpoch(event.block.timestamp)
   const ottoV4 = OttoV4Contract.bind(Address.fromString(OTTO))
   let tokenId = event.params.ottoId_
   let ottoEntity = getOttoEntity(tokenId)
@@ -178,7 +177,6 @@ export function handleBaseAttributesChanged(event: BaseAttributesChanged): void 
 
   if (ottoEntity.baseRarityBoost != event.params.attrs_[7]) {
     ottoEntity.baseRarityBoost = event.params.attrs_[7]
-    let epoch = toEpoch(event.block.timestamp)
     calculateOttoRarityScore(ottoEntity, epoch)
     if (!epochCreated) {
       updateOrCreateOttoSnapshot(ottoEntity, epoch)
@@ -190,7 +188,6 @@ export function handleBaseAttributesChanged(event: BaseAttributesChanged): void 
   if (epochCreated) {
     createSnapshotsForAllOttos(event.block.timestamp)
     if (epoch >= SNAPSHOT_FIX_EPOCH) {
-      resetOttoForNewEpoch(ottoEntity, epoch)
       updateOrCreateOttoSnapshot(ottoEntity, epoch)
     }
   }
@@ -254,12 +251,12 @@ export function handleLevelUp(event: LevelUp): void {
 export function handleApIncreased(event: ApIncreased): void {
   const epochCreated = updateOrCreateEpoch(event.block.timestamp)
   const epoch = toEpoch(event.block.timestamp)
-  if (epoch >= SNAPSHOT_FIX_EPOCH && epochCreated) {
-    resetOttoForNewEpoch(ottoEntity, epoch)
-    updateOrCreateOttoSnapshot(ottoEntity, epoch)
-  }
   if (event.params.ottoId_.gt(TEAM_OTTO_ID)) {
     let ottoEntity = getOttoEntity(event.params.ottoId_)
+
+    if (epoch >= SNAPSHOT_FIX_EPOCH && epochCreated) {
+      updateOrCreateOttoSnapshot(ottoEntity, epoch)
+    }
     ottoEntity.ap += event.params.inc_.toI32()
     ottoEntity.apRank = BigInt.fromI32(ottoEntity.ap)
       .leftShift(32)
@@ -269,14 +266,15 @@ export function handleApIncreased(event: ApIncreased): void {
 
     if (!epochCreated) {
       updateOrCreateOttoSnapshot(ottoEntity, epoch)
+    } else {
+      if (epoch >= SNAPSHOT_FIX_EPOCH) {
+        updateOrCreateOttoSnapshot(ottoEntity, epoch)
+      }
     }
   }
 
   if (epochCreated) {
     createSnapshotsForAllOttos(event.block.timestamp)
-    if (epoch >= SNAPSHOT_FIX_EPOCH) {
-      updateOrCreateOttoSnapshot(ottoEntity, epoch)
-    }
   }
 }
 
